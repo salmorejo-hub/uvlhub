@@ -4,12 +4,13 @@ import requests
 
 from app.modules.dataset.models import DataSet
 from app.modules.featuremodel.models import FeatureModel
-from app.modules.fakenodo.repositories import FakenodoRepository
+from fakenodo.app.repositories import FakenodoRepository
 
 from core.configuration.configuration import uploads_folder_name
 from dotenv import load_dotenv
 from flask import jsonify, Response
 from flask_login import current_user
+
 
 
 from core.services.BaseService import BaseService
@@ -23,11 +24,12 @@ class FakenodoService(BaseService):
 
     def get_fakenodo_url(self):
 
-        FAKENODO_API_URL = os.getenv('FAKENODO_API_URL', 'http://localhost:5000/api/fakenodo')
+        FAKENODO_API_URL = os.getenv("FAKENODO_API_URL", "http://localhost:5001/api/fakenodo")
+        print(f"Uri de fakenodo: ", FAKENODO_API_URL)
         
         return FAKENODO_API_URL
 
-    '''def get_zenodo_access_token(self):
+    '''def get_Fakenodo_access_token(self):
         return os.getenv("ZENODO_ACCESS_TOKEN")
     '''
     
@@ -77,7 +79,7 @@ class FakenodoService(BaseService):
             }
         }
 
-        response = requests.post(self.FAKENODO_API_URL, json=data, headers=self.headers)
+        response = requests.post(f"{self.FAKENODO_API_URL}/deposition", json=data, headers=self.headers)
 
         if response.status_code != 201:
             return jsonify(
@@ -122,14 +124,14 @@ class FakenodoService(BaseService):
         Returns:
             dict: The response in JSON format with the depositions.
         """
-        response = requests.get(self.FAKENODO_API_URL, headers=self.headers)
+        response = requests.get("f{self.FAKENODO_API_URL}/depositions", headers=self.headers)
         if response.status_code != 200:
             raise Exception("Failed to get depositions")
         return response.json()
 
     def create_new_deposition(self, dataset: DataSet) -> dict:
         """
-        Create a new deposition in fakenodo.
+        Create a new deposition in Fakenodo.
 
         Args:
             dataset (DataSet): The DataSet object containing the metadata of the deposition.
@@ -138,7 +140,7 @@ class FakenodoService(BaseService):
             dict: The response in JSON format with the details of the created deposition.
         """
 
-        logger.info("Dataset sending to fakenodo...")
+        logger.info("Dataset sending to Fakenodo...")
         logger.info(f"Publication type...{dataset.ds_meta_data.publication_type.value}")
 
         metadata = {
@@ -167,7 +169,7 @@ class FakenodoService(BaseService):
 
         data = {"metadata": metadata}
 
-        response = requests.post(self.FAKENODO_API_URL, json=data, headers=self.headers)
+        response = requests.post(self.FAKENODO_API_URL, params=self.params, json=data, headers=self.headers)
         if response.status_code != 201:
             error_message = f"Failed to create deposition. Error details: {response.json()}"
             raise Exception(error_message)
@@ -175,10 +177,10 @@ class FakenodoService(BaseService):
 
     def upload_file(self, dataset: DataSet, deposition_id: int, feature_model: FeatureModel, user=None) -> dict:
         """
-        Upload a file to a deposition in fakenodo.
+        Upload a file to a deposition in Fakenodo.
 
         Args:
-            deposition_id (int): The ID of the deposition in fakenodo.
+            deposition_id (int): The ID of the deposition in Fakenodo.
             feature_model (FeatureModel): The FeatureModel object representing the feature model.
             user (FeatureModel): The User object representing the file owner.
 
@@ -200,15 +202,15 @@ class FakenodoService(BaseService):
 
     def publish_deposition(self, deposition_id: int) -> dict:
         """
-        Publish a deposition in fakenodo.
+        Publish a deposition in Fakenodo.
 
         Args:
-            deposition_id (int): The ID of the deposition in fakenodo.
+            deposition_id (int): The ID of the deposition in Fakenodo.
 
         Returns:
             dict: The response in JSON format with the details of the published deposition.
         """
-        publish_url = f"{self.FAKENODO_API_URL}/{deposition_id}/actions/publish"
+        publish_url = f"{self.FA_API_URL}/{deposition_id}/actions/publish"
         response = requests.post(publish_url, params=self.params, headers=self.headers)
         if response.status_code != 202:
             raise Exception("Failed to publish deposition")
@@ -216,26 +218,26 @@ class FakenodoService(BaseService):
 
     def get_deposition(self, deposition_id: int) -> dict:
         """
-        Get a deposition from fakenodo.
+        Get a deposition from Fakenodo.
 
         Args:
-            deposition_id (int): The ID of the deposition in fakenodo.
+            deposition_id (int): The ID of the deposition in Fakenodo.
 
         Returns:
             dict: The response in JSON format with the details of the deposition.
         """
         deposition_url = f"{self.FAKENODO_API_URL}/{deposition_id}"
-        response = requests.get(deposition_url, headers=self.headers)
+        response = requests.get(deposition_url, params=self.params, headers=self.headers)
         if response.status_code != 200:
             raise Exception("Failed to get deposition")
         return response.json()
 
     def get_doi(self, deposition_id: int) -> str:
         """
-        Get the DOI of a deposition from fakenodo.
+        Get the DOI of a deposition from Fakenodo.
 
         Args:
-            deposition_id (int): The ID of the deposition in fakenodo.
+            deposition_id (int): The ID of the deposition in Fakenodo.
 
         Returns:
             str: The DOI of the deposition.

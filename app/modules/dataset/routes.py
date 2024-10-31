@@ -33,7 +33,7 @@ from app.modules.dataset.services import (
     DOIMappingService
 )
 from app.modules.zenodo.services import ZenodoService
-from app.modules.fakenodo.services import FakenodoService
+from fakenodo.app.services import FakenodoService
 
 logger = logging.getLogger(__name__)
 
