@@ -4,6 +4,7 @@ import requests
 
 from app.modules.dataset.models import DataSet
 from app.modules.featuremodel.models import FeatureModel
+from fakenodo.app.models import Deposition
 from fakenodo.app.repositories import FakenodoRepository
 
 from core.configuration.configuration import uploads_folder_name
@@ -72,6 +73,7 @@ class FakenodoService(BaseService):
         # Step 1: Create a deposition on fakenodo
         data = {
             "metadata": {
+                "id":1,
                 "title": "Test Deposition",
                 "upload_type": "dataset",
                 "description": "This is a test deposition created via fakenodo API",
@@ -79,7 +81,9 @@ class FakenodoService(BaseService):
             }
         }
 
-        response = requests.post(f"{self.FAKENODO_API_URL}/deposition", json=data, headers=self.headers)
+        response = requests.post(f"{self.FAKENODO_API_URL}/deposition/empty", json=data, headers=self.headers)
+        
+
 
         if response.status_code != 201:
             return jsonify(
@@ -89,28 +93,29 @@ class FakenodoService(BaseService):
                 }
             )
 
-        deposition_id = response.json()["id"]
+        
+        deposition_id = 1
 
-        # Step 2: Upload an empty file to the deposition
         data = {"name": "test_file.txt"}
-        files = {"file": open(file_path, "rb")}
-        publish_url = f"{self.FAKENODO_API_URL}/{deposition_id}/files"
-        response = requests.post(publish_url, params=self.params, data=data, files=files)
+        with open(file_path, "rb") as f:
+            files = {"file": f}
+            publish_url = f"{self.FAKENODO_API_URL}/deposition/{deposition_id}/files"
+            response = requests.post(publish_url, data=data, files=files)
         files["file"].close()  # Close the file after uploading
 
-        logger.info(f"Publish URL: {publish_url}")
-        logger.info(f"Params: {self.params}")
-        logger.info(f"Data: {data}")
-        logger.info(f"Files: {files}")
-        logger.info(f"Response Status Code: {response.status_code}")
-        logger.info(f"Response Content: {response.content}")
+
+        print(f"Publish URL: {publish_url}")
+        print(f"Data: {data}")
+        print(f"Files: {files}")
+        print(f"Response Status Code: {response.status_code}")
+        print(f"Response Content: {response._content}")
 
         if response.status_code != 201:
             messages.append(f"Failed to upload test file to fakenodo. Response code: {response.status_code}")
             success = False
 
         # Step 3: Delete the deposition
-        response = requests.delete(f"{self.FAKENODO_API_URL}/{deposition_id}", params=self.params)
+        response = requests.delete(f"{self.FAKENODO_API_URL}/{deposition_id}")
 
         if os.path.exists(file_path):
             os.remove(file_path)

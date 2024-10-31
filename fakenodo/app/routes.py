@@ -1,7 +1,9 @@
 # app/routes.py
+import os
 from flask import Blueprint, jsonify, render_template, request
 from app.modules.dataset.models import DataSet
 from app.modules.featuremodel.models import FeatureModel
+from fakenodo.app.models import Deposition
 from fakenodo.app.services import FakenodoService
 
 api_bp = Blueprint("api_bp", __name__)
@@ -23,30 +25,36 @@ def get_all_depositions():
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
 
-@api_bp.route('/api/fakenodo/deposition', methods=['POST'])
-def create_deposition():
+@api_bp.route('/api/fakenodo/deposition/empty', methods=['POST'])
+def create_empty_deposition():
     data = request.json
-    dataset = DataSet(**data)  # Asumiendo que DataSet se puede inicializar directamente con un diccionario
     try:
-        deposition = service.create_new_deposition(dataset)
-        return jsonify(deposition), 201
+        deposition = Deposition(**data)  
+        return jsonify(deposition.to_dict()), 201
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
 
-@api_bp.route('/api/fakenodo/deposition/<int:deposition_id>/upload', methods=['POST'])
+@api_bp.route('/api/fakenodo/deposition/<int:deposition_id>/files', methods=['POST'])
 def upload_file(deposition_id):
-    data = request.json
-    dataset_id = data.get("dataset_id")
-    feature_model_data = data.get("feature_model")  # Asumiendo que puedes crear un FeatureModel de esta manera
-    feature_model = FeatureModel(**feature_model_data)
-    
     try:
+        # Obtener los datos del formulario y los archivos
+        file = request.files.get('file')
+        file_name = request.form.get('name')
 
-        dataset = DataSet.get_by_id(dataset_id)
-        uploaded_file = service.upload_file(dataset, deposition_id, feature_model)
-        return jsonify(uploaded_file), 201
+        # Verifica que el archivo y el nombre estén presentes
+        if not file or not file_name:
+            return jsonify({"success": False, "message": "Missing file or name."}), 400
+        
+      # Guardar el archivo en la carpeta actual
+        save_path = os.path.join(os.getcwd(), file_name)  # Ruta donde se guardará el archivo
+        file.save(save_path)  # Guardar el archivo
+        # Devuelve una respuesta de éxito
+
+        return jsonify({"success": True, "message": "File uploaded successfully.", "file_name": file_name}), 201
+        
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
+
 
 @api_bp.route('/api/fakenodo/deposition/<int:deposition_id>', methods=['GET'])
 def get_deposition(deposition_id):
