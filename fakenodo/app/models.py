@@ -1,54 +1,43 @@
+from app.modules.dataset.models import DataSet
 
-import app
-
-class Fakenodo(app.db.Model):
-    id = app.db.Column(app.db.Integer, primary_key=True)
-
-from app import db
-
-class Creator(db.Model):
-    __tablename__ = 'creators'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), nullable=False)
-    deposition_id = db.Column(db.Integer, db.ForeignKey('depositions.id'), nullable=False)
-    
-    def __init__(self, name):
+class Creator:
+    def __init__(self, name: str, id: int = None, deposition_id: int = None):
+        self.id = id
         self.name = name
+        self.deposition_id = deposition_id
 
     def to_dict(self):
         return {
-            'name': self.name
+            'id': self.id,
+            'name': self.name,
+            'deposition_id': self.deposition_id
         }
 
-class Deposition(db.Model):
-    __tablename__ = 'depositions'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(120), nullable=False)
-    upload_type = db.Column(db.String(50), nullable=False)
-    description = db.Column(db.Text, nullable=False)
-    
-    creators = db.relationship('Creator', backref='deposition', lazy=True, cascade="all, delete")
+class Deposition:
+    _id_counter = 1  
 
-    def __init__(self, metadata):
-        self.title = metadata.get('title')
-        self.upload_type = metadata.get('upload_type')
-        self.description = metadata.get('description')
+    def __init__(self, title=None, upload_type=None, publication_type=None, description=None, creators=None, keywords=None, access_right="open", license="CC-BY-4.0"):
+        self.id = Deposition._id_counter  
+        Deposition._id_counter += 1
         
-        # Inicializa los creadores a partir del JSON en metadata
-        creator_data = metadata.get('creators', [])
-        self.creators = [Creator(**creator) for creator in creator_data]
+        self.title = title
+        self.upload_type = upload_type
+        self.publication_type = publication_type
+        self.description = description
+        self.creators = creators
+        self.keywords = keywords
+        self.access_right = access_right
+        self.license = license
 
     def to_dict(self):
         return {
-                'id': self.id,
-                'title': self.title,
-                'upload_type': self.upload_type,
-                'description': self.description,
-                'creators': [creator.to_dict() for creator in self.creators]
-            }
-    
-
-    def __repr__(self):
-        return f"<Deposition(title={self.title}, upload_type={self.upload_type})>"
+            "id": self.id,
+            "title": self.title,
+            "upload_type": self.upload_type,
+            "publication_type": self.publication_type,
+            "description": self.description,
+            "creators": self.creators,
+            "keywords": self.keywords,
+            "access_right": self.access_right,
+            "license": self.license,
+        }

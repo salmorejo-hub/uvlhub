@@ -1,7 +1,12 @@
-import app
-from fakenodo.app.models import Fakenodo
+from fakenodo.app.models import Deposition,Creator
 from core.repositories.BaseRepository import BaseRepository
 
-class FakenodoRepository(BaseRepository):
+
+class DepositionRepository(BaseRepository):
     def __init__(self):
-        super().__init__(Fakenodo)
+        super().__init__(Deposition)
+
+
+class CreatorRepository(BaseRepository):
+    def __init__(self):
+        super().__init(Creator)

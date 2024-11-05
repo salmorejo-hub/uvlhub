@@ -21,12 +21,12 @@ def fakenodo_test():
 def get_all_depositions():
     try:
         depositions = service.get_all_depositions()
-        return jsonify(depositions)
+        return jsonify(depositions),200
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
 
-@api_bp.route('/api/fakenodo/deposition/empty', methods=['POST'])
-def create_empty_deposition():
+@api_bp.route('/api/fakenodo/deposition/', methods=['POST'])
+def create_deposition():
     data = request.json
     try:
         deposition = Deposition(**data)  
@@ -34,6 +34,8 @@ def create_empty_deposition():
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
 
+
+##Working on it
 @api_bp.route('/api/fakenodo/deposition/<int:deposition_id>/files', methods=['POST'])
 def upload_file(deposition_id):
     try:
@@ -44,11 +46,6 @@ def upload_file(deposition_id):
         # Verifica que el archivo y el nombre estén presentes
         if not file or not file_name:
             return jsonify({"success": False, "message": "Missing file or name."}), 400
-        
-      # Guardar el archivo en la carpeta actual
-        save_path = os.path.join(os.getcwd(), file_name)  # Ruta donde se guardará el archivo
-        file.save(save_path)  # Guardar el archivo
-        # Devuelve una respuesta de éxito
 
         return jsonify({"success": True, "message": "File uploaded successfully.", "file_name": file_name}), 201
         
@@ -56,13 +53,13 @@ def upload_file(deposition_id):
         return jsonify({"success": False, "message": str(e)}), 500
 
 
-@api_bp.route('/api/fakenodo/deposition/<int:deposition_id>', methods=['GET'])
+@api_bp.route('/api/fakenodo/depositions/<int:deposition_id>', methods=['GET'])
 def get_deposition(deposition_id):
     try:
         deposition = service.get_deposition(deposition_id)
-        return jsonify(deposition)
-    except Exception as e:
-        return jsonify({"success": False, "message": str(e)}), 500
+        return jsonify(deposition),200
+    except Exception as _:
+        return jsonify(f"Cannot find deposition with id {deposition_id}"),404 
 
 @api_bp.route('/api/fakenodo/deposition/<int:deposition_id>/publish', methods=['POST'])
 def publish_deposition(deposition_id):
