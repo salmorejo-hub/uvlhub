@@ -17,12 +17,16 @@ jobs:
         run: |
           git config --global user.name "antjimort"
           git config --global user.email "antjimort@alum.us.es"
-
+      - name: Check Git Remote and User
+        run: |
+          git remote -v
+          git config --get user.name
+          git config --get user.email
       - name: Add Parent Repository as Remote
         run: |
           git remote add parent https://github.com/salmorejo-hub/uvlhub.git
           git fetch parent
-
+          
       - name: Push to Parent Repository
         run: |
           git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/salmorejo-hub/uvlhub.git main:develop
