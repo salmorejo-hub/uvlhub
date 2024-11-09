@@ -21,6 +21,10 @@ function send_query() {
                 query: document.querySelector('#query').value,
                 publication_type: document.querySelector('#publication_type').value,
                 sorting: document.querySelector('[name="sorting"]:checked').value,
+                min_number_of_models: document.querySelector('#min_number_of_models').value || null,
+                max_number_of_models: document.querySelector('#max_number_of_models').value || null,
+                min_number_of_features: document.querySelector('#min_number_of_features').value || null,
+                max_number_of_features: document.querySelector('#max_number_of_features').value || null,
             };
 
             console.log(document.querySelector('#publication_type').value);
@@ -178,6 +182,19 @@ function clearFilters() {
         option.checked = option.value == "newest"; // replace "default" with whatever your default value is
         // option.dispatchEvent(new Event('input', {bubbles: true}));
     });
+
+    // Reset the number of models and features filters
+    let minNumberOfModelsInput = document.querySelector('#min_number_of_models');
+    minNumberOfModelsInput.value = "";
+
+    let maxNumberOfModelsInput = document.querySelector('#max_number_of_models');
+    maxNumberOfModelsInput.value = "";
+
+    let minNumberOfFeaturesInput = document.querySelector('#min_number_of_features');
+    minNumberOfFeaturesInput.value = "";
+
+    let maxNumberOfFeaturesInput = document.querySelector('#max_number_of_features');
+    maxNumberOfFeaturesInput.value = "";
 
     // Perform a new search with the reset filters
     queryInput.dispatchEvent(new Event('input', {bubbles: true}));

@@ -1,7 +1,7 @@
 import re
 from sqlalchemy import any_, or_
 import unidecode
-from app.modules.dataset.models import Author, DSMetaData, DataSet, PublicationType
+from app.modules.dataset.models import Author, DSMetaData, DataSet, PublicationType, DSMetrics
 from app.modules.featuremodel.models import FMMetaData, FeatureModel
 from core.repositories.BaseRepository import BaseRepository
 
@@ -10,7 +10,8 @@ class ExploreRepository(BaseRepository):
     def __init__(self):
         super().__init__(DataSet)
 
-    def filter(self, query="", sorting="newest", publication_type="any", tags=[], **kwargs):
+    def filter(self, query="", sorting="newest", publication_type="any", tags=[], min_number_of_models=None,
+               max_number_of_models=None, min_number_of_features=None, max_number_of_features=None, **kwargs):
         # Normalize and remove unwanted characters
         normalized_query = unidecode.unidecode(query).lower()
         cleaned_query = re.sub(r'[,.":\'()\[\]^;!¡¿?]', "", normalized_query)
@@ -51,6 +52,18 @@ class ExploreRepository(BaseRepository):
 
         if tags:
             datasets = datasets.filter(DSMetaData.tags.ilike(any_(f"%{tag}%" for tag in tags)))
+            
+        if min_number_of_models is not None:
+            datasets = datasets.filter(DSMetaData.ds_metrics.has(DSMetrics.number_of_models >= min_number_of_models))
+            
+        if max_number_of_models is not None:
+            datasets = datasets.filter(DSMetaData.ds_metrics.has(DSMetrics.number_of_models <= max_number_of_models))
+            
+        if min_number_of_features is not None:
+            datasets = datasets.filter(DSMetaData.ds_metrics.has(DSMetrics.number_of_features >= min_number_of_features))
+            
+        if max_number_of_features is not None:
+            datasets = datasets.filter(DSMetaData.ds_metrics.has(DSMetrics.number_of_features <= max_number_of_features))
 
         # Order by created_at
         if sorting == "oldest":
