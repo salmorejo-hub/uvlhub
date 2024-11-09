@@ -1,0 +1,68 @@
+{% extends "base_template.html" %}
+
+{% block title %}API Configuration{% endblock %}
+
+{% block content %}
+
+    <h1 class="h3 mb-3">API Configuration</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <div class="alert alert-{{ category }}" role="alert">
+                            <div class="alert-message">
+                                {% if category == 'success' %}
+                                    <h4 class="alert-heading"><i class="align-middle" data-feather="check-circle"></i> Success</h4>
+                                {% elif category == 'error' %}
+                                    <h4 class="alert-heading"><i class="align-middle" data-feather="x-circle"></i> Error</h4>
+                                {% endif %}
+                                    <p style="margin-bottom: 0px">{{ message }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="row">
+        <div class="col-12 col-lg-6">
+            <form method="POST" action="{{ url_for('api.index') }}" class="needs-validation" novalidate>
+                <div class="mb-3">
+                    <label for="token-expiration" class="form-label">Token Expiration (days)</label>
+                    <input type="number" id="token-expiration" name="expiration" class="form-control" placeholder="Enter number of days" required>
+                    <small class="form-text text-muted">Specify how long the token should be valid.</small>
+                </div>    
+                <button type="submit" class="btn btn-primary">Generate API Token</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-6 mt-4 mt-lg-0">
+        {% if generated_token %}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Your API Token</h5>
+                    <p class="card-text"><code>{{ generated_token }}</code></p>
+                    <button onclick="copyToken()" class="btn btn-secondary">Copy to clipboard</button>
+                </div>
+            </div>
+        {% else %}
+            <p class="text-muted">No token generated yet. Fill out the form to create a new API token.</p>
+        {% endif %}
+    </div>
+
+
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        function copyToken() {
+            let tokenText = document.querySelector('.card-text code').innerText;
+            navigator.clipboard.writeText(tokenText);
+            alert("Token copied to clipboard!");
+        }
+    </script>
+{% endblock %}
