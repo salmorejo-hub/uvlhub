@@ -83,7 +83,7 @@ class AuthenticationService(BaseService):
 
     def temp_folder_by_user(self, user: User) -> str:
         return os.path.join(uploads_folder_name(), "temp", str(user.id))
-    
+
     def generate_reset_token(self, email: str) -> str:
         serializer = self._get_serializer()
         token = serializer.dumps(email, salt='password-reset-salt')
