@@ -1,5 +1,5 @@
-from flask import (abort, app, current_app, flash, redirect, render_template,
-                   request, url_for)
+from flask import (abort, current_app, redirect, render_template, request,
+                   url_for)
 from flask_login import current_user, login_user, logout_user
 from itsdangerous import URLSafeTimedSerializer
 
@@ -9,7 +9,6 @@ from app.modules.auth.forms import (LoginForm, RememberMyPasswordForm,
                                     ResetPasswordForm, SignupForm)
 from app.modules.auth.models import User
 from app.modules.auth.services import AuthenticationService
-from app.modules.mail.services import MailService
 from app.modules.profile.services import UserProfileService
 
 authentication_service = AuthenticationService()
@@ -59,7 +58,7 @@ def remember_my_password():
     if current_user.is_authenticated:
         return redirect(url_for('public.index'))
     form = RememberMyPasswordForm()
-    
+
     # Idk why the second time you try a POST validate_on_submit returns False
     if request.method == 'POST' and form.validate_on_submit():
         user_email = form.email.data
@@ -71,8 +70,7 @@ def remember_my_password():
             return render_template('auth/mail_sent.html')
         else:
             return render_template('auth/remember_my_password.html', form=form, error='Not user found')
-    
-    print(form.errors)
+
     return render_template('auth/remember_my_password.html', form=form)
 
 
@@ -84,7 +82,7 @@ def reset_password(token):
         )
     except Exception:
         return abort(404)
-    
+
     form = ResetPasswordForm()
     if request.method == 'POST' and form.validate_on_submit():
         user = User.query.filter_by(email=email).first()
@@ -95,7 +93,7 @@ def reset_password(token):
 
         return render_template('auth/reset_password.html', form=form, error='Something went wrong')
     return render_template('auth/reset_password.html', form=form)
-    
+
 
 @auth_bp.route('/logout')
 def logout():
