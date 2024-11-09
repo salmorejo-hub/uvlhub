@@ -21,6 +21,7 @@ migrate = Migrate()
 
 mail_service = MailService()
 
+
 def create_app(config_name='development'):
     app = Flask(__name__)
 
@@ -31,7 +32,7 @@ def create_app(config_name='development'):
     # Initialize SQLAlchemy and Migrate with the app
     db.init_app(app)
     migrate.init_app(app, db)
-    
+
     mail_service.init_app(app)
 
     # Register modules
