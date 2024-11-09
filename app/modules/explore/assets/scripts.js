@@ -21,10 +21,10 @@ function send_query() {
                 query: document.querySelector('#query').value,
                 publication_type: document.querySelector('#publication_type').value,
                 sorting: document.querySelector('[name="sorting"]:checked').value,
-                min_number_of_models: document.querySelector('#min_number_of_models').value || null,
-                max_number_of_models: document.querySelector('#max_number_of_models').value || null,
-                min_number_of_features: document.querySelector('#min_number_of_features').value || null,
-                max_number_of_features: document.querySelector('#max_number_of_features').value || null,
+                min_number_of_models: document.querySelector('#min_number_of_models').value || 0,
+                max_number_of_models: document.querySelector('#max_number_of_models').value || 100,
+                min_number_of_features: document.querySelector('#min_number_of_features').value || 0,
+                max_number_of_features: document.querySelector('#max_number_of_features').value || 100,
             };
 
             console.log(document.querySelector('#publication_type').value);
@@ -185,16 +185,20 @@ function clearFilters() {
 
     // Reset the number of models and features filters
     let minNumberOfModelsInput = document.querySelector('#min_number_of_models');
-    minNumberOfModelsInput.value = "";
+    minNumberOfModelsInput.value = "0";
+    document.getElementById('min_models_output').value = "0";
 
     let maxNumberOfModelsInput = document.querySelector('#max_number_of_models');
-    maxNumberOfModelsInput.value = "";
+    maxNumberOfModelsInput.value = "100";
+    document.getElementById('max_models_output').value = "100";
 
     let minNumberOfFeaturesInput = document.querySelector('#min_number_of_features');
-    minNumberOfFeaturesInput.value = "";
+    minNumberOfFeaturesInput.value = "0";
+    document.getElementById('min_features_output').value = "0";
 
     let maxNumberOfFeaturesInput = document.querySelector('#max_number_of_features');
-    maxNumberOfFeaturesInput.value = "";
+    maxNumberOfFeaturesInput.value = "100";
+    document.getElementById('max_features_output').value = "100";
 
     // Perform a new search with the reset filters
     queryInput.dispatchEvent(new Event('input', {bubbles: true}));
