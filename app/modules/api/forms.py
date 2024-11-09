@@ -2,5 +2,5 @@ from flask_wtf import FlaskForm
 from wtforms import SubmitField
 
 
-class ApiForm(FlaskForm):
-    submit = SubmitField('Save api')
+class APIForm(FlaskForm):
+    submit = SubmitField('Save API')

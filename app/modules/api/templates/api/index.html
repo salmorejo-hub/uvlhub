@@ -5,6 +5,8 @@
 {% block content %}
 
     <h1 class="h3 mb-3">API Configuration</h1>
+    <p class="text-muted mb-4">Use this screen to configure your API settings and generate secure access tokens. 
+        Set a custom expiration for the token and retrieve a new token as needed. The generated access tokens will allow you to securely access the API.</p>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -29,28 +31,31 @@
 
     <div class="row">
         <div class="col-12 col-lg-6">
-            <form method="POST" action="{{ url_for('api.index') }}" class="needs-validation" novalidate>
+            <form method="POST" action="{{ url_for('api.generate') }}" class="needs-validation" novalidate>
                 <div class="mb-3">
                     <label for="token-expiration" class="form-label">Token Expiration (days)</label>
-                    <input type="number" id="token-expiration" name="expiration" class="form-control" placeholder="Enter number of days" required>
+                    <input type="number" id="token-expiration" name="expiration" class="form-control" placeholder="Enter number" required style="max-width: 150px;">
+
                     <small class="form-text text-muted">Specify how long the token should be valid.</small>
                 </div>    
-                <button type="submit" class="btn btn-primary">Generate API Token</button>
+                <button type="submit" class="btn btn-primary">Generate New API Token</button>
             </form>
         </div>
     </div>
 
-    <div class="col-12 col-lg-6 mt-4 mt-lg-0">
+    <div class="col-lg-6 mt-4">
         {% if generated_token %}
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Your API Token</h5>
-                    <p class="card-text"><code>{{ generated_token }}</code></p>
-                    <button onclick="copyToken()" class="btn btn-secondary">Copy to clipboard</button>
+                    <p class="text-muted">Now you can copy it! Make sure to keep it in a secure place for future use.</p>
+                    <textarea class="form-control mb-2" rows="4" readonly id="generated-token">{{ generated_token }}</textarea>
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-secondary me-3" style="background-color: #4CAF50; color: white;" type="button" onclick="copyToken()">Copy to clipboard</button>
+                        <small class="text-muted">Keep this token secure. It won’t be shown again.</small>
+                    </div>
                 </div>
             </div>
-        {% else %}
-            <p class="text-muted">No token generated yet. Fill out the form to create a new API token.</p>
         {% endif %}
     </div>
 
@@ -60,9 +65,13 @@
 {% block scripts %}
     <script>
         function copyToken() {
-            let tokenText = document.querySelector('.card-text code').innerText;
-            navigator.clipboard.writeText(tokenText);
-            alert("Token copied to clipboard!");
+            const tokenText = document.getElementById("generated-token");
+            tokenText.select();
+            navigator.clipboard.writeText(tokenText.value).then(() => {
+                alert("Token copied to clipboard!");
+            }).catch(err => {
+                console.error("Failed to copy token: ", err);
+            });
         }
     </script>
 {% endblock %}

@@ -1,7 +1,7 @@
 from core.seeders.BaseSeeder import BaseSeeder
 
 
-class ApiSeeder(BaseSeeder):
+class APISeeder(BaseSeeder):
 
     def run(self):
 

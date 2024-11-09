@@ -1,7 +1,7 @@
-from app.modules.api.models import Api
+from app.modules.api.models import APIToken
 from core.repositories.BaseRepository import BaseRepository
 
 
-class ApiRepository(BaseRepository):
+class APIRepository(BaseRepository):
     def __init__(self):
-        super().__init__(Api)
+        super().__init__(APIToken)
