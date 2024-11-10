@@ -59,3 +59,40 @@ class ExploreRepository(BaseRepository):
             datasets = datasets.order_by(self.model.created_at.desc())
 
         return datasets.all()
+
+
+class ExploreUVL(BaseRepository):
+    def __init__(self):
+        super().__init__(FeatureModel)
+
+    def filter(self, query="", sorting="newest", tags=[]):
+        normalized_query = unidecode.unidecode(query).lower()
+        cleaned_query = re.sub(r'[,.":\'()\[\]^;!¡¿?]', "", normalized_query)
+
+        filters = []
+        for word in cleaned_query.split():
+            filters.append(FMMetaData.title.ilike(f"%{word}%"))
+            filters.append(FMMetaData.description.ilike(f"%{word}%"))
+            filters.append(Author.name.ilike(f"%{word}%"))
+            filters.append(Author.affiliation.ilike(f"%{word}%"))
+            filters.append(Author.orcid.ilike(f"%{word}%"))
+            filters.append(FMMetaData.uvl_filename.ilike(f"%{word}%"))
+            filters.append(FMMetaData.tags.ilike(f"%{word}%"))
+
+        uvls = (
+            self.model.query
+            .join(FeatureModel.fm_meta_data)
+            .join(FMMetaData.authors)
+            .filter(or_(*filters))
+            .filter(FMMetaData.publication_doi.isnot(None))
+        )
+
+        if tags:
+            for tag in tags:
+                uvls = uvls.filter(FMMetaData.tags.ilike(f"%{tag}%"))
+
+        if sorting == "oldest":
+            uvls = uvls.order_by(FeatureModel.created_at.asc())
+        else:
+            uvls = uvls.order_by(FeatureModel.created_at.desc())
+        return uvls.all()
