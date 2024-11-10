@@ -1,5 +1,5 @@
 from app import db
-from datetime import datetime
+import datetime
 
 
 class APIToken(db.Model):
@@ -14,7 +14,12 @@ class APIToken(db.Model):
     user = db.relationship("User", backref="api_tokens")
 
     def is_expired(self):
-        return datetime.datetime.now(datetime.timezone.utc) > self.expiration_date
+        if self.expiration_date.tzinfo is None:
+            expiration_date = self.expiration_date.replace(tzinfo=datetime.timezone.utc)
+        else:
+            expiration_date = self.expiration_date
+
+        return datetime.datetime.now(datetime.timezone.utc) > expiration_date
 
     def __repr__(self):
         return f'APIToken<{self.id}>'
