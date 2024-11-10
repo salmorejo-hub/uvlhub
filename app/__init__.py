@@ -12,6 +12,7 @@ from core.managers.error_handler_manager import ErrorHandlerManager
 from core.managers.logging_manager import LoggingManager
 from core.managers.module_manager import ModuleManager
 
+
 # Load environment variables
 load_dotenv()
 
