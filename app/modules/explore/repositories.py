@@ -52,7 +52,7 @@ class ExploreRepository(BaseRepository):
 
         if tags:
             datasets = datasets.filter(DSMetaData.tags.ilike(any_(f"%{tag}%" for tag in tags)))
-        
+
         # Filter by number of models and features
         datasets = datasets.filter(
             DSMetaData.ds_metrics.has(
