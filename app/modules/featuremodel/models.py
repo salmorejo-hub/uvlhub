@@ -13,6 +13,19 @@ class FeatureModel(db.Model):
 
     def __repr__(self):
         return f'FeatureModel<{self.id}>'
+    
+    def get_cleaned_publication_type(self):
+        return self.fm_meta_data.publication_type.name.replace('_', ' ').title()
+
+    def to_dict(self):
+        return {
+            'title': self.fm_meta_data.title,
+            'publication_type': self.get_cleaned_publication_type(),
+            'description': self.fm_meta_data.description,
+            'authors': [author.to_dict() for author in self.fm_meta_data.authors],
+            'tags': self.fm_meta_data.tags.split(",") if self.fm_meta_data.tags else [],
+            'id': self.id
+        }
 
 
 class FMMetaData(db.Model):

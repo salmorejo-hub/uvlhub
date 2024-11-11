@@ -64,6 +64,12 @@ chico sundermann">
                     </a>
                 </li>
 
+                <li class="sidebar-item {{ 'active' if request.endpoint == 'exploreuvl.index' else '' }}">
+                    <a class="sidebar-link" href="{{ url_for('exploreuvl.indexUvl') }}">
+                        <i class="align-middle" data-feather="search"></i> <span class="align-middle">Explore UVLs</span>
+                    </a>
+                </li>
+
                 <li class="sidebar-item {{ 'active' if request.endpoint == 'team.index' else '' }}">
                     <a class="sidebar-link" href="{{ url_for('team.index') }}">
                         <i class="align-middle" data-feather="users"></i> <span
