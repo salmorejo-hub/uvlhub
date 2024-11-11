@@ -1,7 +1,11 @@
 import os
-from flask_login import login_user
-from flask_login import current_user
 
+from flask import current_app
+from flask_login import current_user, login_user
+from itsdangerous import URLSafeTimedSerializer
+from werkzeug.security import generate_password_hash
+
+from app import db
 from app.modules.auth.models import User
 from app.modules.auth.repositories import UserRepository
 from app.modules.profile.models import UserProfile
@@ -79,3 +83,16 @@ class AuthenticationService(BaseService):
 
     def temp_folder_by_user(self, user: User) -> str:
         return os.path.join(uploads_folder_name(), "temp", str(user.id))
+
+    def generate_reset_token(self, email: str) -> str:
+        serializer = self._get_serializer()
+        token = serializer.dumps(email, salt='password-reset-salt')
+        return token
+
+    def _get_serializer(self):
+        return URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+
+    def reset_password(self, user, password):
+        hashed_password = generate_password_hash(password)
+        user.password = hashed_password
+        db.session.commit()
