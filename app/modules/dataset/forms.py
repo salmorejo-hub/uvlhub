@@ -67,7 +67,6 @@ class DataSetForm(FlaskForm):
     tags = StringField("Tags (separated by commas)")
     authors = FieldList(FormField(AuthorForm))
     feature_models = FieldList(FormField(FeatureModelForm), min_entries=1)
-    
     min_number_of_models = IntegerField("Minimum number of models", validators=[Optional()])
     max_number_of_models = IntegerField("Maximum number of models", validators=[Optional()])
     min_number_of_features = IntegerField("Minimum number of features", validators=[Optional()])
