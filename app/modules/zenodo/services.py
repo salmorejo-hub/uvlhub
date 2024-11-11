@@ -1,5 +1,6 @@
 import logging
 import os
+import time
 import requests
 
 from app.modules.dataset.models import DataSet
@@ -18,7 +19,6 @@ logger = logging.getLogger(__name__)
 
 load_dotenv()
 
-
 class ZenodoService(BaseService):
 
     def get_zenodo_url(self):
@@ -27,11 +27,11 @@ class ZenodoService(BaseService):
         ZENODO_API_URL = ""
 
         if FLASK_ENV == "development":
-            ZENODO_API_URL = os.getenv("ZENODO_API_URL", "https://sandbox.zenodo.org/api/deposit/depositions")
+            ZENODO_API_URL = os.getenv("ZENODO_API_URL", "http://localhost:5001/api/fakenodo/depositions") #Fakenodo uri
         elif FLASK_ENV == "production":
             ZENODO_API_URL = os.getenv("ZENODO_API_URL", "https://zenodo.org/api/deposit/depositions")
         else:
-            ZENODO_API_URL = os.getenv("ZENODO_API_URL", "https://sandbox.zenodo.org/api/deposit/depositions")
+            ZENODO_API_URL = os.getenv("ZENODO_API_URL", "http://localhost:5001/api/fakenodo/depositions")
 
         return ZENODO_API_URL
 
@@ -72,7 +72,7 @@ class ZenodoService(BaseService):
         with open(file_path, "w") as f:
             f.write("This is a test file with some content.")
 
-        messages = []  # List to store messages
+        messages = []  # List to store message
 
         # Step 1: Create a deposition on Zenodo
         data = {
@@ -93,9 +93,8 @@ class ZenodoService(BaseService):
                     "messages": f"Failed to create test deposition on Zenodo. Response code: {response.status_code}",
                 }
             )
-
         deposition_id = response.json()["id"]
-
+        
         # Step 2: Upload an empty file to the deposition
         data = {"name": "test_file.txt"}
         files = {"file": open(file_path, "rb")}
@@ -114,8 +113,9 @@ class ZenodoService(BaseService):
             messages.append(f"Failed to upload test file to Zenodo. Response code: {response.status_code}")
             success = False
 
+
         # Step 3: Delete the deposition
-        response = requests.delete(f"{self.ZENODO_API_URL}/{deposition_id}", params=self.params)
+        requests.delete(f"{self.ZENODO_API_URL}/{deposition_id}", params=self.params)
 
         if os.path.exists(file_path):
             os.remove(file_path)
@@ -192,6 +192,7 @@ class ZenodoService(BaseService):
         Returns:
             dict: The response in JSON format with the details of the uploaded file.
         """
+        
         uvl_filename = feature_model.fm_meta_data.uvl_filename
         data = {"name": uvl_filename}
         user_id = current_user.id if user is None else user.id

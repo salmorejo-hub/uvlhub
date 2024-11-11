@@ -117,7 +117,7 @@ class DataSetService(BaseService):
                 fm = self.feature_model_repository.create(
                     commit=False, data_set_id=dataset.id, fm_meta_data_id=fmmetadata.id
                 )
-
+                
                 # associated files in feature model
                 file_path = os.path.join(current_user.temp_folder(), uvl_filename)
                 checksum, size = calculate_checksum_and_size(file_path)
