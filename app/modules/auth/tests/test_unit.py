@@ -49,6 +49,38 @@ def test_login_unsuccessful_bad_password(test_client):
     test_client.get("/logout", follow_redirects=True)
 
 
+def test_remember_password_no_email(test_client):
+    response = test_client.post(
+        "/remember-my-password",
+        data=dict(email=""),
+        follow_redirects=True
+    )
+
+    assert response.request.path == url_for("auth.remember_my_password"), "Invalid email"
+    assert b"This field is required" in response.data, response.data
+
+
+def test_remember_password_bad_email(test_client):
+    response = test_client.post(
+        "/remember-my-password",
+        data=dict(email="bademail@example.com"),
+        follow_redirects=True
+    )
+
+    assert response.request.path == url_for("auth.remember_my_password"), "Invalid email"
+    assert b"User not found" in response.data, response.data
+
+
+def test_remember_password_succesful(test_client):
+    response = test_client.post(
+        "/remember-my-password",
+        data=dict(email="bademail@example.com"),
+        follow_redirects=True
+    )
+
+    assert response.request.path == url_for("auth.remember_my_password"), "Invalid email"
+
+
 def test_signup_user_no_name(test_client):
     response = test_client.post(
         "/signup", data=dict(surname="Foo", email="test@example.com", password="test1234"), follow_redirects=True
