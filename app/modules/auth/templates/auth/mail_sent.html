@@ -1,0 +1,14 @@
+{% extends "base_template.html" %}
+
+{% block title %}Reset password{% endblock %}
+
+{% block content %}
+
+<h1 class="h2 mb-3"><b>Mail succesfully sent</b></h1>
+<p>Please check your inbox for the reset password link.</p>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('auth.scripts') }}"></script>
+{% endblock %}
