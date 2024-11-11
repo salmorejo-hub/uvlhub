@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, FieldList, FormField, SubmitField, TextAreaField
+from wtforms import IntegerField, StringField, SelectField, FieldList, FormField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, URL, Optional
 
 from app.modules.dataset.models import PublicationType
@@ -67,6 +67,10 @@ class DataSetForm(FlaskForm):
     tags = StringField("Tags (separated by commas)")
     authors = FieldList(FormField(AuthorForm))
     feature_models = FieldList(FormField(FeatureModelForm), min_entries=1)
+    min_number_of_models = IntegerField("Minimum number of models", validators=[Optional()])
+    max_number_of_models = IntegerField("Maximum number of models", validators=[Optional()])
+    min_number_of_features = IntegerField("Minimum number of features", validators=[Optional()])
+    max_number_of_features = IntegerField("Maximum number of features", validators=[Optional()])
 
     submit = SubmitField("Submit")
 
@@ -81,6 +85,10 @@ class DataSetForm(FlaskForm):
             "publication_doi": self.publication_doi.data,
             "dataset_doi": self.dataset_doi.data,
             "tags": self.tags.data,
+            "min_number_of_models": self.min_number_of_models.data,
+            "max_number_of_models": self.max_number_of_models.data,
+            "min_number_of_features": self.min_number_of_features.data,
+            "max_number_of_features": self.max_number_of_features.data,
         }
 
     def convert_publication_type(self, value):
