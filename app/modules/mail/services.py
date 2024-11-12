@@ -1,6 +1,5 @@
 import os
 
-from dotenv import load_dotenv
 from flask_mail import Mail, Message
 
 from app.modules.mail.repositories import MailRepository
@@ -15,7 +14,6 @@ class MailService(BaseService):
         self.sender = None
 
     def init_app(self, app):
-        load_dotenv()
         app.config['MAIL_SERVER'] = 'smtp.gmail.com'
         app.config['MAIL_PORT'] = 587
         app.config['MAIL_USE_TLS'] = True

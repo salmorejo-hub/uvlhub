@@ -14,5 +14,6 @@ def index():
 
     if request.method == 'POST':
         criteria = request.get_json()
+        print(criteria)
         datasets = ExploreService().filter(**criteria)
         return jsonify([dataset.to_dict() for dataset in datasets])
