@@ -121,6 +121,14 @@ chico sundermann">
                         </a>
                     </li>
 
+                    <li class="sidebar-item {{ 'active' if request.endpoint == 'api.generate' else '' }}">
+                        <a class="sidebar-link" href="{{ url_for('api.generate') }}">
+                            <i class="align-middle" data-feather="code"></i> <span 
+                                class="align-middle">API Configuration</span>
+                        </a>
+                    </li>
+                    
+
                     <li class="sidebar-item">
                         <a class="sidebar-link" href="{{ url_for('auth.logout') }}">
                             <i class="align-middle" data-feather="log-out"></i> <span

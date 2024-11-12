@@ -68,8 +68,7 @@ def remember_my_password():
             reset_url = url_for('auth.reset_password', token=token, _external=True)
             mail_service.send_reset_email(recipients=[user_email], reset_url=reset_url)
             return render_template('auth/mail_sent.html')
-        else:
-            return render_template('auth/remember_my_password.html', form=form, error='Not user found')
+        return render_template('auth/remember_my_password.html', form=form, error='User not found')
 
     return render_template('auth/remember_my_password.html', form=form)
 
