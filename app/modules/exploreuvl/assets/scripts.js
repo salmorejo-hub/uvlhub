@@ -171,6 +171,31 @@ function clearFilters() {
     // Perform a new search with the reset filters
     queryInput.dispatchEvent(new Event('input', {bubbles: true}));
 }
+document.getElementById('download-files').addEventListener('click', download);
+
+function download() {
+    const csrfToken = document.getElementById('csrf_token').value;
+
+    const searchCriteria = {
+        csrf_token: csrfToken,
+        query: document.querySelector('#query').value,
+        publication_type: document.querySelector('#publication_type').value
+    };
+    fetch('/exploreuvl/download_all', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(searchCriteria)
+    })
+    .then(response => response.json())
+    .then(responseData => {
+        console.log("Response", responseData);
+    })
+    .catch(error => {
+        console.error("Error with the download:", error);
+    });
+}
 
 document.addEventListener('DOMContentLoaded', () => {
 
