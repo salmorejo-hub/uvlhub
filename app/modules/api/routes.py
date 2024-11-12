@@ -19,7 +19,7 @@ def generate():
             flash("Expiration is required.", "error")
             return render_template("api/index.html")
 
-        token, error = api_service.generate_token_with_validation(
+        token, error = api_service.generate_token(
             user_id=current_user.id,
             expiration_days=expiration_days
         )
