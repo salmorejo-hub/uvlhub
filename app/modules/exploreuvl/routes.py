@@ -1,4 +1,13 @@
-from flask import render_template, request, jsonify
+import io
+from zipfile import ZipFile
+from flask import render_template, request, jsonify, send_file
+import logging
+import os
+import json
+import shutil
+import tempfile
+import uuid
+from datetime import datetime, timezone
 
 from app.modules.exploreuvl import exploreuvl_bp
 from app.modules.exploreuvl.forms import ExploreFormUvl
@@ -16,3 +25,27 @@ def indexUvl():
         criteria = request.get_json()
         uvls = ExploreServiceUvl().filter(**criteria)
         return jsonify([uvl.to_dict() for uvl in uvls])
+
+
+@exploreuvl_bp.route('/download_all', methods=['GET'])
+def download_uvls():
+
+    criteria = request.get_json()
+    uvls = ExploreServiceUvl().filter(**criteria)
+
+    zip_buffer = io.BytesIO()
+    with ZipFile(zip_buffer, 'w') as zip_file:
+        for file in uvls:
+            file_path = '/file/download/'+file.id
+            if file_path and os.path.exists(file_path):
+                zip_file.write(file_path, os.path.basename(file_path))
+
+    zip_buffer.seek(0)
+
+    return send_file(
+        zip_buffer,
+        mimetype='application/zip',
+        as_attachment=True,
+        download_name='selectedFeaturedModels.zip'
+    )
+

@@ -38,7 +38,7 @@ function send_query() {
 
                     // results counter
                     const resultCount = data.length;
-                    const resultText = resultCount === 1 ? 'dataset' : 'datasets';
+                    const resultText = resultCount === 1 ? 'Model' : 'Modles';
                     document.getElementById('results_number').textContent = `${resultCount} ${resultText} found`;
 
                     if (resultCount === 0) {
@@ -109,9 +109,10 @@ function send_query() {
 
                                         </div>
                                         <div class="col-md-8 col-12">
-                                            <a href="/file/download/${dataset.id}" class="btn btn-outline-primary btn-sm" id="search" style="border-radius: 5px;">
-                                                Download (5KB)
+                                            <a class="btn btn-outline-primary btn-sm" href="/file/download/${dataset.id}">
+                                                Download
                                             </a>
+                                            
                                         </div>
 
 
@@ -126,12 +127,6 @@ function send_query() {
                 });
         });
     });
-}
-
-function formatDate(dateString) {
-    const options = {day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric'};
-    const date = new Date(dateString);
-    return date.toLocaleString('en-US', options);
 }
 
 function set_tag_as_query(tagName) {

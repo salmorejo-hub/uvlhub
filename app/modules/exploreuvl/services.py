@@ -8,3 +8,5 @@ class ExploreServiceUvl(BaseService):
 
     def filter(self, query="", publication_type="any", tags=[], **kwargs):
         return self.repository.filter(query, publication_type, tags, **kwargs)
+    
+

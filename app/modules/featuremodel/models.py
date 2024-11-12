@@ -13,7 +13,7 @@ class FeatureModel(db.Model):
 
     def __repr__(self):
         return f'FeatureModel<{self.id}>'
-    
+
     def get_cleaned_publication_type(self):
         return self.fm_meta_data.publication_type.name.replace('_', ' ').title()
 
