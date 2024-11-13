@@ -11,6 +11,7 @@
             <div class="card">
 
                 <div class="card-body">
+                    <h5 class="card-title">Published datasets</h5>
                     <table class="table">
                         <thead>
                         <tr>
@@ -23,31 +24,129 @@
                         </thead>
                         <tbody>
                         {% for dataset in datasets %}
-                            <tr>
-                                <td>
-                                    <a href="{{ dataset.get_uvlhub_doi() }}">
-                                        {{ dataset.ds_meta_data.title }}
-                                    </a>
-                                </td>
-                                <td>{{ dataset.ds_meta_data.description }}</td>
-                                <td>{{ dataset.ds_meta_data.publication_type.name.replace('_', ' ').title() }}</td>
-                                <td><a href="{{ dataset.get_uvlhub_doi() }}"
-                                       target="_blank">{{ dataset.get_uvlhub_doi() }}</a></td>
-                                <td>
-                                    <a href="{{ dataset.get_uvlhub_doi() }}">
-                                        <i data-feather="eye"></i>
-                                    </a>
-                                    <a href="{{ url_for('dataset.download_dataset', dataset_id=dataset.id) }}">
-                                        <i data-feather="download"></i>
-                                    </a>
-                                </td>
-                            </tr>
+                            {% if dataset.ds_meta_data.dataset_status.name == 'PUBLISHED' %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ dataset.get_uvlhub_doi() }}">
+                                            {{ dataset.ds_meta_data.title }}
+                                        </a>
+                                    </td>
+                                    <td>{{ dataset.ds_meta_data.description }}</td>
+                                    <td>{{ dataset.ds_meta_data.publication_type.name.replace('_', ' ').title() }}</td>
+                                    <td><a href="{{ dataset.get_uvlhub_doi() }}"
+                                           target="_blank">{{ dataset.get_uvlhub_doi() }}</a></td>
+                                    <td>
+                                        <a href="{{ dataset.get_uvlhub_doi() }}">
+                                            <i data-feather="eye"></i>
+                                        </a>
+                                        <a href="{{ url_for('dataset.download_dataset', dataset_id=dataset.id) }}">
+                                            <i data-feather="download"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endif %}
                         {% endfor %}
                         </tbody>
                     </table>
                 </div>
 
             </div>
+
+
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Staged Datasets</h5>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Publication type</th>
+                                    <th>Dataset DOI</th>
+                                    <th>Options</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for dataset in datasets if dataset.ds_meta_data.dataset_status.name == 'STAGED' %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ dataset.get_uvlhub_doi() }}">
+                                                {{ dataset.ds_meta_data.title }}
+                                            </a>
+                                        </td>
+                                        <td>{{ dataset.ds_meta_data.description }}</td>
+                                        <td>{{ dataset.ds_meta_data.publication_type.name.replace('_', ' ').title() }}</td>
+                                        <td><a href="{{ dataset.get_uvlhub_doi() }}" target="_blank">{{ dataset.get_uvlhub_doi() }}</a></td>
+                                        <td>
+                                            <a href="{{ dataset.get_uvlhub_doi() }}">
+                                                <i data-feather="eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('dataset.download_dataset', dataset_id=dataset.id) }}">
+                                                <i data-feather="download"></i>
+                                            </a>
+                                            <a href="{{ url_for('dataset.unstage_dataset', dataset_id=dataset.id) }}">
+                                                <i data-feather="file-minus"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                    </div>
+                </table>
+                <button type="button" class="btn btn-primary">
+                    <a href="{{ url_for('dataset.publish_datasets', current_user_id=current_user.id) }}" class="text-white">
+                        Publish all staged datasets <i data-feather="upload-cloud"></i>
+                    </a>
+                </button>
+                </div>
+            </div>
+        
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Unstaged Datasets</h5>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Publication type</th>
+                                    <th>Dataset DOI</th>
+                                    <th>Options</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for dataset in datasets if dataset.ds_meta_data.dataset_status.name == 'UNSTAGED' %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ dataset.get_uvlhub_doi() }}">
+                                                {{ dataset.ds_meta_data.title }}
+                                            </a>
+                                        </td>
+                                        <td>{{ dataset.ds_meta_data.description }}</td>
+                                        <td>{{ dataset.ds_meta_data.publication_type.name.replace('_', ' ').title() }}</td>
+                                        <td><a href="{{ dataset.get_uvlhub_doi() }}" target="_blank">{{ dataset.get_uvlhub_doi() }}</a></td>
+                                        <td>
+                                            <a href="{{ dataset.get_uvlhub_doi() }}">
+                                                <i data-feather="eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('dataset.download_dataset', dataset_id=dataset.id) }}">
+                                                <i data-feather="download"></i>
+                                            </a>
+                                            <a href="{{ url_for('dataset.stage_dataset', dataset_id=dataset.id) }}">
+                                                <i data-feather="file-plus"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
 
         </div>
     {% else %}
