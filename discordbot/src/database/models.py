@@ -9,3 +9,11 @@ class UserToken(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(String(64), unique=True, nullable=False)
     token = Column(String(120), unique=True, nullable=False)
+    
+    
+# Create a table to store discord server id and the server prefix
+class ServerPrefix(Base):
+    __tablename__ = 'serverid_prefix'
+    id = Column(Integer, primary_key=True, index=True)
+    server_id = Column(String(64), unique=True, nullable=False)
+    prefix = Column(String(5), nullable=False)

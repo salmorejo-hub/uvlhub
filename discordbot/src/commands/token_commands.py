@@ -41,8 +41,8 @@ async def token(ctx, token=None):
             await ctx.send(message)
         except Exception as e:
             db.rollback()
-            message = f"An error occurred: {str(e)}"
-            await ctx.send(message)
+            print(f"An error occurred: {str(e)}")
+            await ctx.send(f'An error occurred: {str(e)}')
         finally:
             Session.remove()
     else:
