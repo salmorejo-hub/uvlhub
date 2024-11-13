@@ -1,0 +1,151 @@
+/* Dark Mode Styles for Alerts */
+.alert-warning {
+  background-color: #4a4a2b; /* Darker yellow */
+  color: #ffffff;
+}
+
+.alert-success {
+  background-color: #2d5934; /* Dark green */
+  color: #ffffff;
+}
+
+.alert-error {
+  background-color: #593434; /* Dark red */
+  color: #ffffff;
+}
+
+/* Dark Mode Styles for Cards */
+.card-dark,
+.card-header-dark {
+  background-color: #2b3947;
+  color: #ffffff;
+}
+
+.card-welcome {
+  background: #a35210
+    radial-gradient(
+      circle at center left,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0.3)
+    );
+  color: #ffffff;
+}
+
+.card-note {
+  background: #145973
+    radial-gradient(
+      circle at center right,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0.3)
+    );
+  color: #ffffff;
+}
+
+/* Card Titles */
+.card-title-light,
+.card-title-note {
+  color: #ffffff;
+}
+
+/* Dark Mode Styles for Buttons */
+.doi_button {
+  background-color: #333333;
+  border-color: #333333;
+}
+
+.doi_button:hover {
+  background-color: #555555;
+  border-color: #555555;
+}
+
+.button_doi_id {
+  background-color: #444444;
+  color: #ffffff;
+}
+
+.doi_button:hover .button_doi_id {
+  background-color: #666666;
+}
+
+.doi_text {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+.doi_button:hover .doi_text,
+.doi_button:active .doi_text {
+  background-color: #4ebbff;
+}
+
+.doi_button:active .button_doi_id {
+  background-color: #075585;
+}
+
+/* Dark Mode Styles for Badges */
+.badge-success {
+  background-color: #357a38; /* Dark green */
+  color: #ffffff;
+}
+
+.badge-danger {
+  background-color: #7a3a3a; /* Dark red */
+  color: #ffffff;
+}
+
+.badge-warning {
+  background-color: #7a5a2a; /* Dark orange */
+  color: #ffffff;
+}
+
+/* Dark Mode Styles for Search Input */
+.rounded-search {
+  background-color: #2b2b2b;
+  color: #ffffff;
+}
+
+/* Stats Color */
+.stats-color {
+  color: #66ccaa; /* Softer teal for dark mode */
+}
+
+/* Additional Styles without Theme-Specific Changes */
+.error {
+  border: 1px solid red;
+}
+
+.fixed-column {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding-left: 50px;
+}
+
+.scrollable-column {
+  height: 200vh;
+  overflow-y: auto;
+}
+
+.card-header-slim {
+  padding-bottom: 0px;
+}
+
+.card-body-slim {
+  padding-top: 0px;
+}
+
+.custom-card-body {
+  height: 150px;
+}
+
+.custom-img {
+  padding: 0px 20px;
+  max-height: 200px;
+  min-height: 200px;
+}
+
+.center-button-icon {
+  vertical-align: middle;
+  margin-top: -2px;
+  margin-right: 5px;
+}

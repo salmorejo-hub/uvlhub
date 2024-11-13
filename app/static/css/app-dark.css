@@ -1,56 +1,56 @@
-/*!
- * AdminKit v3.3.0 (https://adminkit.io/)
- * Copyright 2022 Paul Laros
- * Copyright 2022 AdminKit
- * Licensed under MIT (https://github.com/adminkit/adminkit/blob/master/LICENSE)
- */
-
-/* Variables de tema claro (por defecto) */
-
+/* Dark Theme Variables */
 :root {
-  --bs-blue: #147abb;
-  --bs-indigo: #0a0a0a;
+  --bs-body-bg: #1e1e1e;
+  --bs-body-color: #565151;
+  --bs-link-color: #4ebbff;
+  --bs-link-hover-color: #0096dd;
+  --bs-border-color: #444444;
+  --bs-highlight-bg: #333333;
+
+  /* Color adjustments for components */
+  --bs-blue: #0d6efd;
+  --bs-indigo: #6610f2;
   --bs-purple: #6f42c1;
-  --bs-pink: #e83e8c;
+  --bs-pink: #d63384;
   --bs-red: #dc3545;
   --bs-orange: #fd7e14;
-  --bs-yellow: #fcb92c;
-  --bs-green: #1cbb8c;
+  --bs-yellow: #ffc107;
+  --bs-green: #198754;
   --bs-teal: #20c997;
-  --bs-cyan: #17a2b8;
+  --bs-cyan: #0dcaf0;
   --bs-black: #000;
   --bs-white: #fff;
   --bs-gray: #6c757d;
   --bs-gray-dark: #343a40;
-  --bs-gray-100: #f8f9fa;
-  --bs-gray-200: #e9ecef;
-  --bs-gray-300: #dee2e6;
-  --bs-gray-400: #ced4da;
-  --bs-gray-500: #adb5bd;
-  --bs-gray-600: #6c757d;
-  --bs-gray-700: #495057;
-  --bs-gray-800: #343a40;
-  --bs-gray-900: #212529;
-  --bs-primary: #147abb;
-  --bs-secondary: #6c757d;
-  --bs-success: #1cbb8c;
-  --bs-info: #17a2b8;
-  --bs-warning: #fcb92c;
+  --bs-gray-100: #1f1f1f;
+  --bs-gray-200: #2e2e2e;
+  --bs-gray-300: #3d3d3d;
+  --bs-gray-400: #4c4c4c;
+  --bs-gray-500: #5c5c5c;
+  --bs-gray-600: #6b6b6b;
+  --bs-gray-700: #7a7a7a;
+  --bs-gray-800: #8a8a8a;
+  --bs-gray-900: #9a9a9a;
+  --bs-primary: #0d6efd;
+  --bs-secondary: #adb5bd;
+  --bs-success: #198754;
+  --bs-info: #0dcaf0;
+  --bs-warning: #ffc107;
   --bs-danger: #dc3545;
-  --bs-light: #f5f7fb;
+  --bs-light: #f8f9fa;
   --bs-dark: #212529;
-  --bs-primary-rgb: 59, 125, 221;
-  --bs-secondary-rgb: 108, 117, 125;
-  --bs-success-rgb: 28, 187, 140;
-  --bs-info-rgb: 23, 162, 184;
-  --bs-warning-rgb: 252, 185, 44;
+  --bs-primary-rgb: 13, 110, 253;
+  --bs-secondary-rgb: 173, 181, 189;
+  --bs-success-rgb: 25, 135, 84;
+  --bs-info-rgb: 13, 202, 240;
+  --bs-warning-rgb: 255, 193, 7;
   --bs-danger-rgb: 220, 53, 69;
-  --bs-light-rgb: 245, 247, 251;
+  --bs-light-rgb: 248, 249, 250;
   --bs-dark-rgb: 33, 37, 41;
   --bs-white-rgb: 255, 255, 255;
   --bs-black-rgb: 0, 0, 0;
-  --bs-body-color-rgb: 73, 80, 87;
-  --bs-body-bg-rgb: 245, 247, 251;
+  --bs-body-color-rgb: 240, 240, 240;
+  --bs-body-bg-rgb: 30, 30, 30;
   --bs-font-sans-serif: "Inter", "Helvetica Neue", Arial, -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -61,6 +61,7 @@
     hsla(0, 0%, 100%, 0.15),
     hsla(0, 0%, 100%, 0)
   );
+
   --bs-body-font-family: var(--bs-font-sans-serif);
   --bs-body-font-size: 0.875rem;
   --bs-body-font-weight: 400;
@@ -79,10 +80,9 @@
   --bs-border-radius-pill: 50rem;
   --bs-link-color: #147abb;
   --bs-link-hover-color: #2f64b1;
-  --bs-code-color: #e83e8c;
-  --bs-highlight-bg: #fef1d5;
+  --bs-code-color: #f66d9b;
+  --bs-highlight-bg: #333333;
 }
-
 *,
 :after,
 :before {
@@ -10625,7 +10625,7 @@ a.list-group-item {
   text-decoration: none;
 }
 .main {
-  background: #f5f7fb;
+  background: #6c757d;
   border-bottom-left-radius: 0;
   border-top-left-radius: 0;
   display: flex;
