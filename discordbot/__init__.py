@@ -1,6 +1,7 @@
 import os
 from discordbot.src.setup import client
-from discordbot.src.commands import *
+import discordbot.src.commands.basic_commands
+import discordbot.src.commands.token_commands
 from dotenv import load_dotenv
 
 load_dotenv()
