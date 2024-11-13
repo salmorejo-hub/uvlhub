@@ -1,18 +1,9 @@
 from discordbot.src.setup import client
 import discord
-from . import Session
+from .. import Session
 from src.database.models import UserToken
 
-@client.event
-async def on_ready():
-    print(f'Discord Bot {client.user} activated')
-    
-    
-@client.command(help="Say hello to check if the bot is working correctly")
-async def hello(ctx):
-    await ctx.send("Hello!")
-    
-    
+
 @client.command(help="Configurate your access token. This command makes the bot send you a private message to configurate your token")
 async def token_config(ctx):
     user = ctx.message.author
@@ -50,8 +41,8 @@ async def token(ctx, token=None):
             await ctx.send(message)
         except Exception as e:
             db.rollback()
-            message = f"An error occurred: {str(e)}"
-            await ctx.send(message)
+            print(f"An error occurred: {str(e)}")
+            await ctx.send(f'An error occurred: {str(e)}')
         finally:
             Session.remove()
     else:
