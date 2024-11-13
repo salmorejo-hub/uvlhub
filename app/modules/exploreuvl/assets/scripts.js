@@ -171,7 +171,7 @@ function clearFilters() {
     // Perform a new search with the reset filters
     queryInput.dispatchEvent(new Event('input', {bubbles: true}));
 }
-document.getElementById('download-files').addEventListener('click', download);
+//document.getElementById('download-files').addEventListener('click', download);
 
 function download() {
     const csrfToken = document.getElementById('csrf_token').value;

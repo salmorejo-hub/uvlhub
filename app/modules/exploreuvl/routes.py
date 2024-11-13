@@ -42,4 +42,3 @@ def download_uvls():
             "FeaturedModlesSearch.zip",
             as_attachment=True,
             mimetype="zip")
-
