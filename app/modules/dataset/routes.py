@@ -118,6 +118,49 @@ def list_dataset():
     )
 
 
+
+
+
+
+## Funcion para sincronizar los datasets
+@dataset_bp.route("/dataset/stage/<int:dataset_id>", methods=["GET"])
+@login_required
+def stage_dataset(dataset_id):
+    dataset_service.set_dataset_to_staged(dataset_id)
+    return render_template(
+        "dataset/list_datasets.html",
+        datasets=dataset_service.get_synchronized(current_user.id),
+        local_datasets=dataset_service.get_unsynchronized(current_user.id),
+    )
+
+## Funcion para desincronizar los datasets
+@dataset_bp.route("/dataset/unstage/<int:dataset_id>", methods=["GET"])
+@login_required
+def unstage_dataset(dataset_id):
+    dataset_service.set_dataset_to_unstaged(dataset_id)
+    return render_template(
+        "dataset/list_datasets.html",
+        datasets=dataset_service.get_synchronized(current_user.id),
+        local_datasets=dataset_service.get_unsynchronized(current_user.id),
+    )
+
+## Funcion para publicar los datasets sincronizados
+@dataset_bp.route("/dataset/publish", methods=["GET"])
+@login_required
+def publish_datasets():
+    dataset_service.publish_datasets(current_user_id=current_user.id)
+    return render_template(
+        "dataset/list_datasets.html",
+        datasets=dataset_service.get_synchronized(current_user.id),
+        local_datasets=dataset_service.get_unsynchronized(current_user.id),
+    )
+
+
+
+
+
+
+
 @dataset_bp.route("/dataset/file/upload", methods=["POST"])
 @login_required
 def upload():

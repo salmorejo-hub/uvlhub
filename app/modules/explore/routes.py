@@ -16,3 +16,4 @@ def index():
         criteria = request.get_json()
         datasets = ExploreService().filter(**criteria)
         return jsonify([dataset.to_dict() for dataset in datasets])
+
