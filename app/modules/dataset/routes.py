@@ -1,38 +1,24 @@
+import json
 import logging
 import os
-import json
 import shutil
 import tempfile
-import time
 import uuid
 from datetime import datetime, timezone
 from zipfile import ZipFile
 
-from flask import (
-    redirect,
-    render_template,
-    request,
-    jsonify,
-    send_from_directory,
-    make_response,
-    abort,
-    url_for,
-)
-from flask_login import login_required, current_user
+from flask import (abort, jsonify, make_response, redirect, render_template,
+                   request, send_from_directory, url_for)
+from flask_login import current_user, login_required
 
-from app.modules.dataset.forms import DataSetForm
-from app.modules.dataset.models import (
-    DSDownloadRecord
-)
 from app.modules.dataset import dataset_bp
-from app.modules.dataset.services import (
-    AuthorService,
-    DSDownloadRecordService,
-    DSMetaDataService,
-    DSViewRecordService,
-    DataSetService,
-    DOIMappingService
-)
+from app.modules.dataset.forms import DataSetForm
+from app.modules.dataset.models import DSDownloadRecord
+from app.modules.dataset.services import (AuthorService, DataSetService,
+                                          DOIMappingService,
+                                          DSDownloadRecordService,
+                                          DSMetaDataService,
+                                          DSViewRecordService)
 from app.modules.zenodo.services import ZenodoService
 
 logger = logging.getLogger(__name__)
@@ -71,16 +57,16 @@ def create_dataset():
         # send dataset as deposition to Zenodo
         data = {}
         try:
-            
+
             zenodo_response_json = service.create_new_deposition(dataset)
             response_data = json.dumps(zenodo_response_json)
             data = json.loads(response_data)
-            
+
         except Exception as exc:
             data = {}
             zenodo_response_json = {}
             logger.exception(f"Exception while create dataset data in Zenodo {exc}")
-            
+
         logger.info(f"Datos enviados: {data}")
 
         if data.get("conceptrecid"):
@@ -88,7 +74,7 @@ def create_dataset():
 
             # update dataset with deposition id in Zenodo
             dataset_service.update_dsmetadata(dataset.ds_meta_data_id, deposition_id=deposition_id)
-            
+
             logger.info(f"Dataset feautre mode: {dataset.feature_models}")
             try:
                 # iterate for each feature model (one feature model = one request to Zenodo)
@@ -112,8 +98,7 @@ def create_dataset():
 
         msg = "Everything works!"
         return jsonify({"message": msg}), 200
-    
-    
+
     return render_template("dataset/upload_dataset.html", form=form)
 
 

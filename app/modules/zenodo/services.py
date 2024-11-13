@@ -1,23 +1,21 @@
 import logging
 import os
-import time
+
 import requests
+from dotenv import load_dotenv
+from flask import Response, jsonify
+from flask_login import current_user
 
 from app.modules.dataset.models import DataSet
 from app.modules.featuremodel.models import FeatureModel
 from app.modules.zenodo.repositories import ZenodoRepository
-
 from core.configuration.configuration import uploads_folder_name
-from dotenv import load_dotenv
-from flask import jsonify, Response
-from flask_login import current_user
-
-
 from core.services.BaseService import BaseService
 
 logger = logging.getLogger(__name__)
 
 load_dotenv()
+
 
 class ZenodoService(BaseService):
 
@@ -27,7 +25,8 @@ class ZenodoService(BaseService):
         ZENODO_API_URL = ""
 
         if FLASK_ENV == "development":
-            ZENODO_API_URL = os.getenv("ZENODO_API_URL", "http://localhost:5001/api/fakenodo/depositions") #Fakenodo uri
+            # Fakenodo uri
+            ZENODO_API_URL = os.getenv("ZENODO_API_URL", "http://localhost:5001/api/fakenodo/depositions")
         elif FLASK_ENV == "production":
             ZENODO_API_URL = os.getenv("ZENODO_API_URL", "https://zenodo.org/api/deposit/depositions")
         else:
@@ -94,7 +93,7 @@ class ZenodoService(BaseService):
                 }
             )
         deposition_id = response.json()["id"]
-        
+
         # Step 2: Upload an empty file to the deposition
         data = {"name": "test_file.txt"}
         files = {"file": open(file_path, "rb")}
@@ -112,7 +111,6 @@ class ZenodoService(BaseService):
         if response.status_code != 201:
             messages.append(f"Failed to upload test file to Zenodo. Response code: {response.status_code}")
             success = False
-
 
         # Step 3: Delete the deposition
         requests.delete(f"{self.ZENODO_API_URL}/{deposition_id}", params=self.params)
@@ -192,7 +190,7 @@ class ZenodoService(BaseService):
         Returns:
             dict: The response in JSON format with the details of the uploaded file.
         """
-        
+
         uvl_filename = feature_model.fm_meta_data.uvl_filename
         data = {"name": uvl_filename}
         user_id = current_user.id if user is None else user.id
