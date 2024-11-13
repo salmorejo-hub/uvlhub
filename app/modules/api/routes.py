@@ -21,6 +21,7 @@ def generate():
 
         token, error = api_service.generate_token(
             user_id=current_user.id,
+            user_email=current_user.email,
             expiration_days=expiration_days
         )
 
