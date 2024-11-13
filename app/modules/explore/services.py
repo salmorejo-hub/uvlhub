@@ -8,3 +8,4 @@ class ExploreService(BaseService):
 
     def filter(self, query="", sorting="newest", publication_type="any", tags=[], **kwargs):
         return self.repository.filter(query, sorting, publication_type, tags, **kwargs)
+
