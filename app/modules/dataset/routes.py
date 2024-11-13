@@ -118,6 +118,49 @@ def list_dataset():
     )
 
 
+
+
+
+
+## Funcion para sincronizar los datasets
+@dataset_bp.route("/dataset/stage/<int:dataset_id>", methods=["GET"])
+@login_required
+def stage_dataset(dataset_id):
+    dataset_service.set_dataset_to_staged(dataset_id)
+    return render_template(
+        "dataset/list_datasets.html",
+        datasets=dataset_service.get_synchronized(current_user.id),
+        local_datasets=dataset_service.get_unsynchronized(current_user.id),
+    )
+
+## Funcion para desincronizar los datasets
+@dataset_bp.route("/dataset/unstage/<int:dataset_id>", methods=["GET"])
+@login_required
+def unstage_dataset(dataset_id):
+    dataset_service.set_dataset_to_unstaged(dataset_id)
+    return render_template(
+        "dataset/list_datasets.html",
+        datasets=dataset_service.get_synchronized(current_user.id),
+        local_datasets=dataset_service.get_unsynchronized(current_user.id),
+    )
+
+## Funcion para publicar los datasets sincronizados
+@dataset_bp.route("/dataset/publish", methods=["GET"])
+@login_required
+def publish_datasets():
+    dataset_service.publish_datasets(current_user_id=current_user.id)
+    return render_template(
+        "dataset/list_datasets.html",
+        datasets=dataset_service.get_synchronized(current_user.id),
+        local_datasets=dataset_service.get_unsynchronized(current_user.id),
+    )
+
+
+
+
+
+
+
 @dataset_bp.route("/dataset/file/upload", methods=["POST"])
 @login_required
 def upload():
@@ -278,3 +321,35 @@ def get_unsynchronized_dataset(dataset_id):
         abort(404)
 
     return render_template("dataset/view_dataset.html", dataset=dataset)
+
+
+@dataset_bp.route('/file/view/<int:uvl_id>', methods=['GET'])
+def view_uvl(uvl_id):
+    file_record = dataset_service.get_file_by_id(uvl_id)
+
+    if not file_record:
+        abort(404, description="File not found")
+
+    new_file_path = os.path.join(
+        'uploads', f'user_{file_record.feature_model.data_set.user_id}',
+        f'dataset_{file_record.feature_model.data_set.id}', file_record.name
+    )
+    example_file_path = os.path.join('app/modules/dataset/uvl_examples', file_record.name)
+
+    # Verifica si el archivo existe en la ubicación new_file_path o en uvl_example
+    if os.path.exists(new_file_path):
+        file_path = new_file_path
+    elif os.path.exists(example_file_path):
+        file_path = example_file_path
+    else:
+        abort(404, description="File not found on disk")
+
+    try:
+        with open(file_path, 'r') as file:
+            content = file.read()
+    except FileNotFoundError:
+        abort(404, description="File not found on disk")
+
+    return jsonify({"content": content})
+
+

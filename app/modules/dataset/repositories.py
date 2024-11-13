@@ -11,7 +11,8 @@ from app.modules.dataset.models import (
     DSDownloadRecord,
     DSMetaData,
     DSViewRecord,
-    DataSet
+    DataSet,
+    DatasetStatus
 )
 from core.repositories.BaseRepository import BaseRepository
 
@@ -114,6 +115,23 @@ class DataSetRepository(BaseRepository):
             .all()
         )
 
+
+    ## New methods to define the different states of the datasets
+    def get_user_staged_datasets(self, current_user_id: int):
+        return (
+            self.model.query.join(DSMetaData)
+            .filter(DataSet.user_id ==  current_user_id, DSMetaData.dataset_status == DatasetStatus.STAGED).all()
+        )
+    def get_user_unstaged_datasets(self, current_user_id: int):
+        return (
+            self.model.query.join(DSMetaData)
+            .filter(DataSet.user_id == current_user_id, DSMetaData.dataset_status == DatasetStatus.UNSTAGED).all()
+        )
+    def get_user_published_datasets(self, current_user_id: int):
+        return (
+            self.model.query.join(DSMetaData)
+            .filter(DataSet.user_id == current_user_id, DSMetaData.dataset_status == DatasetStatus.PUBLISHED).all()
+        )
 
 class DOIMappingRepository(BaseRepository):
     def __init__(self):
