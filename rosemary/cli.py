@@ -21,6 +21,8 @@ from rosemary.commands.env import env
 from rosemary.commands.test import test
 from rosemary.commands.db_tables import db_tables
 from rosemary.commands.db_table import db_table
+from rosemary.commands.run_app import run_app
+
 
 class RosemaryCLI(click.Group):
     def get_command(self, ctx, cmd_name):
@@ -58,6 +60,7 @@ cli.add_command(db_table)
 cli.add_command(route_list)
 cli.add_command(compose_env)
 cli.add_command(locust)
+cli.add_command(run_app)
 cli.add_command(stop)
 cli.add_command(selenium)
 cli.add_command(module_list)
