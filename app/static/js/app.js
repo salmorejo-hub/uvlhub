@@ -43769,6 +43769,7 @@ function applyTheme(theme) {
   document.getElementById("dropzone-dark-css").disabled = !isDark;
 
   document.documentElement.setAttribute("data-theme", theme);
+  localStorage.setItem("theme", theme);
 }
 
 //# sourceMappingURL=app.js.map
