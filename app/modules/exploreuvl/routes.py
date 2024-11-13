@@ -1,6 +1,6 @@
 import io
 from zipfile import ZipFile
-from flask import render_template, request, jsonify, send_from_directory
+from flask import render_template, request, jsonify, send_file
 import os
 
 
@@ -37,10 +37,9 @@ def download_uvls():
 
     zip_buffer.seek(0)
 
-    return send_from_directory(
-            zip_buffer,
+    return send_file(
+            file_path,
             "FeaturedModlesSearch.zip",
             as_attachment=True,
-            mimetype="application/zip",
-        )
+            mimetype="zip")
 

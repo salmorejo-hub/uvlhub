@@ -38,7 +38,7 @@ function send_query() {
 
                     // results counter
                     const resultCount = data.length;
-                    const resultText = resultCount === 1 ? 'Model' : 'Modles';
+                    const resultText = resultCount === 1 ? 'Model' : 'Models';
                     document.getElementById('results_number').textContent = `${resultCount} ${resultText} found`;
 
                     if (resultCount === 0) {
