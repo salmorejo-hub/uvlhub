@@ -36,4 +36,4 @@ class APITokenService(BaseService):
             jwt_token = generateJWT(SECRET_KEY_JWT, user_id, user_email, expiration_days)
             return jwt_token, None
         except (ValueError, TypeError) as e:
-            return None, str(e)
+            return None, e
