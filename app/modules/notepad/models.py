@@ -1,5 +1,6 @@
 from app import db
 
+
 class Notepad(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(256), nullable=False)
@@ -10,4 +11,3 @@ class Notepad(db.Model):
 
     def __repr__(self):
         return f'Notepad<{self.id}, Title={self.title}, Author={self.user.username}>'
-

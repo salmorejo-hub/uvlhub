@@ -5,8 +5,9 @@ from app.modules.rating.services import RatingService
 
 rating_service = RatingService()
 
+
 class RatingResource(Resource):
-   
+
     @login_required
     def post(self, dataset_id):
         data = request.get_json()

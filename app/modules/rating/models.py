@@ -1,6 +1,7 @@
 from datetime import datetime
 from app import db
 
+
 class Rating(db.Model):
     __tablename__ = 'ratings'
 
