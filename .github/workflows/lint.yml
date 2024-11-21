@@ -30,3 +30,10 @@ jobs:
     - name: Lint with flake8
       run: |
         flake8 app
+    
+    - name: Commit and Push Changes
+      uses: ad-m/github-push-action@v0.6.0
+      with:
+        branch: ${{ github.ref_name }} 
+        force: false
+        commit_message: "refractor: Apply autopep8 formatting"
