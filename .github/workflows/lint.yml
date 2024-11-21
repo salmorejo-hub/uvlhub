@@ -35,5 +35,5 @@ jobs:
       uses: ad-m/github-push-action@v0.6.0
       with:
         branch: ${{ github.ref_name }} 
-        force: false
-        commit_message: "refractor: Apply autopep8 formatting"
+        force: true
+        commit_message: "refractor:Apply autopep8 formatting"
