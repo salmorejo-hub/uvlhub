@@ -14,7 +14,7 @@ jobs:
       contents: write
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v2
       with:
         ref: ${{ github.head_ref}}
         
@@ -36,7 +36,7 @@ jobs:
       run: |
         flake8 app
 
-    - uses: stefanzweifel/git-auto-commit-action@v5
+    - uses: stefanzweifel/git-auto-commit-action@a3a9b8377c8089e287d5c78f6747eb02b3627dd6
       with:
         commit_message: Apply autopep8 formatting
 
