@@ -1,4 +1,4 @@
-from flask_restful import Api, Resource
+from flask_restful import Resource
 from flask import request, jsonify
 from flask_login import login_required, current_user
 from app.modules.rating.services import RatingService
