@@ -10,6 +10,9 @@ jobs:
   lint:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
     - uses: actions/checkout@v2
 
@@ -24,16 +27,13 @@ jobs:
         pip install flake8 autopep8
  
     - name: Format with autopep8
-      run: |
+      with:
+        ref: ${{ github.head_ref }}
+        run: |
         autopep8 --in-place --aggressive --recursive app
+
+    - uses: stefanzweifel/git-auto-commit-action@v5
 
     - name: Lint with flake8
       run: |
         flake8 app
-    
-    - name: Commit and Push Changes
-      uses: ad-m/github-push-action@v0.6.0
-      with:
-        branch: ${{ github.ref_name }} 
-        force: true
-        commit_message: "refractor:Apply autopep8 formatting"
