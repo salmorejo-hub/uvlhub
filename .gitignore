@@ -18,4 +18,3 @@ entrypoint.sh
 deployments.log
 test_file.txt
 .vscode/
-integration.yml

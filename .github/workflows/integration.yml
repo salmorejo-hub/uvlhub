@@ -1,0 +1,29 @@
+name: Sync Changes to Parent Repository
+
+on:
+  push:
+    branches:
+      - main  # Solo se ejecuta cuando hay cambios en la rama main del hijo
+
+jobs:
+  sync-to-parent:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v3
+
+    - name: Configure Git
+      run: |
+        git config user.name "salmorejobot"
+        git config user.email "salmorejobot@outlook.com"
+
+    - name: Add the parent repository as remote
+      run: |
+        git remote add parent https://x-access-token:${{ secrets.PAT.BOT }}@github.com/salmorejo-hub/uvlhub.git
+
+    - name: Push changes to parent develop branch
+      run: |
+        git fetch parent develop
+        git rebase --onto parent/develop main main
+        git push parent HEAD:develop --force
