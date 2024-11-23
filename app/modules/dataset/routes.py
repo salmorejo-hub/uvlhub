@@ -118,11 +118,7 @@ def list_dataset():
     )
 
 
-
-
-
-
-## Funcion para sincronizar los datasets
+# Funcion para sincronizar los datasets
 @dataset_bp.route("/dataset/stage/<int:dataset_id>", methods=["GET"])
 @login_required
 def stage_dataset(dataset_id):
@@ -133,7 +129,9 @@ def stage_dataset(dataset_id):
         local_datasets=dataset_service.get_unsynchronized(current_user.id),
     )
 
-## Funcion para desincronizar los datasets
+# Funcion para desincronizar los datasets
+
+
 @dataset_bp.route("/dataset/unstage/<int:dataset_id>", methods=["GET"])
 @login_required
 def unstage_dataset(dataset_id):
@@ -144,7 +142,9 @@ def unstage_dataset(dataset_id):
         local_datasets=dataset_service.get_unsynchronized(current_user.id),
     )
 
-## Funcion para publicar los datasets sincronizados
+# Funcion para publicar los datasets sincronizados
+
+
 @dataset_bp.route("/dataset/publish", methods=["GET"])
 @login_required
 def publish_datasets():
@@ -154,11 +154,6 @@ def publish_datasets():
         datasets=dataset_service.get_synchronized(current_user.id),
         local_datasets=dataset_service.get_unsynchronized(current_user.id),
     )
-
-
-
-
-
 
 
 @dataset_bp.route("/dataset/file/upload", methods=["POST"])
@@ -351,5 +346,3 @@ def view_uvl(uvl_id):
         abort(404, description="File not found on disk")
 
     return jsonify({"content": content})
-
-

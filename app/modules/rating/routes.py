@@ -1,9 +1,10 @@
 from flask import jsonify, request
 from flask_login import login_required, current_user
 from app.modules.rating.services import RatingService
-from app.modules.rating import rating_bp 
+from app.modules.rating import rating_bp
 
 rating_service = RatingService()
+
 
 @rating_bp.route('/dataset/<int:dataset_id>/rating', methods=['POST'])
 @login_required
@@ -32,4 +33,3 @@ def get_user_rating(dataset_id):
     if user_rating is None:
         return jsonify({'message': 'No rating found for this user.'}), 404
     return jsonify({'user_rating': user_rating}), 200
-
