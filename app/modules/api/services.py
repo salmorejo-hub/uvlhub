@@ -8,6 +8,8 @@ from core.services.BaseService import BaseService
 # SE USA UTC COMO ZONA HORARIA PARA ESTANDARIZAR LA GENERACIÓN DE FECHAS
 
 SECRET_KEY_JWT = os.getenv("SECRET_KEY_JWT")
+if not SECRET_KEY_JWT:
+    raise ValueError("SECRET_KEY_JWT is not set. Make sure it is available in the environment variables.")
 
 
 def generateJWT(SECRET_KEY_JWT, user_id, user_email, expiration_days):
