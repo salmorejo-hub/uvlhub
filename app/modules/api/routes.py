@@ -58,7 +58,7 @@ def generate():
 # /dataset -----------------------------------------------------------------------
 
 
-@api_bp.route("/api/dataset/list", methods=["GET", "POST"])  # Falta añadir POST
+@api_bp.route("/api/dataset/list", methods=["GET"])
 @token_required
 def list_dataset_token():
     return render_template(
@@ -68,7 +68,7 @@ def list_dataset_token():
     )
 
 
-@api_bp.route("/api/dataset/upload", methods=["GET"])  # Falta añadir POST
+@api_bp.route("/api/dataset/upload", methods=["GET"])
 @token_required
 def see_dataset_create_page():
     form = DataSetForm()
@@ -90,7 +90,7 @@ def list_unsynchronized_dataset(dataset_id):
 # /profile -----------------------------------------------------------------------
 
 
-@api_bp.route("/api/profile/edit", methods=["GET"])  # Falta añadir POST
+@api_bp.route("/api/profile/edit", methods=["GET"])
 @token_required
 def see_profile_edit_page():
     auth_service = AuthenticationService()
