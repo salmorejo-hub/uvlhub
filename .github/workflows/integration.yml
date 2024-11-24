@@ -20,7 +20,7 @@ jobs:
 
     - name: Add the parent repository as remote
       run: |
-        git remote add parent https://x-access-token:${{ secrets.PAT.BOT }}@github.com/salmorejo-hub/uvlhub.git
+        git remote add parent https://x-access-token:${{ secrets.PAT_BOT }}@github.com/salmorejo-hub/uvlhub.git
 
     - name: Push changes to parent develop branch
       run: |
