@@ -11,7 +11,8 @@ class ExploreRepository(BaseRepository):
         super().__init__(DataSet)
 
     def filter(self, query="", sorting="newest", publication_type="any", tags=[], min_number_of_models=0,
-               max_number_of_models=100, min_number_of_features=0, max_number_of_features=100, day="", month="", year="", **kwargs):
+               max_number_of_models=100, min_number_of_features=0, max_number_of_features=100, day="", month="",
+               year="", **kwargs):
         # Normalize and remove unwanted characters
         normalized_query = unidecode.unidecode(query).lower()
         cleaned_query = re.sub(r'[,.":\'()\[\]^;!¡¿?]', "", normalized_query)
@@ -52,14 +53,14 @@ class ExploreRepository(BaseRepository):
 
         if tags:
             datasets = datasets.filter(DSMetaData.tags.ilike(any_(f"%{tag}%" for tag in tags)))
-            
-        if day is not "":
+
+        if day != "":
             datasets = datasets.filter(func.extract('day', DataSet.created_at) == int(day))
 
-        if month is not "":
+        if month != "":
             datasets = datasets.filter(func.extract('month', DataSet.created_at) == int(month))
 
-        if year is not "":
+        if year != "":
             datasets = datasets.filter(func.extract('year', DataSet.created_at) == int(year))
 
         # Filter by number of models and features
