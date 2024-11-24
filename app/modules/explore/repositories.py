@@ -1,5 +1,5 @@
 import re
-from sqlalchemy import any_, or_, cast, Integer
+from sqlalchemy import any_, or_, cast, Integer, func
 import unidecode
 from app.modules.dataset.models import Author, DSMetaData, DataSet, PublicationType, DSMetrics
 from app.modules.featuremodel.models import FMMetaData, FeatureModel
@@ -11,7 +11,7 @@ class ExploreRepository(BaseRepository):
         super().__init__(DataSet)
 
     def filter(self, query="", sorting="newest", publication_type="any", tags=[], min_number_of_models=0,
-               max_number_of_models=100, min_number_of_features=0, max_number_of_features=100, **kwargs):
+               max_number_of_models=100, min_number_of_features=0, max_number_of_features=100, day="", month="", year="", **kwargs):
         # Normalize and remove unwanted characters
         normalized_query = unidecode.unidecode(query).lower()
         cleaned_query = re.sub(r'[,.":\'()\[\]^;!¡¿?]', "", normalized_query)
@@ -52,6 +52,15 @@ class ExploreRepository(BaseRepository):
 
         if tags:
             datasets = datasets.filter(DSMetaData.tags.ilike(any_(f"%{tag}%" for tag in tags)))
+            
+        if day is not "":
+            datasets = datasets.filter(func.extract('day', DataSet.created_at) == int(day))
+
+        if month is not "":
+            datasets = datasets.filter(func.extract('month', DataSet.created_at) == int(month))
+
+        if year is not "":
+            datasets = datasets.filter(func.extract('year', DataSet.created_at) == int(year))
 
         # Filter by number of models and features
         datasets = datasets.filter(

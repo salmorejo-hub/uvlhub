@@ -25,6 +25,9 @@ function send_query() {
                 max_number_of_models: document.querySelector('#max_number_of_models').value || 100,
                 min_number_of_features: document.querySelector('#min_number_of_features').value || 0,
                 max_number_of_features: document.querySelector('#max_number_of_features').value || 100,
+                day: document.querySelector('#day').value,
+                month: document.querySelector('#month').value,
+                year: document.querySelector('#year').value,
             };
 
             console.log(document.querySelector('#publication_type').value);
@@ -199,6 +202,15 @@ function clearFilters() {
     let maxNumberOfFeaturesInput = document.querySelector('#max_number_of_features');
     maxNumberOfFeaturesInput.value = "100";
     document.getElementById('max_features_output').value = "100";
+
+    let dayInput = document.querySelector('#day');
+    dayInput.value = "";
+
+    let monthInput = document.querySelector('#month');
+    monthInput.value = "";
+
+    let yearInput = document.querySelector('#year');
+    yearInput.value = "";
 
     // Perform a new search with the reset filters
     queryInput.dispatchEvent(new Event('input', {bubbles: true}));
