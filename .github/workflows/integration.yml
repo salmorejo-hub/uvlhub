@@ -44,27 +44,31 @@ jobs:
         git config --global user.name "CI: GitHub Actions Bot"
 
     # Step 5: Add the parent repository as a remote
-    - name: Add parent repository
+    - name: Add parent repository as upstream
       run: |
-        git remote add parent git@github.com:salmorejo-hub/uvlhub.git
-        git fetch parent develop
+        git remote add upstream git@github.com:salmorejo-hub/uvlhub.git
+        git fetch upstream
 
-    # Step 6: Attempt to push changes to parent/develop
-    - name: Push changes to parent/develop
+    - name: Checkout and prepare upstream develop
       run: |
-        git push parent main:develop || echo "Push failed. Possible conflicts detected."
+        git fetch upstream develop
+        git checkout -b temp-develop upstream/develop
 
-    # Step 7: Handle push failure
-    - name: Notify conflicts if push fails
+    - name: Attempt to merge with fork main
+      run: |
+        git merge origin/main --allow-unrelated-histories --no-commit --no-ff
+      continue-on-error: true
+
+    - name: Check for merge conflicts
       if: failure()
       run: |
-        echo "Push failed because the remote branch 'develop' has changes that conflict with 'main'."
+        echo "Merge conflict detected. Manual intervention required."
         echo "The following files have conflicts:"
         git diff --name-only --diff-filter=U
-        echo "Please resolve these conflicts manually and try again."
+        exit 1
 
-    # Step 8: Notify user if the push was successful
-    - name: Notify success
+    - name: Push changes to parent develop
       if: success()
       run: |
-        echo "The push was successful and changes were synced to parent/develop."
+        git commit -m "chore: AUTO merge from salmorejo-hub-1 to salmorejo-hub/uvlhub/develop"
+        git push upstream temp-develop:develop
