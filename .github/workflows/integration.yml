@@ -49,34 +49,22 @@ jobs:
         git remote add parent git@github.com:salmorejo-hub/uvlhub.git
         git fetch parent develop
 
-    # Step 6: Attempt to merge changes from salmorejo-hub-1/main to parent/develop
-    - name: Attempt to merge into parent/develop
+    # Step 6: Attempt to push changes to parent/develop
+    - name: Push changes to parent/develop
       run: |
-        git checkout -b develop-parent parent/develop
-        git merge --allow-unrelated-histories --no-ff main || echo "Merge conflict detected."
+        git push parent main:develop || echo "Push failed. Possible conflicts detected."
 
-    # Step 7: Inspect merge conflicts if any
-    - name: Inspect merge conflicts
+    # Step 7: Handle push failure
+    - name: Notify conflicts if push fails
       if: failure()
       run: |
+        echo "Push failed because the remote branch 'develop' has changes that conflict with 'main'."
         echo "The following files have conflicts:"
         git diff --name-only --diff-filter=U
-        echo "Please resolve these conflicts manually."
+        echo "Please resolve these conflicts manually and try again."
 
-    # Step 8: Push changes to the parent repository
-    - name: Push changes to parent/develop
-      if: success()
-      run: |
-        git push parent HEAD:develop
-
-    # Step 9: Notify user if the merge was successful
+    # Step 8: Notify user if the push was successful
     - name: Notify success
       if: success()
       run: |
-        echo "The merge was successful and changes were pushed to parent/develop."
-
-    # Step 10: Notify user if the merge failed
-    - name: Notify failure
-      if: failure()
-      run: |
-        echo "The merge failed due to conflicts. Please resolve conflicts manually and try again."
+        echo "The push was successful and changes were synced to parent/develop."
