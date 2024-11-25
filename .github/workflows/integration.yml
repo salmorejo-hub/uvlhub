@@ -44,11 +44,14 @@ jobs:
       run: |
         git push https://${{ secrets.PARENT_REPO_TOKEN }}@github.com/salmorejo-hub/uvlhub.git HEAD:develop
 
-    # Step 6: Notify user if the merge was successful or failed
-    - name: Notify user
+    # Step 6: Notify user if the merge was successful
+    - name: Notify success
+      if: success()
+      run: |
+        echo "The merge was successful and changes were pushed to parent/develop."
+
+    # Step 7: Notify user if the merge failed
+    - name: Notify failure
       if: failure()
       run: |
         echo "The merge failed due to conflicts. Please resolve conflicts manually and try again."
-      else:
-        run: |
-          echo "The merge was successful and changes were pushed to parent/develop."
