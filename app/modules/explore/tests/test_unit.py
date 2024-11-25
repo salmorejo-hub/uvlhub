@@ -58,9 +58,11 @@ def test_filtering_service_model_and_feature_count(test_client):
     features.
     """
     explore_service = ExploreService()
-    datasets = explore_service.filter(min_number_of_models=20, max_number_of_models=100, min_number_of_features=0,
+    datasets = explore_service.filter(min_number_of_models=20, max_number_of_models=100,
+                                      min_number_of_features=0,
                                       max_number_of_features=30)
     # Based on the entries in seeders.py (50 models, 20 features and 75 models, 40 features)
     expected_dataset_count = 2
     assert len(datasets) == expected_dataset_count, \
+        \
         f"Expected {expected_dataset_count} datasets, but got {len(datasets)}"
