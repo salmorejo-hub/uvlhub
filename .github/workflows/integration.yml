@@ -32,43 +32,50 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-    # Step 3: Configure Git identity
+    # Step 3: Fetch all branches to ensure synchronization
+    - name: Fetch all branches
+      run: |
+        git fetch --all
+
+    # Step 4: Configure Git identity
     - name: Set Git identity
       run: |
         git config --global user.email "actions@github.com"
         git config --global user.name "CI: GitHub Actions Bot"
 
-    # Step 4: Add the parent repository as a remote
+    # Step 5: Add the parent repository as a remote
     - name: Add parent repository
       run: |
         git remote add parent git@github.com:salmorejo-hub/uvlhub.git
         git fetch parent develop
 
-    # Step 5: Attempt to merge changes from salmorejo-hub-1/main to parent/develop
+    # Step 6: Attempt to merge changes from salmorejo-hub-1/main to parent/develop
     - name: Attempt to merge into parent/develop
       run: |
         git checkout -b develop-parent parent/develop
         git merge --allow-unrelated-histories --no-ff main || echo "Merge conflict detected."
 
-    # Step 6: Check if there are merge conflicts
-    - name: Check for merge conflicts
+    # Step 7: Inspect merge conflicts if any
+    - name: Inspect merge conflicts
+      if: failure()
       run: |
-        if git ls-files -u | grep -q '.'; then
-          echo "Merge conflict detected. Please resolve manually." && exit 1
-        fi
+        echo "The following files have conflicts:"
+        git diff --name-only --diff-filter=U
+        echo "Please resolve these conflicts manually."
 
-    # Step 7: Push changes to the parent repository
+    # Step 8: Push changes to the parent repository
     - name: Push changes to parent/develop
+      if: success()
       run: |
         git push parent HEAD:develop
 
-    # Step 8: Notify user if the merge was successful
+    # Step 9: Notify user if the merge was successful
     - name: Notify success
       if: success()
       run: |
         echo "The merge was successful and changes were pushed to parent/develop."
 
-    # Step 9: Notify user if the merge failed
+    # Step 10: Notify user if the merge failed
     - name: Notify failure
       if: failure()
       run: |
