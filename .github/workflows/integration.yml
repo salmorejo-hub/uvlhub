@@ -1,29 +1,54 @@
-name: Sync Changes to Parent Repository
+name: Sync to Parent Repository
 
 on:
   push:
     branches:
-      - main  # Solo se ejecuta cuando hay cambios en la rama main del hijo
+      - main
+  pull_request:
+    branches:
+      - main
 
-jobs:
+jobs:  
   sync-to-parent:
+    name: Sync Changes to Parent Repository
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout the repository
+    # Step 1: Checkout the forked repository (salmorejo-hub-1)
+    - name: Checkout salmorejo-hub-1 repository
       uses: actions/checkout@v3
+      with:
+        ref: main
 
-    - name: Configure Git
+    # Step 2: Add the parent repository as a remote
+    - name: Add parent repository
       run: |
-        git config user.name "salmorejobot"
-        git config user.email "salmorejobot@outlook.com"
-
-    - name: Add the parent repository as remote
-      run: |
-        git remote add parent https://x-access-token:${{ secrets.PAT_BOT }}@github.com/salmorejo-hub/uvlhub.git
-
-    - name: Push changes to parent develop branch
-      run: |
+        git remote add parent https://github.com/salmorejo-hub/uvlhub.git
         git fetch parent develop
-        git rebase --onto parent/develop main main
-        git push parent HEAD:develop --force
+
+    # Step 3: Attempt to merge changes from salmorejo-hub-1/main to parent/develop
+    - name: Attempt to merge into parent/develop
+      run: |
+        git checkout -b develop-parent parent/develop
+        git merge --no-ff main || echo "Merge conflict detected."
+
+    # Step 4: Check if there are merge conflicts
+    - name: Check for merge conflicts
+      run: |
+        if git ls-files -u | grep -q '.'; then
+          echo "Merge conflict detected. Please resolve manually." && exit 1
+        fi
+
+    # Step 5: Push changes to the parent repository
+    - name: Push changes to parent/develop
+      run: |
+        git push https://${{ secrets.PARENT_REPO_TOKEN }}@github.com/salmorejo-hub/uvlhub.git HEAD:develop
+
+    # Step 6: Notify user if the merge was successful or failed
+    - name: Notify user
+      if: failure()
+      run: |
+        echo "The merge failed due to conflicts. Please resolve conflicts manually and try again."
+      else:
+        run: |
+          echo "The merge was successful and changes were pushed to parent/develop."
