@@ -19,7 +19,6 @@ def test_client(test_client):
     with test_client.application.app_context():
         user_test = User(email='user@example.com', password='test1234')
         user_test2 = User(email='user2@example.com', password='test1234')
-        
         db.session.add_all([user_test, user_test2])
         db.session.commit()
 
