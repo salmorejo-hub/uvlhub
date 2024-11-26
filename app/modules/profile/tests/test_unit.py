@@ -104,7 +104,8 @@ def test_dataset_with_uvl_file_display(test_client):
 
 def test_dataset_without_dataset_file_display(test_client):
     """
-    Verifies that a user without any datasets or UVL file does not see the file or the download button on the profile page and instead sees 'No datasets found'.
+    Verifies that a user without any datasets or UVL file does
+    not see the file or the download button on the profile page and instead sees 'No datasets found'.
     """
     login_response = login(test_client, "user2@example.com", "test1234")
     assert login_response.status_code == 200, "Login failed for user without any datasets."
