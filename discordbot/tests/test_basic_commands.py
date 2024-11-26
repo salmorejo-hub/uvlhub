@@ -8,5 +8,4 @@ from src.setup import client
 async def test_hello_command(bot):
     await dpytest.message("!hello")
 
-    # Verifica que el bot responde con "Hello!"
     assert dpytest.verify().message().content("Hello!")

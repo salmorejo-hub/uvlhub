@@ -13,10 +13,12 @@ import asyncio
 
 load_dotenv()
 
+# Choose the database to use
+DATABASE = 'MARIADB_TEST_DATABASE' if os.getenv('USE_TEST_DB') == 'true' else 'MARIADB_DATABASE'
 
 # Configure database
-DATABASE_URL = f"mysql+pymysql://{os.getenv('MARIADB_USER')}:{os.getenv('MARIADB_PASSWORD')}@{os.getenv('MARIADB_HOSTNAME')}:{os.getenv('MARIADB_PORT')}/{os.getenv('MARIADB_DATABASE')}"
-# DATABASE_URL = f"mysql+pymysql://{os.getenv('MARIADB_USER')}:{os.getenv('MARIADB_PASSWORD')}@{os.getenv('MARIADB_HOSTNAME')}:{os.getenv('MARIADB_PORT')}/{os.getenv('MARIADB_TEST_DATABASE', os.getenv('MARIADB_DATABASE'))}"
+DATABASE_URL = f"mysql+pymysql://{os.getenv('MARIADB_USER')}:{os.getenv('MARIADB_PASSWORD')}@{os.getenv('MARIADB_HOSTNAME')}:{os.getenv('MARIADB_PORT')}/{os.getenv(DATABASE)}"
+
 engine = create_engine(DATABASE_URL)
 
 session_factory = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -41,6 +43,8 @@ def get_prefix(bot, message):
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return "!"
+    finally:
+        Session.remove()
     
     
 

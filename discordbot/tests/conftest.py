@@ -2,9 +2,14 @@ import pytest
 import pytest_asyncio
 import discord.ext.test as dpytest
 from discordbot.src.setup import client
-import discordbot.src.commands.basic_commands
-import discord
 from discord.ext import commands
+import os
+
+@pytest.fixture(scope="session", autouse=True)
+def set_test_db_env():
+    os.environ['USE_TEST_DB'] = 'true'
+    yield
+    os.environ['USE_TEST_DB'] = 'false'
 
 @pytest_asyncio.fixture
 async def bot(request):
@@ -14,7 +19,7 @@ async def bot(request):
 
     yield client
     
-    dpytest.empty_queue()
+    await dpytest.empty_queue()
 
 # @pytest.fixture(scope="module", autouse=True)
 # def setup_database():
