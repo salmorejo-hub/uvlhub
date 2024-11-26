@@ -30,7 +30,7 @@ jobs:
  
     - name: Format with autopep8
       run: |
-        autopep8 --in-place --aggressive --recursive app
+        autopep8 --in-place --aggressive --aggressive --recursive app
 
     - name: Lint with flake8
       run: |
