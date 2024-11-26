@@ -7,6 +7,7 @@ from core.environment.host import get_host_for_selenium_testing
 from core.selenium.common import initialize_driver, close_driver
 from selenium.common.exceptions import NoSuchElementException
 
+
 def test_check_user_uvl_models():
 
     driver = initialize_driver()
@@ -36,7 +37,8 @@ def test_check_user_uvl_models():
         driver.get(f'{host}/profile/summary')
         time.sleep(3)
 
-        uvl_model = driver.find_element(By.XPATH, "/html/body/div/div/main/div/div[2]/div/div/div/table/tbody/tr[1]/td[3]/ul/li[1]/a")
+        uvl_model = driver.find_element(
+            By.XPATH, "/html/body/div/div/main/div/div[2]/div/div/div/table/tbody/tr[1]/td[3]/ul/li[1]/a")
         print(uvl_model.text)
         assert uvl_model.text == "Download", "No hay uvls en esta usuario"
     except NoSuchElementException:
@@ -46,6 +48,3 @@ def test_check_user_uvl_models():
 
         # Close the browser
         close_driver(driver)
-
-
-

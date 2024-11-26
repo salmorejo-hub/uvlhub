@@ -7,6 +7,7 @@ from app.modules.dataset.models import DataSet, DSMetaData
 from app.modules.featuremodel.models import FeatureModel, FMMetaData
 from app.modules.hubfile.models import Hubfile
 
+
 @pytest.fixture(scope="module")
 def test_client(test_client):
     """
@@ -87,6 +88,7 @@ def test_client(test_client):
             db.session.rollback()
             print(f"Error during teardown: {e}")
 
+
 def test_dataset_with_uvl_file_display(test_client):
     """
     Verifies that a user with an associated UVL file sees the file and the download button on the profile page.
@@ -101,6 +103,7 @@ def test_dataset_with_uvl_file_display(test_client):
     assert b"Download" in response.data, "Download button not displayed for user with UVL file."
 
     logout(test_client)
+
 
 def test_dataset_without_dataset_file_display(test_client):
     """
@@ -118,6 +121,7 @@ def test_dataset_without_dataset_file_display(test_client):
     assert b"No datasets found" in response.data, "Message 'No datasets found' not displayed for user without datasets."
 
     logout(test_client)
+
 
 def test_edit_profile_page_get(test_client):
     """
