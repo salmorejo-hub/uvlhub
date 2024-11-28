@@ -1,6 +1,3 @@
-from app.modules.dataset.models import DataSet
-
-
 class Creator:
     def __init__(self, name: str, id: int = None, deposition_id: int = None):
         self.id = id
