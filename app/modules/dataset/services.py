@@ -5,10 +5,11 @@ import shutil
 from typing import Optional
 import uuid
 
+
 from flask import request
 
 from app.modules.auth.services import AuthenticationService
-from app.modules.dataset.models import DSViewRecord, DataSet, DSMetaData
+from app.modules.dataset.models import DSViewRecord, DataSet, DSMetaData, DatasetStatus
 from app.modules.dataset.repositories import (
     AuthorRepository,
     DOIMappingRepository,
@@ -140,6 +141,54 @@ class DataSetService(BaseService):
         domain = os.getenv('DOMAIN', 'localhost')
         return f'http://{domain}/doi/{dataset.ds_meta_data.dataset_doi}'
 
+    def get_file_by_id(self, file_id):
+        return self.hubfilerepository.get_by_id(file_id)
+
+    # New methods to manage dataset status
+    # Method to set dataset to staged
+
+    def set_dataset_to_staged(self, dataset_id):
+        try:
+            dataset = self.repository.get_by_id(dataset_id)
+            if dataset.ds_meta_data.dataset_status == DatasetStatus.UNSTAGED:
+                dataset.ds_meta_data.dataset_status = DatasetStatus.STAGED
+                self.repository.session.commit()
+                return dataset
+            else:
+                raise ValueError("Dataset is not in 'UNSTAGED' status")
+        except Exception as exc:
+            logger.error(f"Exception setting dataset to staged: {exc}")
+            self.repository.session.rollback()
+            raise exc
+
+    # Method to set dataset to unstaged
+    def set_dataset_to_unstaged(self, dataset_id):
+        try:
+            dataset = self.repository.get_by_id(dataset_id)
+            if dataset.ds_meta_data.dataset_status == DatasetStatus.STAGED:
+                dataset.ds_meta_data.dataset_status = DatasetStatus.UNSTAGED
+                self.repository.session.commit()
+                return dataset
+            else:
+                raise ValueError("Dataset is not in 'STAGED' status")
+        except Exception as exc:
+            logger.error(f"Exception setting dataset to unstaged: {exc}")
+            self.repository.session.rollback()
+            raise exc
+
+    # Method to set dataset to published
+    def publish_datasets(self, current_user_id):
+        try:
+            datasets = self.repository.get_user_staged_datasets(current_user_id)
+            for dataset in datasets:
+                dataset.ds_meta_data.dataset_status = DatasetStatus.PUBLISHED
+                self.repository.session.commit()
+            else:
+                raise ValueError("Dataset is not in 'STAGED' status")
+        except Exception as exc:
+            logger.error(f"Exception setting dataset to published: {exc}")
+            self.repository.session.rollback()
+
 
 class AuthorService(BaseService):
     def __init__(self):
@@ -169,7 +218,7 @@ class DSViewRecordService(BaseService):
     def the_record_exists(self, dataset: DataSet, user_cookie: str):
         return self.repository.the_record_exists(dataset, user_cookie)
 
-    def create_new_record(self, dataset: DataSet,  user_cookie: str) -> DSViewRecord:
+    def create_new_record(self, dataset: DataSet, user_cookie: str) -> DSViewRecord:
         return self.repository.create_new_record(dataset, user_cookie)
 
     def create_cookie(self, dataset: DataSet) -> str:
