@@ -1,5 +1,6 @@
 from app.modules.dataset.models import DataSet
 
+
 class Creator:
     def __init__(self, name: str, id: int = None, deposition_id: int = None):
         self.id = id
@@ -12,32 +13,35 @@ class Creator:
             'name': self.name,
             'deposition_id': self.deposition_id
         }
+
+
 class File:
     _id_counter = 1
+
     def __init__(self, name: str, size: int, checksum):
-        self.id = File._id_counter  
+        self.id = File._id_counter
         File._id_counter += 1
         self.name = name
         self.size = size
         self.checksum = checksum
-        
+
     def to_dict(self):
         return {
-            "id":self.id,
+            "id": self.id,
             "name": self.name,
             "size": self.size,
             "checksum": self.checksum
         }
-        
-        
-class Deposition:
-    _id_counter = 1  
 
-    def __init__(self, title=None, upload_type=None, publication_type=None, description=None, 
-                 creators=None, keywords=None, access_right=None, license=None,doi=None, published=False,files=[]):
-        self.id = Deposition._id_counter  
+
+class Deposition:
+    _id_counter = 1
+
+    def __init__(self, title=None, upload_type=None, publication_type=None, description=None,
+                 creators=None, keywords=None, access_right=None, license=None, doi=None, published=False, files=[]):
+        self.id = Deposition._id_counter
         Deposition._id_counter += 1
-        
+
         self.title = title
         self.upload_type = upload_type
         self.publication_type = publication_type
@@ -67,6 +71,3 @@ class Deposition:
             "files": self.files,
             "conceptrecid": self.conceptrecid
         }
-
-        
-        

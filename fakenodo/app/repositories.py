@@ -1,4 +1,4 @@
-from fakenodo.app.models import Deposition,Creator
+from fakenodo.app.models import Deposition, Creator
 from core.repositories.BaseRepository import BaseRepository
 
 
