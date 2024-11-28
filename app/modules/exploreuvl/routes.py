@@ -31,14 +31,14 @@ def download_uvls():
     zip_buffer = io.BytesIO()
     with ZipFile(zip_buffer, 'w') as zip_file:
         for file in uvls:
-            file_path = '/file/download/'+str(file.id)
+            file_path = '/file/download/' + str(file.id)
             if file_path and os.path.exists(file_path):
                 zip_file.write(file_path, os.path.basename(file_path))
 
     zip_buffer.seek(0)
 
     return send_file(
-            file_path,
-            "FeaturedModlesSearch.zip",
-            as_attachment=True,
-            mimetype="zip")
+        file_path,
+        "FeaturedModlesSearch.zip",
+        as_attachment=True,
+        mimetype="zip")

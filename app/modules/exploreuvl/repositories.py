@@ -10,7 +10,7 @@ class ExploreUVL(BaseRepository):
     def __init__(self):
         super().__init__(FeatureModel)
 
-    def filter(self, query="", publication_type="any",  tags=[], **kwargs):
+    def filter(self, query="", publication_type="any", tags=[], **kwargs):
         normalized_query = unidecode.unidecode(query).lower()
         cleaned_query = re.sub(r'[,.":\'()\[\]^;!¡¿?]', "", normalized_query)
 

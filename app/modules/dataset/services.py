@@ -144,10 +144,9 @@ class DataSetService(BaseService):
     def get_file_by_id(self, file_id):
         return self.hubfilerepository.get_by_id(file_id)
 
+    # New methods to manage dataset status
+    # Method to set dataset to staged
 
-
-    ## New methods to manage dataset status
-    ## Method to set dataset to staged
     def set_dataset_to_staged(self, dataset_id):
         try:
             dataset = self.repository.get_by_id(dataset_id)
@@ -162,7 +161,7 @@ class DataSetService(BaseService):
             self.repository.session.rollback()
             raise exc
 
-    ## Method to set dataset to unstaged
+    # Method to set dataset to unstaged
     def set_dataset_to_unstaged(self, dataset_id):
         try:
             dataset = self.repository.get_by_id(dataset_id)
@@ -176,8 +175,8 @@ class DataSetService(BaseService):
             logger.error(f"Exception setting dataset to unstaged: {exc}")
             self.repository.session.rollback()
             raise exc
-    
-    ## Method to set dataset to published
+
+    # Method to set dataset to published
     def publish_datasets(self, current_user_id):
         try:
             datasets = self.repository.get_user_staged_datasets(current_user_id)
@@ -189,8 +188,6 @@ class DataSetService(BaseService):
         except Exception as exc:
             logger.error(f"Exception setting dataset to published: {exc}")
             self.repository.session.rollback()
-
-
 
 
 class AuthorService(BaseService):
@@ -221,7 +218,7 @@ class DSViewRecordService(BaseService):
     def the_record_exists(self, dataset: DataSet, user_cookie: str):
         return self.repository.the_record_exists(dataset, user_cookie)
 
-    def create_new_record(self, dataset: DataSet,  user_cookie: str) -> DSViewRecord:
+    def create_new_record(self, dataset: DataSet, user_cookie: str) -> DSViewRecord:
         return self.repository.create_new_record(dataset, user_cookie)
 
     def create_cookie(self, dataset: DataSet) -> str:
