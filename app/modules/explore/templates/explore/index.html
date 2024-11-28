@@ -88,6 +88,42 @@
 
                     </div>
 
+                    <!-- New filter section for number of models and features -->
+                    <div class="row mt-3">
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="min_number_of_models">Minimum number of models</label>
+                                <input class="form-range" id="min_number_of_models" name="min_number_of_models" type="range" min="0" max="100" step="1" value="0" oninput="document.getElementById('min_models_output').value = this.value">
+                                <output id="min_models_output">0</output>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="max_number_of_models">Maximum number of models</label>
+                                <input class="form-range" id="max_number_of_models" name="max_number_of_models" type="range" min="0" max="100" step="1" value="100" oninput="document.getElementById('max_models_output').value = this.value">
+                                <output id="max_models_output">100</output>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="min_number_of_features">Minimum number of features</label>
+                                <input class="form-range" id="min_number_of_features" name="min_number_of_features" type="range" min="0" max="100" step="1" value="0" oninput="document.getElementById('min_features_output').value = this.value">
+                                <output id="min_features_output">0</output>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="max_number_of_features">Maximum number of features</label>
+                                <input class="form-range" id="max_number_of_features" name="max_number_of_features" type="range" min="0" max="100" step="1" value="100" oninput="document.getElementById('max_features_output').value = this.value">
+                                <output id="max_features_output">100</output>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End of new filter section -->
+
                     <div class="row">
 
                         <div class="col-6">

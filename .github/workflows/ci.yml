@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout son repository
+        uses: actions/checkout@v2
+        with:
+          repository: salmorejo-hub-1/uvlhub
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "javsanmar5@alum.us.es"
+          git config --global user.name "Javier Santos"
+
+      - name: Add father repository as remote
+        run: |
+          git remote add parent https://github.com/salmorejo-hub/uvlhub.git
+          git fetch parent
+
+      - name: Merge son/main into father/develop
+        run: |
+          git checkout -b temp-merge
+          git merge origin/main --no-edit 
+          git pull parent develop --rebase || true 
+          git log --oneline --graph --decorate --all 
+          git push parent temp-merge:develop --force-with-lease
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+      - name: Verify Push
+        run: |
+          git fetch parent develop
+          git log parent/develop --oneline --graph --decorate --all
