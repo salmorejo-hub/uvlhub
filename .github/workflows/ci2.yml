@@ -1,0 +1,29 @@
+name: CI2
+
+on:
+  push:
+    branches:
+      - main
+    
+jobs:
+  sync:
+    if: github.repository == 'salmorejo-hub-1/uvlhub' || github.repository == 'salmorejo-hub-2/uvlhub'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout son repository
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ github.repository }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Add father repository as remote
+      run: |
+        git remote add parent https://github.com/salmorejo-hub/uvlhub.git
+        git fetch parent
+
+    - name: Merge son/main into father/develop
+      run: |
+        git checkout -b temp-merge
+        git merge origin/main --no-edit 
+        git pull parent develop --rebase || true 
+        git push parent temp-merge:develop --force-with-lease

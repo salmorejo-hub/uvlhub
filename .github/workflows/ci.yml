@@ -7,7 +7,7 @@ on:
 
 jobs:
   sync:
-    if: ${{ github.repository == 'salmorejo-hub-1/uvlhub' }}
+    if:  github.repository == 'salmorejo-hub-1/uvlhub'
     runs-on: ubuntu-latest
 
     steps:
@@ -41,3 +41,6 @@ jobs:
         run: |
           git fetch parent develop
           git log parent/develop --oneline --graph --decorate --all
+
+
+
