@@ -15,25 +15,25 @@ def set_test_db_env():
 async def bot(request):
     await client._async_setup_hook()
     
-    dpytest.configure(client)
+    # Crear listas de guilds, miembros y canales con nombres específicos
+    guild_names = ["guild1", "guild2"]
+    channel_names = ["channel1", "channel2"]
+    member_names = ["user1", "user2"]
 
-    # Configura los guilds
-    guild1 = dpytest.backend.make_guild("guild1")
-    guild2 = dpytest.backend.make_guild("guild2")
+    # Configuración para dpytest: pasamos las listas con los nombres
+    dpytest.configure(
+        client=client,
+        guilds=guild_names,      # Pasamos los nombres de los guilds
+        text_channels=channel_names,  # Pasamos los nombres de los canales
+        members=member_names     # Pasamos los nombres de los miembros
+    )
+
+    yield client
     
-    # Configura los canales de texto
-    channel1 = dpytest.backend.make_text_channel("channel1", guild=guild1)
-    channel2 = dpytest.backend.make_text_channel("channel2", guild=guild2)
     
-    # Configura los usuarios
-    user1 = dpytest.backend.make_user("user1", 1234)
-    user2 = dpytest.backend.make_user("user2", 5678)
     
-    # Configura los miembros
-    member1 = dpytest.backend.make_member(user1, guild1)
-    member2 = dpytest.backend.make_member(user2, guild2)
-    
-    yield client, guild1, guild2, channel1, channel2, member1, member2
-    
+@pytest_asyncio.fixture(autouse=True)
+async def cleanup():
+    yield
     await dpytest.empty_queue()
-    Base.metadata.drop_all(bind=engine)
+    Base.metadata.drop_all(engine)
