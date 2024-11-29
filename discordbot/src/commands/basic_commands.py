@@ -14,7 +14,7 @@ async def setup_basic_commands(client, session):
         await ctx.send("Hello!")
         
     @client.command(help="Change bot prefix in the server")
-    async def prefix(ctx, prefix):
+    async def prefix(ctx, prefix=None):
         id = ctx.guild.id if ctx.guild else ctx.author.id
         
         if prefix is None:
@@ -35,7 +35,7 @@ async def setup_basic_commands(client, session):
                 db.add(new_server_prefix)
                 db.commit()
                 db.refresh(new_server_prefix)
-                message = "Prefix configurated successfully!"
+                message = "Prefix configured successfully!"
             await ctx.send(message)
         except Exception as e:
             db.rollback()
