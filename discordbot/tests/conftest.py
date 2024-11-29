@@ -1,9 +1,9 @@
 import pytest
 import pytest_asyncio
 import discord.ext.test as dpytest
-from discordbot.src.setup import client
+from discordbot.src.setup import init#, Base, engine
 import os
-from discordbot.src.setup import Base, engine
+
 
 @pytest.fixture(scope="session", autouse=True)
 def set_test_db_env():
@@ -11,8 +11,10 @@ def set_test_db_env():
     yield
     os.environ['USE_TEST_DB'] = 'false'
 
+
 @pytest_asyncio.fixture
 async def bot(request):
+    client, engine, Base = await init()
     await client._async_setup_hook()
     
     # Crear listas de guilds, miembros y canales con nombres específicos
@@ -30,10 +32,5 @@ async def bot(request):
 
     yield client
     
-    
-    
-@pytest_asyncio.fixture(autouse=True)
-async def cleanup():
-    yield
     await dpytest.empty_queue()
-    Base.metadata.drop_all(engine)
+    Base.metadata.drop_all(bind=engine)
