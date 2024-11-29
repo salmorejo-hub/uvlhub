@@ -1,6 +1,4 @@
 import pytest
-import pytest_asyncio
-import asyncio
 import discord.ext.test as dpytest
 
 
@@ -52,6 +50,7 @@ async def test_prefix_command(bot):
     await dpytest.message("$hello", channel=channel_guild1, member=user_guild1)
     assert dpytest.verify().message().content("Hello!"), "Prefix change did not work correctly second time"
     
+    # Check prefix did not affect other guilds
     await dpytest.message("!hello", channel=channel_guild2, member=user_guild2)
     assert dpytest.verify().message().content("Hello!"), "Prefix change affected other guilds"
     

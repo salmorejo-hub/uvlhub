@@ -19,7 +19,7 @@ async def setup_token_commands(client, session):
 
         # Check if the channel is a private message
         if isinstance(ctx.channel, discord.DMChannel):
-            message = "Token configurated successfully!"
+            message = ""
                     
             user = ctx.message.author
             db = session()
@@ -37,7 +37,7 @@ async def setup_token_commands(client, session):
                     db.add(new_user_token)
                     db.commit()
                     db.refresh(new_user_token)
-                    message = "Token configurated successfully!"
+                    message = "Token configured successfully!"
                 await ctx.send(message)
             except Exception as e:
                 db.rollback()
@@ -46,7 +46,7 @@ async def setup_token_commands(client, session):
             finally:
                 session.remove()
         else:
-            await ctx.send("For security reasons, please configurate your token in a private message.")
+            await ctx.send("For security reasons, please  change your token and configurate it in a private message.")
             
             
     #This command needs to be removed. It is only for testing purposes       
