@@ -68,10 +68,17 @@ class Service(BaseService):
             file_instance = File(
                 name=file.filename,
                 size=len(file_data),
-                checksum=hashlib.md5(file_data).hexdigest()
+                checksum=hashlib.md5(file_data).hexdigest(),
+                deposition_id=deposition_id
             )
+
             target_deposition = self.get_deposition(deposition_id)
-            target_deposition.files.append(file_instance.to_dict())
+            if target_deposition is None:
+                raise FileNotFoundError("Deposition not found")
+            if target_deposition.files is None:
+                target_deposition.files = [file_instance.to_dict()]
+            else:
+                target_deposition.files.append(file_instance.to_dict())
 
         except Exception as e:
             print(f"Error en la subida del archivo: {e}")
@@ -97,15 +104,17 @@ class Service(BaseService):
         """
         depositions.remove(deposition)
 
-    def get_deposition(self, deposition_id: int) -> dict:
-        """Get deposition by id
+    def get_deposition(self, deposition_id: int) -> Deposition | None:
+        """
+        Get deposition by id.
 
         Args:
-            deposition_id(int): id of the target deposition
+            deposition_id (int): ID of the target deposition.
+
         Returns:
-            dict: deposition with id given as parameter
+            dict | None: The deposition with the given ID, or None if not found.
         """
-        return [deposition for deposition in depositions if deposition.to_dict()['id'] == deposition_id][0]
+        return [deposition for deposition in depositions if deposition_id == deposition.id][0]
 
     def get_doi(self, deposition_id: int) -> str:
         """
@@ -118,4 +127,4 @@ class Service(BaseService):
         Returns:
             str: Doi of the target deposition
         """
-        return self.get_deposition(deposition_id)['doi']
+        return self.get_deposition(deposition_id).doi

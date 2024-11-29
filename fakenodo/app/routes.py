@@ -76,7 +76,7 @@ def upload_file(deposition_id) -> tuple:
         for file in request.files.getlist('file'):
             if not file:
                 return jsonify({"success": False, "message": "Missing file"}), 400
-            service.upload_file(file, request.data, deposition_id)
+            service.upload_file(file, deposition_id)
 
         return jsonify('File uploaded succesfully'), 201
     except Exception as e:
@@ -110,7 +110,6 @@ def deposition(deposition_id):
             Returns:
                 (json,status_code): Json of the target deposition and status code(200 if OK)
             """
-
             resposne = deposition.to_dict()
             return jsonify(resposne), 200
 
@@ -132,7 +131,7 @@ def deposition(deposition_id):
         return jsonify(f"Cannot find deposition with id {deposition_id}"), 404
 
 
-@api_bp.route('/api/fakenodo/deposition/<int:deposition_id>/actions/publish', methods=['GET'])
+@api_bp.route('/api/fakenodo/depositions/<int:deposition_id>/actions/publish', methods=['POST'])
 def publish_deposition(deposition_id) -> tuple:
     """Publish deposition endpoint
 
