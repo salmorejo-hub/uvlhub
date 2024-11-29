@@ -28,6 +28,8 @@ function send_query() {
                 day: document.querySelector('#day').value,
                 month: document.querySelector('#month').value,
                 year: document.querySelector('#year').value,
+                max_size: parseFloat(document.querySelector('#max_size').value),
+                size_unit: document.querySelector('#size_unit').value,
             };
 
             console.log(document.querySelector('#publication_type').value);
@@ -211,6 +213,12 @@ function clearFilters() {
 
     let yearInput = document.querySelector('#year');
     yearInput.value = "";
+
+    let maxSizeInput = document.querySelector('#max_size');
+    maxSizeInput.value = "";
+
+    let sizeUnitSelect = document.querySelector('#size_unit');
+    sizeUnitSelect.value = "bytes";
 
     // Perform a new search with the reset filters
     queryInput.dispatchEvent(new Event('input', {bubbles: true}));

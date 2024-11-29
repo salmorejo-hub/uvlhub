@@ -12,7 +12,7 @@ class ExploreRepository(BaseRepository):
 
     def filter(self, query="", sorting="newest", publication_type="any", tags=[], min_number_of_models=0,
                max_number_of_models=100, min_number_of_features=0, max_number_of_features=100, day="", month="",
-               year="", **kwargs):
+               year="", max_size=None, size_unit="bytes", **kwargs):
         # Normalize and remove unwanted characters
         normalized_query = unidecode.unidecode(query).lower()
         cleaned_query = re.sub(r'[,.":\'()\[\]^;!¡¿?]', "", normalized_query)
@@ -63,6 +63,12 @@ class ExploreRepository(BaseRepository):
         if year != "":
             datasets = datasets.filter(func.extract('year', DataSet.created_at) == int(year))
 
+        # Order by created_at
+        if sorting == "oldest":
+            datasets = datasets.order_by(self.model.created_at.asc())
+        else:
+            datasets = datasets.order_by(self.model.created_at.desc())
+
         # Filter by number of models and features
         datasets = datasets.filter(
             DSMetaData.ds_metrics.has(
@@ -71,12 +77,18 @@ class ExploreRepository(BaseRepository):
                 (cast(DSMetrics.number_of_features, Integer) >= min_number_of_features) &
                 (cast(DSMetrics.number_of_features, Integer) <= max_number_of_features)
             )
-        )
+        ).all()
 
-        # Order by created_at
-        if sorting == "oldest":
-            datasets = datasets.order_by(self.model.created_at.asc())
-        else:
-            datasets = datasets.order_by(self.model.created_at.desc())
+        # This filter operates on the datasets list that was returned by the previous filters that used ORM queries.
+        if max_size is not None:
+            if size_unit == "kb":
+                max_size_bytes = max_size * 1024
+            elif size_unit == "mb":
+                max_size_bytes = max_size * 1024 ** 2
+            elif size_unit == "gb":
+                max_size_bytes = max_size * 1024 ** 3
+            else:
+                max_size_bytes = max_size
+            datasets = [dataset for dataset in datasets if dataset.get_file_total_size() <= max_size_bytes]
 
-        return datasets.all()
+        return datasets

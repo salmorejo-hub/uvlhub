@@ -87,6 +87,25 @@
                         </div>
 
                     </div>
+
+                    <!-- Filter by dataset size -->
+                <div class="row mt-3">
+                    <div class="col-6">
+                        <label for="max_size" class="form-label">Maximum size</label>
+                        <input type="number" class="form-control" id="max_size" name="max_size" min="0"
+                               placeholder="Enter size">
+                    </div>
+                    <div class="col-6">
+                        <label for="size_unit" class="form-label">Units</label>
+                        <select class="form-select" id="size_unit" name="size_unit">
+                            <option value="bytes">Bytes</option>
+                            <option value="kb">KB</option>
+                            <option value="mb">MB</option>
+                            <option value="gb">GB</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- End of filter by dataset size -->
                     
                     <!-- Filter by Date (Day, Month, Year) -->
                     <div class="row mt-3">
