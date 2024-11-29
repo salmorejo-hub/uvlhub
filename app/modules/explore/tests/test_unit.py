@@ -54,7 +54,8 @@ def test_filtering_service_feature_count(test_client):
 
 def test_filtering_service_model_and_feature_count(test_client):
     """
-    Test to verify that the filtering service correctly counts the number of datasets based on the number of models and
+    Test to verify that the filtering service correctly counts the number of
+    datasets based on the number of models and
     features.
     """
     explore_service = ExploreService()

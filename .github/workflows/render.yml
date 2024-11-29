@@ -11,6 +11,7 @@ on:
 jobs:
 
   deploy:
+    if: github.repository == salmorejo-hub/uvlhub
     name: Deploy to Render
     runs-on: ubuntu-latest
     steps:
