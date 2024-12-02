@@ -1,4 +1,3 @@
-# app/routes.py
 import logging
 from flask import Blueprint, jsonify, request
 from fakenodo.app.models import Deposition
@@ -145,17 +144,14 @@ def publish_deposition(deposition_id) -> tuple:
     try:
         # Target deposition
         deposition = service.get_deposition(deposition_id)
-        if deposition:
-            service.publish_deposition(deposition)
-            return jsonify(f"Deposition with id {deposition_id} published succesfully"), 204
-        else:
-            return jsonify("Deposition not found"), 404
+        service.publish_deposition(deposition)
+        return jsonify(f"Deposition with id {deposition_id} published succesfully"), 201
 
-    except Exception as e:
-        return jsonify({"success": False, "message": str(e)}), 500
+    except Exception:
+        return jsonify("Deposition not found"), 404
 
 
-@api_bp.route('/api/fakenodo/deposition/<int:deposition_id>/doi', methods=['GET'])
+@api_bp.route('/api/fakenodo/depositions/<int:deposition_id>/doi', methods=['GET'])
 def get_doi(deposition_id) -> tuple:
     """Get doi of a deposition endpoint
 
