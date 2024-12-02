@@ -1,8 +1,9 @@
 import pytest
 from flask import url_for
-
+from app.modules.auth.models import User
 from app.modules.auth.services import AuthenticationService
 from app.modules.auth.repositories import UserRepository
+from flask_mail import Mail
 from app.modules.profile.repositories import UserProfileRepository
 
 
@@ -95,7 +96,7 @@ def test_signup_user_unsuccessful(test_client):
         "/signup", data=dict(name="Test", surname="Foo", email=email, password="test1234"), follow_redirects=True
     )
     assert response.request.path == url_for("auth.show_signup_form"), "Signup was unsuccessful"
-    assert f"Email {email} in use".encode("utf-8") in response.data
+    assert b"Email test@example.com in use" in response.data
 
 
 def test_signup_user_successful(test_client):
@@ -104,7 +105,8 @@ def test_signup_user_successful(test_client):
         data=dict(name="Foo", surname="Example", email="foo@example.com", password="foo1234"),
         follow_redirects=True,
     )
-    assert response.request.path == url_for("public.index"), "Signup was unsuccessful"
+    assert response.request.path == url_for("public.index"), "User was not redirected to the public index after successful signup"
+
 
 
 def test_service_create_with_profie_success(clean_database):
@@ -149,3 +151,55 @@ def test_service_create_with_profile_fail_no_password(clean_database):
 
     assert UserRepository().count() == 0
     assert UserProfileRepository().count() == 0
+
+
+@pytest.fixture
+def mail_outbox():
+    mail = Mail()
+    with mail.record_messages() as outbox:
+        yield outbox
+
+def test_signup_and_send_confirmation_email(test_client, mail_outbox):
+    data = {
+        "name": "Test",
+        "surname": "User",
+        "email": "testuser@example.com",
+        "password": "testpassword",
+        "confirm_password": "testpassword"
+    }
+
+    response = test_client.post(
+        url_for('auth.show_signup_form'),
+        data=data,
+        follow_redirects=True
+    )
+
+    assert response.status_code == 200
+    assert b"A confirmation email has been sent via email." in response.data
+
+    # Verificar que se envió un correo electrónico
+    assert len(mail_outbox) == 1
+    assert mail_outbox[0].subject == "Please confirm your email"
+    assert "testuser@example.com" in mail_outbox[0].recipients
+
+    # Extraer el token del correo electrónico
+    token = mail_outbox[0].body.split("token=")[1].split("\n")[0]
+
+    return token
+
+
+def test_confirm_email(test_client, mail_outbox):
+    token = test_signup_and_send_confirmation_email(test_client, mail_outbox)
+
+    response = test_client.get(
+        url_for('auth.confirm_email', token=token),
+        follow_redirects=True
+    )
+
+    assert response.status_code == 200
+    assert b"Your account has been confirmed." in response.data
+
+    # Verificar que el usuario fue creado
+    user = User.query.filter_by(email="testuser@example.com").first()
+    assert user is not None
+    assert user.is_active
