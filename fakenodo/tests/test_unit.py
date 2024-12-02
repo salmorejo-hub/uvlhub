@@ -35,63 +35,53 @@ def mock_service(method, return_value=None, side_effect=None):
     return patch(f'fakenodo.app.routes.service.{method}', return_value=return_value, side_effect=side_effect)
 
 
-def test_depositions(test_client):
-    '''Tests for depositions'''
+def test_get_all_depositions_with_no_depositions(test_client):
+    '''Test fakenodo deposition list without posting any deposition'''
 
-    def test_get_all_depositions_with_no_depositions():
-        '''Test fakenodo deposition list without posting any deposition'''
-
-        with mock_service('get_all_depositions', return_value=[]):
-            response = test_client.get(DEPOSITIONS_URI)
-            assert response.status_code == 200
-            assert b'[]' in response.data
-
-    def test_post_depositions():
-        '''Test post a deposition into fakenodo'''
-
-        with mock_service('create_new_deposition', return_value=SAMPLE_DEPOSITION["metadata"]):
-            response = test_client.post(DEPOSITIONS_URI, json=SAMPLE_DEPOSITION)
-            assert response.status_code == 201
-            assert b'This is a test deposition' in response.data
-
-    def test_get_all_depositions_with_depositions():
-        '''Test fakenodo deposition list with depositions'''
-
-        mock_deposition = Deposition(**SAMPLE_DEPOSITION["metadata"]).to_dict()
-        with mock_service('get_all_depositions', return_value=[mock_deposition]):
-            response = test_client.get(DEPOSITIONS_URI)
-            assert response.status_code == 200
-            assert b'[]' not in response.data
-            response_list = json.loads(response.data.decode('utf-8'))
-            assert len(response_list) == 1
-            assert response_list[0]['description'] == mock_deposition['description']
-
-    test_get_all_depositions_with_no_depositions()
-    test_post_depositions()
-    test_get_all_depositions_with_depositions()
+    with mock_service('get_all_depositions', return_value=[]):
+        response = test_client.get(DEPOSITIONS_URI)
+        assert response.status_code == 200
+        assert b'[]' in response.data
 
 
-def test_deposition(test_client):
-    """Test for an specific deposition"""
+def test_post_depositions(test_client):
+    '''Test post a deposition into fakenodo'''
 
-    def test_get_deposition():
+    with mock_service('create_new_deposition', return_value=SAMPLE_DEPOSITION["metadata"]):
+        response = test_client.post(DEPOSITIONS_URI, json=SAMPLE_DEPOSITION)
+        assert response.status_code == 201
+        assert b'This is a test deposition' in response.data
+
+
+def test_get_all_depositions_with_depositions(test_client):
+    '''Test fakenodo deposition list with depositions'''
+
+    mock_deposition = Deposition(**SAMPLE_DEPOSITION["metadata"]).to_dict()
+    with mock_service('get_all_depositions', return_value=[mock_deposition]):
+        response = test_client.get(DEPOSITIONS_URI)
+        assert response.status_code == 200
+        assert b'[]' not in response.data
+        response_list = json.loads(response.data.decode('utf-8'))
+        assert len(response_list) == 1
+        assert response_list[0]['description'] == mock_deposition['description']
+
+
+def test_get_deposition(test_client):
+    with mock_service('get_deposition', return_value=Deposition(title="Test Deposition")):
+        response = test_client.get(DEPOSITION_URI)
+
+        assert response.status_code == 200, response.data
+        assert b'Test Deposition' in response.data, response.data
+
+
+def test_delete_deposition(test_client):
+
+    with mock_service('delete_deposition', return_value=None):
         with mock_service('get_deposition', return_value=Deposition(title="Test Deposition")):
-            response = test_client.get(DEPOSITION_URI)
+            response = test_client.delete(DEPOSITION_URI)
 
-            assert response.status_code == 200, response.data
-            assert b'Test Deposition' in response.data, response.data
-
-    def test_delete_deposition():
-
-        with mock_service('delete_deposition', return_value=None):
-            with mock_service('get_deposition', return_value=Deposition(title="Test Deposition")):
-                response = test_client.delete(DEPOSITION_URI)
-
-                assert response.status_code == 204, response.data
-                assert b'' == response.data, response.data
-
-    test_get_deposition()
-    test_delete_deposition()
+            assert response.status_code == 204, response.data
+            assert b'' == response.data, response.data
 
 
 def create_sample_file():
