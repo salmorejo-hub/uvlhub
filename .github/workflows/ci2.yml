@@ -1,0 +1,66 @@
+name: CI2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    if: github.repository == 'salmorejo-hub-2/uvlhub'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout son repository
+        uses: actions/checkout@v2
+        with:
+          repository: salmorejo-hub-2/uvlhub
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "JuanluRM"
+          git config --global user.email "juanluis.ruano.muriedas@gmail.com"
+          
+
+      - name: Add father repository as remote
+        run: |
+          git remote add parent https://github.com/salmorejo-hub/uvlhub.git
+          git fetch parent
+
+      - name: Attempt to Merge son/main into father/develop
+        id: merge
+        run: |
+          git checkout -b temp-merge
+          if ! git merge origin/main --no-edit; then
+            echo "merge_conflict=true" >> $GITHUB_ENV
+          fi
+          if ! git pull parent develop --rebase; then
+            echo "rebase_conflict=true" >> $GITHUB_ENV
+          fi
+
+      - name: Create Pull Request if Conflicts Exist
+        if: env.merge_conflict == 'true' || env.rebase_conflict == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          commit-message: "Resolve conflicts between main and develop"
+          branch: temp-merge-2
+          base: develop
+          title: "Conflict Resolution: Salmorejo-hub-2 main into develop"
+          body: |
+            The merge or rebase operation between Salmorejo-hub-2 and Salmorejo-hub encountered conflicts. 
+            Please review and resolve the conflicts manually.
+
+      - name: Push Changes to father/develop
+        if: env.merge_conflict != 'true' && env.rebase_conflict != 'true'
+        run: |
+          git push parent temp-merge-2:develop --force-with-lease
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+      - name: Verify Push
+        if: env.merge_conflict != 'true' && env.rebase_conflict != 'true'
+        run: |
+          git fetch parent develop
+          git log parent/develop --oneline --graph --decorate --all
