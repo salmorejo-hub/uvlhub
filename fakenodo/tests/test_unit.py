@@ -14,4 +14,6 @@ def test_client(test_client):
     yield test_client
     
 def test_full_connection(test_client):
-    assert True == True
+    response = test_client.get('/api/fakenodo/depositions')
+    
+    assert response.status_code == 200, response.request

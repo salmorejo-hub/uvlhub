@@ -1,10 +1,19 @@
 # conftest.py en la raíz del proyecto (uvlhub/)
 import pytest
+from fakenodo import create_app
+
+
+# conftest.py en la raíz del proyecto (uvlhub/)
+import pytest
 from flask import Flask
+from fakenodo.app.routes import api_bp
 
 @pytest.fixture(scope="module")
 def test_client():
     app = Flask(__name__)
-    app.config["testing"] = True
+    app.config["TESTING"] = True
+    app.config["SERVER_NAME"] = "localhost:5001" 
+    app.register_blueprint(api_bp)  
     with app.test_client() as client:
-        yield client
+        with app.app_context():
+            yield client
