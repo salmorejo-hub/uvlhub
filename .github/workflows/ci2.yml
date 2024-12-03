@@ -51,5 +51,4 @@ jobs:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           title: "CI/ Resolve conflicts for integrations"
           body: "Can't automatically merge the changes into Salmorejo-hub, please resolve conflicts to continue"
-          base: feat/CI-implementations
           branch: feat/CI-implementation
