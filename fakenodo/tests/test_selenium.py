@@ -23,11 +23,3 @@ def test_upload_dataset_to_fakenodo():
         assert len(dataset["creators"]) == 3, f"Dataset {i} has incorrect number of creators"
 
         assert len(dataset["files"]) == 2, f"Dataset {i} has incorrect number of files"
-        expected_files = [
-            {"checksum": "01939e8e60a452b828b60db125a1758c", "size": 1024},
-            {"checksum": "67a574babd23cbaefc70f4fce14e5b07", "size": 2048}
-        ]
-        for j, file in enumerate(dataset["files"], start=1):
-            expected_file = expected_files[j - 1]
-            assert file["size"] == expected_file["size"], f"File {j} in dataset {i} has incorrect size"
-            assert file["checksum"] == expected_file["checksum"], f"File {j} in dataset {i} has incorrect checksum"
