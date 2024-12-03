@@ -46,9 +46,10 @@ jobs:
   
       - name: Create Pull Request if conflicts exist
         if: failure()
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          title: "CI/ Resolve conflicts for integrations"
-          body: "Can't automatically merge the changes into Salmorejo-hub, please resolve conflicts to continue"
-          branch: feat/CI-implementation
+        run: |
+          PR_TITLE="Sync child main to parent develop"
+          PR_BODY="This PR syncs the child main branch with the parent develop branch to resolve conflicts."
+        
+          curl -X POST -H "Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN }}" \
+            -d "{\"title\":\"$PR_TITLE\", \"body\":\"$PR_BODY\", \"head\":\"feat/CI-implementations\", \"base\":\"feat/CI-implementation\"}" \
+            "https://api.github.com/salmorejo-hub-2/uvlhub/pulls"
