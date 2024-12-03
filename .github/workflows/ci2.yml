@@ -1,0 +1,45 @@
+name: Push or Create PR on Conflict
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout fork repository
+        uses: actions/checkout@v2
+        with:
+          repository: salmorejo-hub-1/uvlhub
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          ref: main
+
+      - name: Add parent repository as remote
+        run: |
+          git remote add parent https://github.com/salmorejo-hub/uvlhub.git
+          git fetch parent
+
+      - name: Attempt to push changes
+        id: push
+        run: |
+          set -e
+          git merge parent/feat/CI-implementation --no-edit || echo "merge_failed=true" >> $GITHUB_ENV
+          git push parent main:feat/CI-implementation 
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+      - name: Create Pull Request on Conflict
+        if: env.merge_failed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          base: feat/CI-implementation 
+          branch: main
+          title: "CI/ Sync Salmorejo-hub-2 to develop"
+          body: |
+            This pull request was created because a direct push from Salmorejo-hub-2/main to Salmorejo-hub/develop encountered conflicts.
+            Please resolve the conflicts manually and merge this pull request.
+          maintainer-can-modify: true
