@@ -9,6 +9,7 @@ from discordbot.src.database.models import *
 from dotenv import load_dotenv
 from .commands.basic_commands import setup_basic_commands
 from .commands.token_commands import setup_token_commands
+from .commands.dataset_commands import setup_dataset_commands
 import asyncio
 
 load_dotenv()
@@ -64,4 +65,5 @@ async def init():
     client = commands.Bot(command_prefix=get_prefix, intents=intents)
     await setup_basic_commands(client, Session)
     await setup_token_commands(client, Session)
+    await setup_dataset_commands(client, Session)
     return client, engine, Base

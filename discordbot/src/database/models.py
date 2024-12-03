@@ -8,7 +8,7 @@ class UserToken(Base):
     __tablename__ = 'userid_token'
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(String(64), unique=True, nullable=False)
-    token = Column(String(120), unique=True, nullable=False)
+    token = Column(String(200), unique=True, nullable=False)
     
     
 # Create a table to store discord server id and the server prefix
