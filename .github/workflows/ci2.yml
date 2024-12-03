@@ -44,13 +44,20 @@ jobs:
         run: |
           git push parent feat/CI-implementations:feat/CI-implementation
   
-      - name: Create Pull Request if conflicts exist
+      - name: Sets local branch if conflicts arises
+        if: failure()
+        run: |
+          git remote add parent https://github.com/salmorejo-hub/uvlhub.git
+          git fetch parent feat/CI-implementation:upstream-main
+          git reset --hard upstream-main
+
+      - name: Create Pull Request
         if: failure()
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          branch: CI/sync-with-parent
           title: "CI/ Resolve conflicts for integrations"
           body: "Can't automatically merge the changes into Salmorejo-hub, please resolve conflicts to continue"
           base: feat/CI-implementations
-          branch: CI/sync-with-parent
           delete-branch: true
