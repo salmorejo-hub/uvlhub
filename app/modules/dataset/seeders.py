@@ -19,6 +19,16 @@ class DataSetSeeder(BaseSeeder):
     priority = 2  # Lower priority
 
     def run(self):
+
+        fixed_dates = [
+            datetime(2021, 1, 15, 10, 0, tzinfo=timezone.utc),
+            datetime(2021, 6, 20, 14, 30, tzinfo=timezone.utc),
+            datetime(2022, 3, 10, 8, 15, tzinfo=timezone.utc),
+            datetime(2023, 8, 5, 18, 45, tzinfo=timezone.utc)
+        ]
+
+        fixed_sizes = [1024, 2048, 5120, 8192, 10240, 20480, 51200, 102400, 204800, 409600, 1024000, 2048000]
+
         # Retrieve users
         user1 = User.query.filter_by(email='user1@example.com').first()
         user2 = User.query.filter_by(email='user2@example.com').first()
@@ -26,7 +36,7 @@ class DataSetSeeder(BaseSeeder):
         if not user1 or not user2:
             raise Exception("Users not found. Please seed users first.")
 
-        # Create DSMetrics instances with different numbers of models and features
+        # Create DSMetrics instances
         ds_metrics_list = [
             DSMetrics(number_of_models=5, number_of_features=10),
             DSMetrics(number_of_models=50, number_of_features=20),
@@ -51,27 +61,27 @@ class DataSetSeeder(BaseSeeder):
         seeded_ds_meta_data = self.seed(ds_meta_data_list)
 
         # Create Author instances and associate with DSMetaData
-        authors = [
+        ds_authors = [
             Author(
-                name=f'Author {i + 1}',
-                affiliation=f'Affiliation {i + 1}',
+                name=f'DS Author {i+1}',
+                affiliation=f'Affiliation {i+1}',
                 orcid=f'0000-0000-0000-000{i}',
-                ds_meta_data_id=seeded_ds_meta_data[i % 4].id
+                ds_meta_data_id=seeded_ds_meta_data[i].id
             ) for i in range(4)
         ]
-        self.seed(authors)
+        self.seed(ds_authors)
 
-        # Create DataSet instances
+        # Create DataSet instances with fixed dates
         datasets = [
             DataSet(
                 user_id=user1.id if i % 2 == 0 else user2.id,
                 ds_meta_data_id=seeded_ds_meta_data[i].id,
-                created_at=datetime.now(timezone.utc)
+                created_at=fixed_dates[i]
             ) for i in range(4)
         ]
         seeded_datasets = self.seed(datasets)
 
-        # Assume there are 12 UVL files, create corresponding FMMetaData and FeatureModel
+        # Create FMMetaData instances
         fm_meta_data_list = [
             FMMetaData(
                 uvl_filename=f'file{i + 1}.uvl',
@@ -88,14 +98,15 @@ class DataSetSeeder(BaseSeeder):
         # Create Author instances and associate with FMMetaData
         fm_authors = [
             Author(
-                name=f'Author {i + 5}',
-                affiliation=f'Affiliation {i + 5}',
-                orcid=f'0000-0000-0000-000{i + 5}',
+                name=f'FM Author {i+1}',
+                affiliation=f'Affiliation {i+1}',
+                orcid=f'0000-0000-0000-100{i}',
                 fm_meta_data_id=seeded_fm_meta_data[i].id
             ) for i in range(12)
         ]
         self.seed(fm_authors)
 
+        # Create FeatureModel instances
         feature_models = [
             FeatureModel(
                 data_set_id=seeded_datasets[i // 3].id,
@@ -104,7 +115,7 @@ class DataSetSeeder(BaseSeeder):
         ]
         seeded_feature_models = self.seed(feature_models)
 
-        # Create files, associate them with FeatureModels and copy files
+        # Create files with fixed sizes and associate them with FeatureModels
         load_dotenv()
         working_dir = os.getenv('WORKING_DIR', '')
         src_folder = os.path.join(working_dir, 'app', 'modules', 'dataset', 'uvl_examples')
@@ -116,14 +127,18 @@ class DataSetSeeder(BaseSeeder):
 
             dest_folder = os.path.join(working_dir, 'uploads', f'user_{user_id}', f'dataset_{dataset.id}')
             os.makedirs(dest_folder, exist_ok=True)
-            shutil.copy(os.path.join(src_folder, file_name), dest_folder)
 
-            file_path = os.path.join(dest_folder, file_name)
+            # Create the file with a fixed size
+            fixed_size = fixed_sizes[i % len(fixed_sizes)]
+            with open(os.path.join(src_folder, file_name), 'wb') as f:
+                f.write(os.urandom(fixed_size))
+
+            shutil.copy(os.path.join(src_folder, file_name), dest_folder)
 
             uvl_file = Hubfile(
                 name=file_name,
-                checksum=f'checksum{i + 1}',
-                size=os.path.getsize(file_path),
+                checksum=f'checksum{i+1}',
+                size=fixed_size,
                 feature_model_id=feature_model.id
             )
             self.seed([uvl_file])
