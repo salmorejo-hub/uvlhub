@@ -23,8 +23,6 @@ from app.modules.zenodo.services import ZenodoService
 
 logger = logging.getLogger(__name__)
 
-ENVIRONMENT = os.getenv('FLASK_ENV', 'development')
-
 
 service = ZenodoService()
 dataset_service = DataSetService()
@@ -54,7 +52,7 @@ def create_dataset():
             logger.exception(f"Exception while create dataset data in local {exc}")
             return jsonify({"Exception while create dataset data in local: ": str(exc)}), 400
 
-        # send dataset as deposition to Zenodo
+        # send dataset as deposition to Zenodo or Fakenodo
         data = {}
         try:
 
@@ -75,7 +73,6 @@ def create_dataset():
             # update dataset with deposition id in Zenodo
             dataset_service.update_dsmetadata(dataset.ds_meta_data_id, deposition_id=deposition_id)
 
-            logger.info(f"Dataset feautre mode: {dataset.feature_models}")
             try:
                 # iterate for each feature model (one feature model = one request to Zenodo)
                 for feature_model in dataset.feature_models:
