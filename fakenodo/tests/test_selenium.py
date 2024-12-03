@@ -26,4 +26,3 @@ def test_upload_dataset_to_fakenodo():
         for file in dataset["files"]:
             assert file["size"] == 414, f"File in dataset {i} has incorrect size"
             assert file["checksum"] == "c80ca2ca9edec3c8b001e42922229d4c", f"File in dataset {i} has incorrect checksum"
-            
