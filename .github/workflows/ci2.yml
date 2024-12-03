@@ -22,13 +22,19 @@ jobs:
           git remote add parent https://github.com/salmorejo-hub/uvlhub.git
           git fetch parent
 
+      - name: Configure Git
+        run: |
+            git config pull.rebase false   
+            git config user.email "juanluis.ruano.muriedas@gmail.com"
+            git config user.name "JuanluRM"
+
       - name: Attempt to push changes
         id: push
         run: |
           set -e
-          git pull parent develop || echo "merge_failed=true" >> $GITHUB_ENV
+          git pull parent feat/CI-implementation || echo "merge_failed=true" >> $GITHUB_ENV
           git merge parent/feat/CI-implementation --no-edit || echo "merge_failed=true" >> $GITHUB_ENV
-          git push parent main:feat/CI-implementation 
+          git push parent feat/CI-implementations:feat/CI-implementation 
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
@@ -38,7 +44,7 @@ jobs:
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           base: feat/CI-implementation 
-          branch: main
+          branch: feat/CI-implementations
           title: "CI/ Sync Salmorejo-hub-2 to develop"
           body: |
             This pull request was created because a direct push from Salmorejo-hub-2/main to Salmorejo-hub/develop encountered conflicts.
