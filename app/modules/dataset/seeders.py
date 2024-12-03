@@ -63,8 +63,8 @@ class DataSetSeeder(BaseSeeder):
         # Create Author instances and associate with DSMetaData
         ds_authors = [
             Author(
-                name=f'DS Author {i+1}',
-                affiliation=f'Affiliation {i+1}',
+                name=f'DS Author {i + 1}',
+                affiliation=f'Affiliation {i + 1}',
                 orcid=f'0000-0000-0000-000{i}',
                 ds_meta_data_id=seeded_ds_meta_data[i].id
             ) for i in range(4)
@@ -98,8 +98,8 @@ class DataSetSeeder(BaseSeeder):
         # Create Author instances and associate with FMMetaData
         fm_authors = [
             Author(
-                name=f'FM Author {i+1}',
-                affiliation=f'Affiliation {i+1}',
+                name=f'FM Author {i + 1}',
+                affiliation=f'Affiliation {i + 1}',
                 orcid=f'0000-0000-0000-100{i}',
                 fm_meta_data_id=seeded_fm_meta_data[i].id
             ) for i in range(12)
@@ -137,7 +137,7 @@ class DataSetSeeder(BaseSeeder):
 
             uvl_file = Hubfile(
                 name=file_name,
-                checksum=f'checksum{i+1}',
+                checksum=f'checksum{i + 1}',
                 size=fixed_size,
                 feature_model_id=feature_model.id
             )
