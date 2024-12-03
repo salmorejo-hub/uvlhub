@@ -13,7 +13,7 @@ jobs:
       - name: Checkout fork repository
         uses: actions/checkout@v2
         with:
-          repository: salmorejo-hub-1/uvlhub
+          repository: salmorejo-hub-2/uvlhub
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           ref: main
 
@@ -26,6 +26,7 @@ jobs:
         id: push
         run: |
           set -e
+          git pull parent develop || echo "merge_failed=true" >> $GITHUB_ENV
           git merge parent/feat/CI-implementation --no-edit || echo "merge_failed=true" >> $GITHUB_ENV
           git push parent main:feat/CI-implementation 
         env:
