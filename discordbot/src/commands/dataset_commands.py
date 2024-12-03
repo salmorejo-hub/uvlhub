@@ -23,7 +23,7 @@ async def setup_dataset_commands(client, session):
             await ctx.send(embed=embed_dataset(data[0]), view=view)
         except requests.exceptions.HTTPError as http_err:
             if http_err.response.status_code == 401:  # Manejo específico para 401
-                await ctx.send("Acess token not valid.")
+                await ctx.send("Access token not valid.")
             else:
                 await ctx.send(f"An HTTP error occurred: {http_err.response.status_code} {http_err.response.reason}")
         except Exception as e:
