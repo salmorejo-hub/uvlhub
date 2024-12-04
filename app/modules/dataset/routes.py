@@ -275,7 +275,6 @@ def get_unsynchronized_dataset(dataset_id):
     return render_template("dataset/view_dataset.html", dataset=dataset)
 
 
-
 # ==================================================================================================
 # Routes with token_required decorator without HTML rendering for bot requests
 
@@ -285,4 +284,3 @@ def get_unsynchronized_dataset(dataset_id):
 def list_datasets():
     datasets = dataset_service.get_synchronized(current_user.id)
     return jsonify([dataset.to_dict() for dataset in datasets])
-    
