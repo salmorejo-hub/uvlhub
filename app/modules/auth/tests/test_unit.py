@@ -74,11 +74,40 @@ def test_remember_password_bad_email(test_client):
 def test_remember_password_succesful(test_client):
     response = test_client.post(
         "/remember-my-password",
-        data=dict(email="bademail@example.com"),
+        data=dict(email="test@example.com"),
         follow_redirects=True
     )
 
     assert response.request.path == url_for("auth.remember_my_password"), "Invalid email"
+    assert b"Mail succesfully sent" in response.data, response.data
+
+
+def test_reset_password_bad_token(test_client):
+    response = test_client.get("/reset-password/badtoken", follow_redirects=True)
+
+    assert response.status_code == 404, f"Expected 404, got {response.status_code}"
+    assert b"Page Not Found" in response.data, "404 error page not displayed"
+
+
+def test_reset_password_succesful(test_client):
+    authentication_service = AuthenticationService()
+
+    email = "test@example.com"
+    token = authentication_service.generate_reset_token(email)
+    response = test_client.get(f"/reset-password/{token}")
+
+    assert response.status_code == 200
+    assert b"Reset password" in response.data, response.data
+
+    new_password = "new_secure_password"
+    response = test_client.post(
+        f"/reset-password/{token}",
+        data=dict(password=new_password),
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert url_for("auth.login") in response.request.path, response.data
 
 
 def test_signup_user_no_name(test_client):
