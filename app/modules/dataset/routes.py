@@ -6,6 +6,7 @@ import tempfile
 import uuid
 from datetime import datetime, timezone
 from zipfile import ZipFile
+from app.modules.api.decorators import token_required
 
 from flask import (abort, jsonify, make_response, redirect, render_template,
                    request, send_from_directory, url_for)
@@ -22,8 +23,6 @@ from app.modules.dataset.services import (AuthorService, DataSetService,
 from app.modules.zenodo.services import ZenodoService
 
 logger = logging.getLogger(__name__)
-
-ENVIRONMENT = os.getenv('FLASK_ENV', 'development')
 
 
 service = ZenodoService()
@@ -54,7 +53,7 @@ def create_dataset():
             logger.exception(f"Exception while create dataset data in local {exc}")
             return jsonify({"Exception while create dataset data in local: ": str(exc)}), 400
 
-        # send dataset as deposition to Zenodo
+        # send dataset as deposition to Zenodo or Fakenodo
         data = {}
         try:
 
@@ -75,7 +74,6 @@ def create_dataset():
             # update dataset with deposition id in Zenodo
             dataset_service.update_dsmetadata(dataset.ds_meta_data_id, deposition_id=deposition_id)
 
-            logger.info(f"Dataset feautre mode: {dataset.feature_models}")
             try:
                 # iterate for each feature model (one feature model = one request to Zenodo)
                 for feature_model in dataset.feature_models:
@@ -310,6 +308,17 @@ def get_unsynchronized_dataset(dataset_id):
         abort(404)
 
     return render_template("dataset/view_dataset.html", dataset=dataset)
+
+
+# ==================================================================================================
+# Routes with token_required decorator without HTML rendering for bot requests
+
+
+@dataset_bp.route("/api/dataset", methods=["GET"])
+@token_required
+def list_datasets():
+    datasets = dataset_service.get_synchronized(current_user.id)
+    return jsonify([dataset.to_dict() for dataset in datasets])
 
 
 @dataset_bp.route('/file/view/<int:uvl_id>', methods=['GET'])
