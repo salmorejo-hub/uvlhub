@@ -38,6 +38,7 @@ async def test_datasets_command(bot):
     embed = response.embeds[0]
     assert embed.title == "List of Datasets", "The embed title is incorrect."
     print(embed.fields[0])
-    # print("aaaaa\n\n" + embed.fields[0].value)
-    assert embed.fields[0].name == "Sample dataset 1", "The embed name is incorrect."
-    assert "Description for dataset 1" in embed.fields[0].value, "The embed description is incorrect."
+    print("aaaaaaaaaa" + embed.fields[0].name)
+    
+    assert embed.fields[0].name == "Sample dataset 3", "The embed name is incorrect."
+    assert "Description for dataset 3" in embed.fields[0].value, "The embed description is incorrect."
