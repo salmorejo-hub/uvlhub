@@ -6,6 +6,7 @@ import tempfile
 import uuid
 from datetime import datetime, timezone
 from zipfile import ZipFile
+from app.modules.api.decorators import token_required
 
 from flask import (abort, jsonify, make_response, redirect, render_template,
                    request, send_from_directory, url_for)
@@ -272,3 +273,14 @@ def get_unsynchronized_dataset(dataset_id):
         abort(404)
 
     return render_template("dataset/view_dataset.html", dataset=dataset)
+
+
+# ==================================================================================================
+# Routes with token_required decorator without HTML rendering for bot requests
+
+
+@dataset_bp.route("/api/dataset", methods=["GET"])
+@token_required
+def list_datasets():
+    datasets = dataset_service.get_synchronized(current_user.id)
+    return jsonify([dataset.to_dict() for dataset in datasets])

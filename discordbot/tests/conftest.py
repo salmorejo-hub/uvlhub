@@ -16,11 +16,11 @@ def set_test_db_env():
 async def bot(request):
     client, engine, Base = await init()
     await client._async_setup_hook()
-    
+
     guild_names = ["guild1", "guild2"]
     channel_names = ["channel1", "channel2"]
     member_names = ["user1", "user2"]
-    
+
     dpytest.configure(
         client=client,
         guilds=guild_names,
@@ -29,6 +29,6 @@ async def bot(request):
     )
 
     yield client
-    
+
     await dpytest.empty_queue()
     Base.metadata.drop_all(bind=engine)

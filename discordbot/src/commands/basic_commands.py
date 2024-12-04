@@ -3,27 +3,26 @@ from src.database.models import ServerPrefix
 
 
 async def setup_basic_commands(client, session):
-    
+
     @client.event
     async def on_ready():
         print(f'Discord Bot {client.user} activated')
-        
-        
+
     @client.command(help="Say hello to check if the bot is working correctly")
     async def hello(ctx):
         await ctx.send("Hello!")
-        
+
     @client.command(help="Change bot prefix in the server")
     async def prefix(ctx, prefix=None):
         id = ctx.guild.id if ctx.guild else ctx.author.id
-        
+
         if prefix is None:
             await ctx.send("No prefix provided. Please type !prefix <new_prefix>")
             return
-        
+
         try:
             db = session()
-            
+
             # Check if the prefix already exists
             existing_server_prefix = db.query(ServerPrefix).filter(ServerPrefix.server_id == str(id)).first()
             if existing_server_prefix:
