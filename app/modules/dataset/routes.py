@@ -319,7 +319,8 @@ def get_unsynchronized_dataset(dataset_id):
 def list_datasets():
     datasets = dataset_service.get_synchronized(current_user.id)
     return jsonify([dataset.to_dict() for dataset in datasets])
-  
+
+
 @dataset_bp.route('/file/view/<int:uvl_id>', methods=['GET'])
 def view_uvl(uvl_id):
     file_record = dataset_service.get_file_by_id(uvl_id)
