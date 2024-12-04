@@ -8,11 +8,10 @@ async def setup_token_commands(client, session):
     async def token_config(ctx):
         user = ctx.message.author
         await user.send("To configurate your access token, please type !token <your_token>")
-        
-        
+
     @client.command(help="Set your access token. Type !token <your_token>")
     async def token(ctx, token=None):
-        
+
         if token is None:
             await ctx.send("No token provided. Please type !token <your_token>")
             return
@@ -20,7 +19,7 @@ async def setup_token_commands(client, session):
         # Check if the channel is a private message
         if isinstance(ctx.channel, discord.DMChannel):
             message = ""
-                    
+
             user = ctx.message.author
             db = session()
             try:
@@ -47,9 +46,9 @@ async def setup_token_commands(client, session):
                 session.remove()
         else:
             await ctx.send("For security reasons, please  change your token and configurate it in a private message.")
-            
-            
-    #This command needs to be removed. It is only for testing purposes       
+
+    # This command needs to be removed. It is only for testing purposes
+
     @client.command(help="Get your access token")
     async def GetToken(ctx):
         user = ctx.message.author

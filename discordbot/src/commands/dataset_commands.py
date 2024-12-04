@@ -4,8 +4,9 @@ from src.util.embeds import embed_dataset, PaginationView
 from src.util.api_request import request_api
 import requests
 
+
 async def setup_dataset_commands(client, session):
-    
+
     @client.command(help="List all datasets")
     async def datasets(ctx):
         url = "http://127.0.0.1:5000/api/dataset"
@@ -15,7 +16,7 @@ async def setup_dataset_commands(client, session):
         if token is None:
             await ctx.send("You have not registered your token. Use the command `token_config` to register your token.")
             return
-        
+
         try:
             data = request_api(url, token)
             view = PaginationView(data)

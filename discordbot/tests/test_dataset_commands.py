@@ -1,6 +1,7 @@
 import pytest
 import discord.ext.test as dpytest
 
+
 @pytest.mark.asyncio
 async def test_datasets_command(bot):
     channel = bot.guilds[0].text_channels[0]
@@ -32,7 +33,7 @@ async def test_datasets_command(bot):
     # Verify the embed response
     response = dpytest.get_message()  # Get the bot's response
     assert response.embeds, "The bot did not respond with an embed."
-    
+
     # Access the first embed
     embed = response.embeds[0]
     assert embed.title == "List of Datasets", "The embed title is incorrect."

@@ -14,12 +14,18 @@ import asyncio
 
 load_dotenv()
 
+
 def database_config():
     # Choose the database to use
     DATABASE = 'MARIADB_TEST_DATABASE' if os.getenv('USE_TEST_DB') == 'true' else 'MARIADB_DATABASE'
 
     # Configure database
-    DATABASE_URL = f"mysql+pymysql://{os.getenv('MARIADB_USER')}:{os.getenv('MARIADB_PASSWORD')}@{os.getenv('MARIADB_HOSTNAME')}:{os.getenv('MARIADB_PORT')}/{os.getenv(DATABASE)}"
+    DATABASE_URL = f"mysql+pymysql://{
+        os.getenv('MARIADB_USER')}:{
+        os.getenv('MARIADB_PASSWORD')}@{
+            os.getenv('MARIADB_HOSTNAME')}:{
+                os.getenv('MARIADB_PORT')}/{
+                    os.getenv(DATABASE)}"
 
     engine = create_engine(DATABASE_URL)
 
@@ -28,7 +34,7 @@ def database_config():
 
     # Create database tables
     Base.metadata.create_all(bind=engine)
-    
+
     return Session, engine, Base
 
 
@@ -50,18 +56,17 @@ def get_prefix_factory(Session):
         finally:
             Session.remove()
     return get_prefix
-    
-    
+
 
 async def init():
     intents = discord.Intents.default()
     intents.members = True
     intents.message_content = True
-    
+
     Session, engine, Base = database_config()
-    
+
     get_prefix = get_prefix_factory(Session)
-    
+
     client = commands.Bot(command_prefix=get_prefix, intents=intents)
     await setup_basic_commands(client, Session)
     await setup_token_commands(client, Session)
