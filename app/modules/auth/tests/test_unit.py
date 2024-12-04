@@ -1,8 +1,10 @@
+import secrets
+
 import pytest
 from flask import url_for
 
-from app.modules.auth.services import AuthenticationService
 from app.modules.auth.repositories import UserRepository
+from app.modules.auth.services import AuthenticationService
 from app.modules.profile.repositories import UserProfileRepository
 
 
@@ -99,7 +101,7 @@ def test_reset_password_succesful(test_client):
     assert response.status_code == 200
     assert b"Reset password" in response.data, response.data
 
-    new_password = "new_secure_password"
+    new_password = secrets.token_urlsafe(16)
     response = test_client.post(
         f"/reset-password/{token}",
         data=dict(password=new_password),
