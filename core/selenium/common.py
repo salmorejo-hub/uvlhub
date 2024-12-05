@@ -8,6 +8,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 def initialize_driver():
     # Initializes the browser options
     options = webdriver.ChromeOptions()
+    options.add_argument("--start-maximized")
 
     # Initialise the browser using WebDriver Manager
     service = Service(os.getenv("CHROMEDRIVER_BIN_PATH", ChromeDriverManager().install()))
