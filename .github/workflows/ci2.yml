@@ -34,7 +34,7 @@ jobs:
       - name: Attempt to merge main into develop
         run: |
           git checkout -b temp-develop upstream/develop
-          git merge --no-ff main 
+          git merge --no-ff main --allow-unrelated-histories 
 
       - name: Push changes if merge is successful
         if: success()
@@ -50,7 +50,6 @@ jobs:
             --base develop \
             --title "CI/ Sync Salmorejo-hub-2 main to Salmorejo-hub develop" \
             --body "This PR syncs changes from main in salmorejo-hub-2 to develop in salmorejo-hub after discovering conflicts in the push and the @salmorejo-hub/Salmorejo-hub-2 team needs to resolve."
-            --label integration
 
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
