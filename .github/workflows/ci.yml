@@ -19,12 +19,12 @@ jobs:
 
       - name: Set up git
         run: |
-          git config user.name "JuanluRM
+          git config user.name "JuanluRM"
           git config user.email "juanluis.ruano.muriedas@gmail.com"
 
       - name: Add the parent repository as a remote
         run: |
-          git remote add upstream https://github.com/Salmorejo-hub/uvlhub.git
+          git remote add upstream https://github.com/salmorejo-hub/uvlhub.git
           git fetch upstream
 
       - name: Attempt to merge main into develop
