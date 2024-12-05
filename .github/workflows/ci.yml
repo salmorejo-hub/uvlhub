@@ -30,7 +30,7 @@ jobs:
       - name: Attempt to merge main into develop
         run: |
           git checkout -b temp-develop upstream/feat/CI-implementation
-          git merge --no-ff main || echo "Merge conflict detected, skipping push"
+          git merge --no-ff feat/CI-implementations || echo "Merge conflict detected, skipping push"
 
       - name: Push changes if merge is successful
         if: success()
@@ -39,12 +39,12 @@ jobs:
 
       - name: Create a pull request if merge failed
         if: failure()
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           title: "Sync main to Salmorejo-hub"
           body: |
             This pull request was created automatically because a direct merge from `main` to `develop` was not possible due to conflicts.
-          branch: CI/sync-hub-2
           base: feat/CI-implementation
+          branch: CI/sync-hub-2
           delete-branch: true
