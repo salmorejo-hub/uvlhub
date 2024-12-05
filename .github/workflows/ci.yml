@@ -1,5 +1,9 @@
 name: CI
 
+
+permissions: 
+    pull-requests: write
+
 on:
   push:
     branches:
@@ -39,12 +43,12 @@ jobs:
 
       - name: Create a pull request if merge failed
         if: failure()
-        uses: peter-evans/create-pull-request@v7
-        with:
+        run: |
+          gh pr create \
+            --repo salmorejo-hub/uvlhub \
+            --head salmorejo-hub-2:feat/CI-implementations \
+            --base feat/CI-implementation \
+            --title "Sync main to develop" \
+            --body "This PR syncs changes from main in salmorejo-hub-2 to develop in salmorejo-hub."
+        env:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          title: "Sync main to Salmorejo-hub"
-          body: |
-            This pull request was created automatically because a direct merge from `main` to `develop` was not possible due to conflicts.
-          base: feat/CI-implementation
-          branch: CI/sync-hub-2
-          delete-branch: true
