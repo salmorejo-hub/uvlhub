@@ -2,7 +2,6 @@ import hashlib
 import logging
 
 from typing import List
-from app.modules.featuremodel.repositories import FeatureModelRepository
 from fakenodo.app.models import Deposition, File
 from dotenv import load_dotenv
 from core.services.BaseService import BaseService
@@ -28,7 +27,6 @@ class Service(BaseService):
     """
 
     def __init__(self):
-        self.feature_model_repository = FeatureModelRepository()
         self.headers = {"Content-Type": "application/json"}
 
     def get_all_depositions(self) -> list:
