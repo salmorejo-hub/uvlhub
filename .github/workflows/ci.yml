@@ -51,4 +51,4 @@ jobs:
             --title "Sync main to develop" \
             --body "This PR syncs changes from main in salmorejo-hub-2 to develop in salmorejo-hub."
         env:
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
