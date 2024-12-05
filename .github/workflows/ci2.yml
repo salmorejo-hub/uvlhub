@@ -1,4 +1,4 @@
-name: CI
+name: CI2
 
 
 permissions: 
@@ -8,7 +8,6 @@ on:
   push:
     branches:
       - main
-      - feat/CI-implementations
 
 jobs:
   sync:
@@ -17,9 +16,10 @@ jobs:
 
     steps:
       - name: Checkout the fork repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         with:
-          ref: feat/CI-implementations
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          ref: main
 
       - name: Set up git
         run: |
@@ -33,22 +33,24 @@ jobs:
 
       - name: Attempt to merge main into develop
         run: |
-          git checkout -b temp-develop upstream/feat/CI-implementation
-          git merge --no-ff feat/CI-implementations || echo "Merge conflict detected, skipping push"
+          git checkout -b temp-develop upstream/develop
+          git merge --no-ff main 
 
       - name: Push changes if merge is successful
         if: success()
         run: |
-          git push upstream temp-develop:feat/CI-implementation
+          git push upstream temp-develop:develop
 
       - name: Create a pull request if merge failed
         if: failure()
         run: |
           gh pr create \
             --repo salmorejo-hub/uvlhub \
-            --head salmorejo-hub-2:feat/CI-implementations \
-            --base feat/CI-implementation \
-            --title "Sync main to develop" \
-            --body "This PR syncs changes from main in salmorejo-hub-2 to develop in salmorejo-hub."
+            --head salmorejo-hub-2:main \
+            --base develop \
+            --title "CI/ Sync Salmorejo-hub-2 main to Salmorejo-hub develop" \
+            --body "This PR syncs changes from main in salmorejo-hub-2 to develop in salmorejo-hub after discovering conflicts in the push."
+            --label integration
+
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
