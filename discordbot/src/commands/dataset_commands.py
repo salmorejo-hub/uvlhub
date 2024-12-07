@@ -8,7 +8,7 @@ import requests
 async def setup_dataset_commands(client, session):
 
     @client.command(help="List all datasets")
-    async def datasets(ctx):
+    async def mine(ctx):
         url = "http://127.0.0.1:5000/api/dataset"
         user = ctx.message.author
 
