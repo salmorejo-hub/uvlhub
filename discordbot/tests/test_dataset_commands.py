@@ -4,12 +4,12 @@ import discord.ext.test as dpytest
 user_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX2VtYWlsIjoidXNlcjFAZXhhbXBsZS5jb20iLCJleHAiOjE3Mzg3NzkzODcsImlhdCI6MTczMzU5NTM4N30.JMbVIPOTI_SIDlx2vGp48w9bjiwCbYV4JSiwLer88-8"
 
 @pytest.mark.asyncio
-async def test_mine_command(bot):
+async def test_datasets_command(bot):
     channel = bot.guilds[0].text_channels[0]
     user = bot.guilds[0].members[0]
 
     # Check command when the user has not registered a token
-    await dpytest.message("!mine", channel=channel, member=user)
+    await dpytest.message("!datasets", channel=channel, member=user)
     assert dpytest.verify().message().contains().content(
         "You have not registered your token"
     ), "The bot did not respond with the expected message when no token used."
@@ -18,7 +18,7 @@ async def test_mine_command(bot):
     dm = await user.create_dm()
     await dpytest.message("!token false_token", dm)
     await dpytest.empty_queue()
-    await dpytest.message("!mine", channel=channel, member=user)
+    await dpytest.message("!datasets", channel=channel, member=user)
     assert dpytest.verify().message().content(
         "Access token not valid."
     ), "The bot did not respond with the expected message when an invalid token is used."
@@ -27,7 +27,7 @@ async def test_mine_command(bot):
     await dpytest.empty_queue()
     await dpytest.message(f"!token {user_token}", dm)
     await dpytest.empty_queue()
-    await dpytest.message("!mine", channel=channel, member=user)
+    await dpytest.message("!datasets", channel=channel, member=user)
 
     # Verify the embed response
     response = dpytest.get_message()  # Get the bot's response
