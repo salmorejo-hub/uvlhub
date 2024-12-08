@@ -18,8 +18,8 @@ def index():
         print(criteria)
         datasets = ExploreService().filter(**criteria)
         return jsonify([dataset.to_dict() for dataset in datasets])
-    
-    
+
+
 # ==============================================================================
 # Routes for the explore module to consume from discord bot
 
@@ -28,5 +28,3 @@ def index():
 def api_explore(query):
     datasets = ExploreService().filter(query=query)
     return jsonify([dataset.to_dict() for dataset in datasets])
-
-
