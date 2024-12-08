@@ -23,30 +23,28 @@ async def setup_dataset_commands(client, session):
             view.children[1].disabled = len(data) == 1
             await ctx.send(embed=embed_dataset(data[0]), view=view)
         except requests.exceptions.HTTPError as http_err:
-            if http_err.response.status_code == 401: 
+            if http_err.response.status_code == 401:
                 await ctx.send("Access token not valid.")
             else:
                 await ctx.send(f"An HTTP error occurred: {http_err.response.status_code} {http_err.response.reason}")
         except Exception as e:
             await ctx.send(f"An unexpected error occurred: {e}")
-            
-            
-            
+
     @client.command(help="Search datasets by query")
     async def search(ctx, query=None):
         url = f"http://127.0.0.1:5000/api/explore/{query}"
         user = ctx.message.author
-        
+
         token = get_token(user, session)
         if token is None:
             await ctx.send("You have not registered your token. Use the command `token_config` to register your token.")
             return
-        
+
         if query is None:
             await ctx.send("Please provide a query.")
             return
-        
-        try: 
+
+        try:
             data = request_api(url, token)
             if len(data) == 0:
                 await ctx.send("No datasets found.")
