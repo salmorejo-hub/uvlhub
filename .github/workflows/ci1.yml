@@ -1,6 +1,5 @@
 name: CI1
 
-
 permissions: 
     pull-requests: write
 
@@ -25,11 +24,13 @@ jobs:
         run: |
           git config user.name "antjimort"
           git config user.email "antjimort@alum.us.es"
-
+          
       - name: Add the parent repository as a remote
         run: |
           git remote add upstream https://github.com/salmorejo-hub/uvlhub.git
           git fetch upstream
+        env:
+          GH_TOKEN: ${{ secrets.PAT_BOT }}
 
       - name: Attempt to merge main into develop
         run: |
@@ -40,6 +41,8 @@ jobs:
         if: success()
         run: |
           git push upstream temp-develop:develop
+        env:
+          GH_TOKEN: ${{ secrets.PAT_BOT }}
 
       - name: Create a pull request if merge failed
         if: failure()
@@ -50,6 +53,5 @@ jobs:
             --base develop \
             --title "CI/ Sync Salmorejo-hub-1 main to Salmorejo-hub develop" \
             --body "This PR syncs changes from main in salmorejo-hub-1 to develop in salmorejo-hub after discovering conflicts in the push and the @salmorejo-hub/Salmorejo-hub-1 team needs to resolve."
-
         env:
           GH_TOKEN: ${{ secrets.PAT_BOT }}
