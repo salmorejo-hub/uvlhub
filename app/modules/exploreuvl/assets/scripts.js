@@ -2,6 +2,21 @@ document.addEventListener('DOMContentLoaded', () => {
     send_query();
 });
 
+function toggleSections() {
+    const section1 = document.getElementById('normal-search');
+    const section2 = document.getElementById('advanced-search');
+
+    if (section1.style.display === 'block') {
+        clearFilters();
+        section1.style.display = 'none';
+        section2.style.display = 'block';
+    } else {
+        clearFilters();
+        section1.style.display = 'block';
+        section2.style.display = 'none';
+    }
+}
+
 function send_query() {
 
     console.log("send query...")
@@ -19,6 +34,10 @@ function send_query() {
             const searchCriteria = {
                 csrf_token: csrfToken,
                 query: document.querySelector('#query').value,
+                title: document.querySelector('#query-title').value,
+                description: document.querySelector('#query-description').value,
+                authors: document.querySelector('#query-authors').value,
+                q_tags: document.querySelector('#query-tags').value,
                 publication_type: document.querySelector('#publication_type').value
             };
 
@@ -132,7 +151,7 @@ function send_query() {
 function set_tag_as_query(tagName) {
     const queryInput = document.getElementById('query');
     queryInput.value = tagName.trim();
-    queryInput.dispatchEvent(new Event('input', {bubbles: true}));
+    queryInput.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
 function set_publication_type_as_query(publicationType) {
@@ -144,7 +163,7 @@ function set_publication_type_as_query(publicationType) {
             break;
         }
     }
-    publicationTypeSelect.dispatchEvent(new Event('input', {bubbles: true}));
+    publicationTypeSelect.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
 document.getElementById('clear-filters').addEventListener('click', clearFilters);
@@ -153,7 +172,16 @@ function clearFilters() {
 
     // Reset the search query
     let queryInput = document.querySelector('#query');
+    let queryTitle = document.querySelector('#query-title');
+    let queryAuthors = document.querySelector('#query-authors');
+    let queryTags = document.querySelector('#query-tags');
+    let queryDescription = document.querySelector('#query-description');
+    queryTitle.value = "";
+    queryAuthors.value = "";
+    queryTags.value = "";
+    queryDescription.value = "";
     queryInput.value = "";
+
     // queryInput.dispatchEvent(new Event('input', {bubbles: true}));
 
     // Reset the publication type to its default value
@@ -169,33 +197,9 @@ function clearFilters() {
     // });
 
     // Perform a new search with the reset filters
-    queryInput.dispatchEvent(new Event('input', {bubbles: true}));
+    queryInput.dispatchEvent(new Event('input', { bubbles: true }));
 }
-//document.getElementById('download-files').addEventListener('click', download);
 
-function download() {
-    const csrfToken = document.getElementById('csrf_token').value;
-
-    const searchCriteria = {
-        csrf_token: csrfToken,
-        query: document.querySelector('#query').value,
-        publication_type: document.querySelector('#publication_type').value
-    };
-    fetch('/exploreuvl/download_all', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(searchCriteria)
-    })
-    .then(response => response.json())
-    .then(responseData => {
-        console.log("Response", responseData);
-    })
-    .catch(error => {
-        console.error("Error with the download:", error);
-    });
-}
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -209,11 +213,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const queryInput = document.getElementById('query');
         queryInput.value = queryParam
-        queryInput.dispatchEvent(new Event('input', {bubbles: true}));
+        queryInput.dispatchEvent(new Event('input', { bubbles: true }));
         console.log("throw event");
 
     } else {
         const queryInput = document.getElementById('query');
-        queryInput.dispatchEvent(new Event('input', {bubbles: true}));
+        queryInput.dispatchEvent(new Event('input', { bubbles: true }));
     }
+
 });
