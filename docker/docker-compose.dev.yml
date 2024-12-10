@@ -18,6 +18,20 @@ services:
     networks:
       - uvlhub_network
 
+  discordbot:
+    container_name: discord_bot_container
+    image: discordbot
+    env_file:
+      - ../.env 
+    build:
+      context: ../  # Indica el contexto de construcción (carpeta raíz)
+      dockerfile: docker/images/Dockerfile.discord  # Usa el Dockerfile de tu bot
+    depends_on:
+      - db  # Este contenedor depende de la base de datos 'db'
+    command: ["python", "discordbot/run.py"]  # Ejecuta el bot
+    networks:
+      - uvlhub_network  # Conecta a la red para que pueda comunicarse con "db"
+
   db:
     container_name: mariadb_container
     env_file:
