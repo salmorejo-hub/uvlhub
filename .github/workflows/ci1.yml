@@ -23,7 +23,7 @@ jobs:
 
       - name: Set up git
         run: |
-          git config user.name "Javier Santos
+          git config user.name "Javier Santos"
           git config user.email "javsanmar5@us.es"
 
       - name: Add the parent repository as a remote
