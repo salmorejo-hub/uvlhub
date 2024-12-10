@@ -18,7 +18,7 @@ jobs:
       - name: Checkout the fork repository
         uses: actions/checkout@v2
         with:
-          token: ${{ secrets.PAT_BOT }}
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           ref: main
 
       - name: Set up git
@@ -52,4 +52,4 @@ jobs:
             --body "This PR syncs changes from main in salmorejo-hub-1 to develop in salmorejo-hub after discovering conflicts in the push and the @salmorejo-hub/Salmorejo-hub-1 team needs to resolve."
 
         env:
-          GH_TOKEN: ${{ secrets.PAT_BOT }}
+          GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
