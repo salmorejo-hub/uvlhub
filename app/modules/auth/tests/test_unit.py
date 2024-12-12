@@ -190,3 +190,10 @@ def test_expired_token(test_client, mocker):
     assert response.status_code == 302  # Redirige al formulario de registro
     assert response.headers["Location"] == url_for("auth.token_expired")
 
+
+def test_invalid_token(test_client):
+    invalid_token = "invalid-token"
+
+    response = test_client.get(f'/confirm/{invalid_token}')
+    assert response.status_code == 302  # Redirige al formulario de registro
+    assert response.headers["Location"] == url_for("auth.invalid_token")

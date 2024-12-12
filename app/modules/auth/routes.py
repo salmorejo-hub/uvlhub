@@ -61,7 +61,7 @@ def confirm_email(token):
         return redirect(url_for('auth.token_expired'))
     except BadSignature:
         flash('The confirmation link is invalid.', 'danger')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('auth.invalid_token'))
     except Exception as e:
         logging.error(f"Error confirming email: {e}")
         flash('An error occurred while confirming your email.', 'danger')
@@ -91,6 +91,12 @@ def email_confirmed():
 @auth_bp.route('/token-expired')
 def token_expired():
     return render_template("auth/token_expired.html")
+
+
+@auth_bp.route('/invalid-token')
+def invalid_token():
+    return render_template("auth/invalid_token.html")
+
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
