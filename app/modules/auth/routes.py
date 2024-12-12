@@ -21,8 +21,10 @@ def show_signup_form():
 
     form = SignupForm()
     if form.validate_on_submit():
+        print('AAAAAAAAA')
         email = form.email.data
         password = form.password.data
+        confirm_password = form.confirm_password.data
         name = form.name.data
         surname = form.surname.data
         if not authentication_service.is_email_available(email):
@@ -30,9 +32,9 @@ def show_signup_form():
 
         # Generate a token for email verification
         serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
-        token = serializer.dumps({'email': email, 'password': password, 'name': name, 'surname': surname}, salt='email-confirmation-salt')
-        confirm_url = url_for('auth.confirm_email', token=token, _external=True)
-        html = render_template('auth/activate.html', confirm_url=confirm_url)
+        token = serializer.dumps({'email': email, 'password': password, 'confirm_password': confirm_password, 'name': name, 'surname': surname}, salt='email-confirmation-salt')
+        confirm_url = url_for('auth.confirm_email', token=token, _external=True) # url de confirmación
+        html = render_template('auth/activate.html', confirm_url=confirm_url) # html del correo de confirmación
         subject = "Please confirm your email"
         mail_service.send_email(subject, recipients=[email], html_body=html)
 
