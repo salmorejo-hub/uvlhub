@@ -72,7 +72,7 @@ jobs:
         MARIADB_TEST_DATABASE: uvlhubdb_test
         MARIADB_USER: uvlhub_user
         MARIADB_PASSWORD: uvlhub_password
-        API_URL=http://127.0.0.1:5000/api/
+        API_URL: http://127.0.0.1:5000/api/
       run: |
         pytest discordbot/ --ignore-glob='*selenium*'
 
