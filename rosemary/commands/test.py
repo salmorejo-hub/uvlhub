@@ -29,6 +29,25 @@ def test(module_name, keyword):
     except subprocess.CalledProcessError as e:
         click.echo(click.style(f"Error running tests: {e}", fg='red'))
 
+    if not module_name:
+        # Discord bot
+        click.echo("Running tests for the discord bot...")
+        rosemary_test_path = os.path.join(os.getenv('WORKING_DIR', ''), 'discordbot')
+        rosemary_test_cmd = ['pytest', '-v', '--ignore-glob=*selenium*', rosemary_test_path]
+        try:
+            subprocess.run(rosemary_test_cmd, check=True)
+        except subprocess.CalledProcessError as e:
+            click.echo(click.style(f"Error running tests: {e}. Remember to run the app for the bot tests", fg='red'))
+
+        # Rosemary
+        click.echo("Running tests for the rosemary CLI...")
+        rosemary_test_path = os.path.join(os.getenv('WORKING_DIR', ''), 'rosemary')
+        rosemary_test_cmd = ['pytest', '-v', '--ignore-glob=*selenium*', rosemary_test_path]
+        try:
+            subprocess.run(rosemary_test_cmd, check=True)
+        except subprocess.CalledProcessError as e:
+            click.echo(click.style(f"Error running rosemary tests: {e}.", fg='red'))
+
 
 if __name__ == '__main__':
     test()
