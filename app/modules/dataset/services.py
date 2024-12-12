@@ -4,6 +4,7 @@ import hashlib
 import shutil
 from typing import Optional
 import uuid
+from zipfile import ZipFile
 
 
 from flask import request
@@ -188,6 +189,31 @@ class DataSetService(BaseService):
         except Exception as exc:
             logger.error(f"Exception setting dataset to published: {exc}")
             self.repository.session.rollback()
+
+    def zip_datasets(path:str):
+        working_dir = os.getenv("WORKING_DIR", "")
+        uploads_dir = os.path.join(working_dir,"uploads")
+        
+        with ZipFile(path,"w") as zip:
+            subdirs = os.listdir(uploads_dir)
+            
+            for dir in subdirs:
+                user_dir = os.path.join(dir,user_dir)
+                
+                if os.path.isdir(user_dir):
+                    for dataset in os.listdir(user_dir):
+                        dataset_dir = os.path.join(user_dir,dataset)
+                        
+                        if os.path.isdir(dataset_dir):
+                            for subdir,_,files in os.walk():
+                                for file in files:
+                                    file_path = os.path.join(subdir,file)
+                                    zip.write(file_path)                                       
+                                        
+                            
+                        
+                
+
 
 
 class AuthorService(BaseService):
