@@ -18,13 +18,13 @@ jobs:
       - name: Checkout the fork repository
         uses: actions/checkout@v2
         with:
-          token: ${{ secrets.PAT_BOT }}
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           ref: main
 
       - name: Set up git
         run: |
-          git config user.name "salmorejobot"
-          git config user.email "salmorejobot@outlook.com"
+          git config user.name "Javier Santos"
+          git config user.email "javsanmar5@us.es"
 
       - name: Add the parent repository as a remote
         run: |
@@ -52,4 +52,4 @@ jobs:
             --body "This PR syncs changes from main in salmorejo-hub-1 to develop in salmorejo-hub after discovering conflicts in the push and the @salmorejo-hub/Salmorejo-hub-1 team needs to resolve."
 
         env:
-          GH_TOKEN: ${{ secrets.PAT_BOT }}
+          GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}

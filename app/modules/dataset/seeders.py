@@ -143,6 +143,7 @@ class DataSetSeeder(BaseSeeder):
                 name=file_name,
                 checksum=f'checksum{i + 1}',
                 size=fixed_size,
+
                 feature_model_id=feature_model.id
             )
             self.seed([uvl_file])
