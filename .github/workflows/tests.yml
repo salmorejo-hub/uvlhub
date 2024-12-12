@@ -49,3 +49,44 @@ jobs:
         SECRET_KEY_JWT: ${{ secrets.SECRET_KEY_JWT }}
       run: |
         pytest app/modules/ --ignore-glob='*selenium*'
+
+    - name: Start Flask app
+      env:
+        FLASK_ENV: testing
+        MARIADB_HOSTNAME: 127.0.0.1
+        MARIADB_PORT: 3306
+        MARIADB_TEST_DATABASE: uvlhubdb_test
+        MARIADB_USER: uvlhub_user
+        MARIADB_PASSWORD: uvlhub_password
+        SECRET_KEY_JWT: ${{ secrets.SECRET_KEY_JWT }}
+      run: |
+        flask run --host=0.0.0.0 --reload --debug &
+        echo $! > flask.pid
+      shell: bash
+
+    - name: Run Tests for discordbot
+      env:
+        FLASK_ENV: testing
+        MARIADB_HOSTNAME: 127.0.0.1
+        MARIADB_PORT: 3306
+        MARIADB_TEST_DATABASE: uvlhubdb_test
+        MARIADB_USER: uvlhub_user
+        MARIADB_PASSWORD: uvlhub_password
+      run: |
+        pytest discordbot/ --ignore-glob='*selenium*'
+
+    - name: Stop Flask app
+      run: |
+        kill $(cat flask.pid)
+      shell: bash
+    
+    - name: Run Tests for rosemary
+      env:
+        FLASK_ENV: testing
+        MARIADB_HOSTNAME: 127.0.0.1
+        MARIADB_PORT: 3306
+        MARIADB_TEST_DATABASE: uvlhubdb_test
+        MARIADB_USER: uvlhub_user
+        MARIADB_PASSWORD: uvlhub_password
+      run: |
+        pytest rosemary/ --ignore-glob='*selenium*'
