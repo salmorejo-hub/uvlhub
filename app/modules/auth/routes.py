@@ -58,14 +58,14 @@ def confirm_email(token):
         surname = data['surname']
     except SignatureExpired:
         flash('The confirmation link has expired.', 'danger')
-        return redirect(url_for('auth.show_signup_form'))
+        return redirect(url_for('auth.token_expired'))
     except BadSignature:
         flash('The confirmation link is invalid.', 'danger')
-        return redirect(url_for('auth.show_signup_form'))
+        return redirect(url_for('auth.login'))
     except Exception as e:
         logging.error(f"Error confirming email: {e}")
         flash('An error occurred while confirming your email.', 'danger')
-        return redirect(url_for('auth.show_signup_form'))
+        return redirect(url_for('auth.login'))
 
     if not authentication_service.is_email_available(email):
         flash('Email already confirmed. Please login.', 'success')
@@ -86,6 +86,11 @@ def confirm_email(token):
 @auth_bp.route('/email-confirmed')
 def email_confirmed():
     return render_template("auth/email_confirmed.html")
+
+
+@auth_bp.route('/token-expired')
+def token_expired():
+    return render_template("auth/token_expired.html")
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():

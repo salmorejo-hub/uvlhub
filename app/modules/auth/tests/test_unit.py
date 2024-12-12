@@ -1,4 +1,4 @@
-from itsdangerous import URLSafeTimedSerializer
+from itsdangerous import SignatureExpired, URLSafeTimedSerializer
 import pytest
 from flask import url_for, current_app
 from app.modules.auth.models import User
@@ -166,42 +166,6 @@ def test_service_create_with_profile_fail_no_password(clean_database):
     assert UserProfileRepository().count() == 0
 
 
-# @pytest.fixture
-# def mail_outbox():
-#     mail = Mail()
-#     with mail.record_messages() as outbox:
-#         yield outbox
-
-# def test_signup_and_send_confirmation_email(test_client, mail_outbox):
-#     data = {
-#         "name": "Test",
-#         "surname": "User",
-#         "email": "testuser@example.com",
-#         "password": "testpassword",
-#         "confirm_password": "testpassword"
-#     }
-
-#     response = test_client.post(
-#         '/signup',
-#         data=data,
-#         follow_redirects=True
-#     )
-
-    
-
-#     assert response.status_code == 200
-#     assert b"A confirmation email has been sent via email." in response.data
-
-#     # Verificar que se envió un correo electrónico
-#     assert len(mail_outbox) == 1
-#     assert mail_outbox[0].subject == "Please confirm your email"
-#     assert "testuser@example.com" in mail_outbox[0].recipients
-
-#     # # Extraer el token del correo electrónico
-#     # token = mail_outbox[0].body.split("token=")[1].split("\n")[0]
-
-#     # return token
-
 
 def test_email_confirmation(test_client, mocker):
     # Generar token
@@ -213,3 +177,16 @@ def test_email_confirmation(test_client, mocker):
     # Verifica que se redirige correctamente
     assert response.status_code == 302
     assert response.headers["Location"] == "/email-confirmed"  # O el endpoint al que debe redirigir
+
+
+def test_expired_token(test_client, mocker):
+    # Generar token con expiración simulada
+    serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+    token = serializer.dumps({'email': 'test7@example.com', 'password': 'password123', 'confirm_password': 'password123', 'name': 'Test', 'surname': 'User'}, salt='email-confirmation-salt')
+
+    mocker.patch("app.modules.auth.routes.URLSafeTimedSerializer.loads", side_effect=SignatureExpired("Token expired"))
+
+    response = test_client.get(f'/confirm/{token}')
+    assert response.status_code == 302  # Redirige al formulario de registro
+    assert response.headers["Location"] == url_for("auth.token_expired")
+
