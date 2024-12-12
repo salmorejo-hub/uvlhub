@@ -24,8 +24,6 @@ from app.modules.zenodo.services import ZenodoService
 
 logger = logging.getLogger(__name__)
 
-ENVIRONMENT = os.getenv('FLASK_ENV', 'development')
-
 
 service = ZenodoService()
 dataset_service = DataSetService()
@@ -55,7 +53,7 @@ def create_dataset():
             logger.exception(f"Exception while create dataset data in local {exc}")
             return jsonify({"Exception while create dataset data in local: ": str(exc)}), 400
 
-        # send dataset as deposition to Zenodo
+        # send dataset as deposition to Zenodo or Fakenodo
         data = {}
         try:
 
@@ -76,7 +74,6 @@ def create_dataset():
             # update dataset with deposition id in Zenodo
             dataset_service.update_dsmetadata(dataset.ds_meta_data_id, deposition_id=deposition_id)
 
-            logger.info(f"Dataset feautre mode: {dataset.feature_models}")
             try:
                 # iterate for each feature model (one feature model = one request to Zenodo)
                 for feature_model in dataset.feature_models:
@@ -106,6 +103,44 @@ def create_dataset():
 @dataset_bp.route("/dataset/list", methods=["GET", "POST"])
 @login_required
 def list_dataset():
+    return render_template(
+        "dataset/list_datasets.html",
+        datasets=dataset_service.get_synchronized(current_user.id),
+        local_datasets=dataset_service.get_unsynchronized(current_user.id),
+    )
+
+
+# Funcion para sincronizar los datasets
+@dataset_bp.route("/dataset/stage/<int:dataset_id>", methods=["GET"])
+@login_required
+def stage_dataset(dataset_id):
+    dataset_service.set_dataset_to_staged(dataset_id)
+    return render_template(
+        "dataset/list_datasets.html",
+        datasets=dataset_service.get_synchronized(current_user.id),
+        local_datasets=dataset_service.get_unsynchronized(current_user.id),
+    )
+
+# Funcion para desincronizar los datasets
+
+
+@dataset_bp.route("/dataset/unstage/<int:dataset_id>", methods=["GET"])
+@login_required
+def unstage_dataset(dataset_id):
+    dataset_service.set_dataset_to_unstaged(dataset_id)
+    return render_template(
+        "dataset/list_datasets.html",
+        datasets=dataset_service.get_synchronized(current_user.id),
+        local_datasets=dataset_service.get_unsynchronized(current_user.id),
+    )
+
+# Funcion para publicar los datasets sincronizados
+
+
+@dataset_bp.route("/dataset/publish", methods=["GET"])
+@login_required
+def publish_datasets():
+    dataset_service.publish_datasets(current_user_id=current_user.id)
     return render_template(
         "dataset/list_datasets.html",
         datasets=dataset_service.get_synchronized(current_user.id),
@@ -284,3 +319,33 @@ def get_unsynchronized_dataset(dataset_id):
 def list_datasets():
     datasets = dataset_service.get_synchronized(current_user.id)
     return jsonify([dataset.to_dict() for dataset in datasets])
+
+
+@dataset_bp.route('/file/view/<int:uvl_id>', methods=['GET'])
+def view_uvl(uvl_id):
+    file_record = dataset_service.get_file_by_id(uvl_id)
+
+    if not file_record:
+        abort(404, description="File not found")
+
+    new_file_path = os.path.join(
+        'uploads', f'user_{file_record.feature_model.data_set.user_id}',
+        f'dataset_{file_record.feature_model.data_set.id}', file_record.name
+    )
+    example_file_path = os.path.join('app/modules/dataset/uvl_examples', file_record.name)
+
+    # Verifica si el archivo existe en la ubicación new_file_path o en uvl_example
+    if os.path.exists(new_file_path):
+        file_path = new_file_path
+    elif os.path.exists(example_file_path):
+        file_path = example_file_path
+    else:
+        abort(404, description="File not found on disk")
+
+    try:
+        with open(file_path, 'r') as file:
+            content = file.read()
+    except FileNotFoundError:
+        abort(404, description="File not found on disk")
+
+    return jsonify({"content": content})
