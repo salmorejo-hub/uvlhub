@@ -64,6 +64,7 @@ jobs:
         API_URL: http://127.0.0.1:5000/api/
       run: |
         flask db upgrade
+        rosemary db:migrate
         rosemary db:seed
         flask run --host=0.0.0.0 --reload --debug &
         pytest discordbot/ --ignore-glob='*selenium*'
