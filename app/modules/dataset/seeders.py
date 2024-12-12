@@ -58,6 +58,10 @@ class DataSetSeeder(BaseSeeder):
                 ds_metrics_id=seeded_ds_metrics[i].id
             ) for i in range(4)
         ]
+
+        # Change the title of the last dataset to addapt it to explore command tests in discord bot
+        ds_meta_data_list[3].title = 'Test dataset for discord bot'
+        ds_meta_data_list[3].description = 'Test dataset for testing explore command in discord bot.'
         seeded_ds_meta_data = self.seed(ds_meta_data_list)
 
         # Create Author instances and associate with DSMetaData
