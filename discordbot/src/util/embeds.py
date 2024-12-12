@@ -41,7 +41,7 @@ def embed_dataset(dataset):
         f"**Type:** {dataset['publication_type']}\n"
         f"**Size:** {dataset['total_size_in_human_format']}\n"
         f"**[View Dataset]({dataset['url']})**\n"
-        f"**[Download]({dataset['download']})**\n\n)"
+        f"**[Download]({dataset['download']})**\n\n"
         f"**Number of files:** {dataset['files_count']}\n"
         f"{get_embed_files(dataset['files'])}\n"
 

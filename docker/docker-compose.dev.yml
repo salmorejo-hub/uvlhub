@@ -20,7 +20,20 @@ services:
     command: [ "sh", "-c", "sh /app/docker/entrypoints/development_entrypoint.sh" ]
     networks:
       - uvlhub_network
-
+    
+  discordbot:
+    container_name: discord_bot_container
+    image: discordbot_container
+    env_file:
+      - ../.env 
+    build:
+      context: ../  
+      dockerfile: docker/images/Dockerfile.discord
+    depends_on:
+      - db
+      - web
+    command: [ "sh", "/app/docker/entrypoints/discordbot_entrypoint.sh" ]
+  
   fakenodo:
     container_name: fakenodo
     image: fakenodo

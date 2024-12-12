@@ -3,13 +3,14 @@ from src.util.token import get_token
 from src.util.embeds import embed_dataset, PaginationView
 from src.util.api_request import request_api
 import requests
+import os
 
 
 async def setup_dataset_commands(client, session):
 
     @client.command(help="List all datasets")
     async def datasets(ctx):
-        url = "http://127.0.0.1:5000/api/dataset"
+        url = f"{os.getenv('API_URL')}dataset"
         user = ctx.message.author
 
         token = get_token(user, session)
@@ -32,7 +33,7 @@ async def setup_dataset_commands(client, session):
 
     @client.command(help="Search datasets by query")
     async def search(ctx, query=None):
-        url = f"http://127.0.0.1:5000/api/explore/{query}"
+        url = f"{os.getenv('API_URL')}explore/{query}"
         user = ctx.message.author
 
         token = get_token(user, session)
