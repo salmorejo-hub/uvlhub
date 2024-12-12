@@ -115,10 +115,10 @@ def test_signup_user_successful(test_client):
             surname="Example", 
             email="foo@example.com", 
             password="foo1234",
-            confirm_password="test1234"), 
+            confirm_password="foo1234"), 
         follow_redirects=True,
     )
-    # assert response.request.path == url_for("public.index"), "User was not redirected to the public index after successful signup"
+    assert response.request.path == url_for("auth.check_inbox"), "User was not redirected to the check-inbox page after sumbitting the form"
 
 
 def test_service_create_with_profie_success(clean_database):
