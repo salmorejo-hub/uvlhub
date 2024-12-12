@@ -10,10 +10,10 @@ class ExploreUVL(BaseRepository):
     def __init__(self):
         super().__init__(FeatureModel)
 
-    def filter(self, query="", q_title="", q_description="", q_authors="", q_tags="", publication_type="any", tags=[], **kwargs):
+    def filter(self, query="", q_title="", q_description="", q_authors="", q_tags="", q_bytes="", publication_type="any", tags=[], **kwargs):
         
         if query=="":
-            filters = {'title': q_title, 'description': q_description, 'authors': q_authors, 'tags': q_tags}     
+            filters = {'title': q_title, 'description': q_description, 'authors': q_authors, 'tags': q_tags} 
             q_filters = []
             author_filters = []
             for type in filters:
@@ -38,6 +38,7 @@ class ExploreUVL(BaseRepository):
                 .filter(and_(*q_filters))
                 .filter(FMMetaData.publication_doi.isnot(None))
             )
+            
         else:
             normalized_query = unidecode.unidecode(query).lower()
             cleaned_query = re.sub(r'[,.":\'()\[\]^;!¡¿?]', "", normalized_query)
@@ -72,5 +73,8 @@ class ExploreUVL(BaseRepository):
 
         if tags:
             uvls = uvls.filter(FMMetaData.tags.ilike(any_(f"%{tag}%" for tag in tags)))
-
+  
+        if q_bytes is not None:
+            return list(filter(lambda uvl: uvl.get_total_files_size() <= q_bytes, uvls.all()))
+                
         return uvls.all()

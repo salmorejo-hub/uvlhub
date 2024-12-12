@@ -25,11 +25,31 @@ function send_query() {
     document.getElementById("results_not_found").style.display = "none";
     console.log("hide not found icon");
 
-    const filters = document.querySelectorAll('#filters input, #filters select, #filters [type="radio"]');
+    const filters = document.querySelectorAll('#filters input, #filters select, #filters [type="radio"], #filters number');
 
     filters.forEach(filter => {
         filter.addEventListener('input', () => {
             const csrfToken = document.getElementById('csrf_token').value;
+
+            const maxSizeInput = document.querySelector('#query-max-size').value;
+            const sizeUnit = document.getElementById('size-unit').value;
+            const sizeValue = parseFloat(maxSizeInput);
+            let sizeInBytes;
+
+            switch (sizeUnit) {
+                case 'kb':
+                    sizeInBytes = sizeValue * 1024;
+                    break;
+                case 'mb':
+                    sizeInBytes = sizeValue * 1024 * 1024;
+                    break;
+                case 'gb':
+                    sizeInBytes = sizeValue * 1024 * 1024 * 1024;
+                    break;
+                default:
+                    sizeInBytes = sizeValue;
+            }
+
 
             const searchCriteria = {
                 csrf_token: csrfToken,
@@ -38,6 +58,7 @@ function send_query() {
                 description: document.querySelector('#query-description').value,
                 authors: document.querySelector('#query-authors').value,
                 q_tags: document.querySelector('#query-tags').value,
+                bytes: sizeInBytes,
                 publication_type: document.querySelector('#publication_type').value
             };
 
@@ -128,8 +149,8 @@ function send_query() {
 
                                         </div>
                                         <div class="col-md-8 col-12">
-                                            <a class="btn btn-outline-primary btn-sm" href="/file/download/${dataset.id}">
-                                                Download
+                                            <a class="btn btn-outline-primary btn-sm" href="${dataset.files[0].url}">
+                                                Download ${dataset.files.length} files (${get_total_size(dataset.files)} bytes)
                                             </a>
                                             
                                         </div>
@@ -146,6 +167,11 @@ function send_query() {
                 });
         });
     });
+}
+
+function get_total_size(files) {
+    return files.reduce((acc, file) => acc + file.size_in_bytes, 0);
+
 }
 
 function set_tag_as_query(tagName) {
@@ -176,11 +202,13 @@ function clearFilters() {
     let queryAuthors = document.querySelector('#query-authors');
     let queryTags = document.querySelector('#query-tags');
     let queryDescription = document.querySelector('#query-description');
+    let queryBytes = document.querySelector('#query-max-size');
     queryTitle.value = "";
     queryAuthors.value = "";
     queryTags.value = "";
     queryDescription.value = "";
     queryInput.value = "";
+    queryBytes.value = "";
 
     // queryInput.dispatchEvent(new Event('input', {bubbles: true}));
 

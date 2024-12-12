@@ -16,6 +16,9 @@ class FeatureModel(db.Model):
 
     def get_cleaned_publication_type(self):
         return self.fm_meta_data.publication_type.name.replace('_', ' ').title()
+    
+    def get_total_files_size(self):
+        return sum(f.size for f in self.files)
 
     def to_dict(self):
         return {
@@ -24,7 +27,8 @@ class FeatureModel(db.Model):
             'description': self.fm_meta_data.description,
             'authors': [author.to_dict() for author in self.fm_meta_data.authors],
             'tags': self.fm_meta_data.tags.split(",") if self.fm_meta_data.tags else [],
-            'id': self.id
+            'id': self.id,
+            'files': [file.to_dict() for file in self.files],
         }
 
 

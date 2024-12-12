@@ -20,25 +20,3 @@ def indexUvl():
         criteria = request.get_json()
         uvls = ExploreServiceUvl().filter(**criteria)
         return jsonify([uvl.to_dict() for uvl in uvls])
-
-
-@exploreuvl_bp.route('/exploreuvl/download_all', methods=['POST'])
-def download_uvls():
-
-    criteria = request.get_json()
-    uvls = ExploreServiceUvl().filter(**criteria)
-
-    zip_buffer = io.BytesIO()
-    with ZipFile(zip_buffer, 'w') as zip_file:
-        for file in uvls:
-            file_path = '/file/download/' + str(file.id)
-            if file_path and os.path.exists(file_path):
-                zip_file.write(file_path, os.path.basename(file_path))
-
-    zip_buffer.seek(0)
-
-    return send_file(
-        file_path,
-        "FeaturedModlesSearch.zip",
-        as_attachment=True,
-        mimetype="zip")
