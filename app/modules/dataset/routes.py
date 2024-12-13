@@ -357,7 +357,7 @@ def download_all_datasets():
         zip_filename = 'all_datasets.zip'
         tmp = tempfile.mkdtemp()
         zip_path = os.path.join(tmp, zip_filename)
-        
+
         dataset_service.zip_datasets(zip_path)
 
         return send_file(zip_path, as_attachment=True, download_name=zip_filename)
