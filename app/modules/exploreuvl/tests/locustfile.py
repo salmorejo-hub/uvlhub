@@ -2,35 +2,31 @@ from locust import TaskSet, HttpUser, task
 from core.environment.host import get_host_for_locust_testing
 
 
-class ExploreUvlUser(TaskSet):
+class ExploreUvlBehaviour(TaskSet):
     def on_start(self):
-        self.index()
+        self.load()
 
     @task
-    def submit_search_form(self):
+    def load(self):
         
-        response = self.client.get("/polls/2/vote")
-        csrftoken = response.cookies['csrftoken']
-
-        json_data = {
-            'csrf_token': csrftoken,
-            'query': '',
-            'title': '',
-            'description': '',
-            'authors': '',
-            'q_tags': '',
-            'bytes': '',
-            'publication_type': 'any'
-        }
-
-        response = self.client.post('/exploreuvl', json=json_data)
-
+        response = self.client.get("/exploreuvl")
         if response.status_code != 200:
             print(f"Request failed with status code: {response.status_code}")
 
+class SearchBehaviour(TaskSet):
+    def on_start(self):
+        self.search()
+
+    @task
+    def search(self):
+        
+        response = self.client.get("/exploreuvl?query=author")
+        if response.status_code != 200:
+            print(f"Request failed with status code: {response.status_code}")
+    
 
 class ExploreUvlUser(HttpUser):
-    tasks = [ExploreUvlUser]
+    tasks = [ExploreUvlBehaviour, SearchBehaviour]
     min_wait = 5000
     max_wait = 9000
     host = get_host_for_locust_testing()
