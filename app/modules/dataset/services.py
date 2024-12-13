@@ -208,7 +208,8 @@ class DataSetService(BaseService):
                             for subdir, _, files in os.walk(dataset_dir):
                                 for file in files:
                                     file_path = os.path.join(subdir, file)
-                                    zip.write(file_path)
+                                    rel_path = os.path.relpath(file_path, user_dir)
+                                    zip.write(file_path, arcname=rel_path)
 
 
 class AuthorService(BaseService):
