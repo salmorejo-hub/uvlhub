@@ -8,6 +8,9 @@ services:
       - "5000"
     depends_on:
       - db
+      - fakenodo
+    environment:
+      - FAKENODO_URL=http://fakenodo:5001
     build:
       context: ../
       dockerfile: docker/images/Dockerfile.dev
@@ -15,6 +18,35 @@ services:
       - ../:/app
       - /var/run/docker.sock:/var/run/docker.sock
     command: [ "sh", "-c", "sh /app/docker/entrypoints/development_entrypoint.sh" ]
+    networks:
+      - uvlhub_network
+    
+  discordbot:
+    container_name: discord_bot_container
+    image: discordbot_container
+    env_file:
+      - ../.env 
+    build:
+      context: ../  
+      dockerfile: docker/images/Dockerfile.discord
+    depends_on:
+      - db
+      - web
+    command: [ "sh", "/app/docker/entrypoints/discordbot_entrypoint.sh" ]
+  
+  fakenodo:
+    container_name: fakenodo
+    image: fakenodo
+    expose:
+      - "5001"
+    build:
+      context: ../
+      dockerfile: docker/images/Dockerfile.fakenodo
+    volumes:
+      - ../:/fakenodo
+    ports:
+      - "5001:5001"
+    command: [ "python", "fakenodo/run.py" ]
     networks:
       - uvlhub_network
 
