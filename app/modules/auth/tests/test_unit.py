@@ -197,3 +197,11 @@ def test_invalid_token(test_client):
     response = test_client.get(f'/confirm/{invalid_token}')
     assert response.status_code == 302  # Redirige al formulario de registro
     assert response.headers["Location"] == url_for("auth.invalid_token")
+
+def test_resend_confirmation_email(test_client, mocker):
+    mock_send_email = mocker.patch("app.mail_service.send_email")
+
+    response = test_client.post('/auth/resend-confirmation/', data={'email': 'test@example.com'})
+    assert response.status_code == 200
+    mock_send_email.assert_called_once()
+    assert b'A new confirmation email has been sent.' in response.data

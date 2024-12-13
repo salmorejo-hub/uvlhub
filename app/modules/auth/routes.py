@@ -1,4 +1,4 @@
-from flask import abort, current_app, redirect, render_template, request, url_for, flash
+from flask import abort, current_app, redirect, render_template, request, url_for, flash, session
 from flask_login import current_user, login_user, logout_user
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 import logging
@@ -21,7 +21,6 @@ def show_signup_form():
 
     form = SignupForm()
     if form.validate_on_submit():
-        print('AAAAAAAAA')
         email = form.email.data
         password = form.password.data
         confirm_password = form.confirm_password.data
@@ -30,22 +29,38 @@ def show_signup_form():
         if not authentication_service.is_email_available(email):
             return render_template("auth/signup_form.html", form=form, error=f'Email {email} in use')
 
-        # Generate a token for email verification
-        serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
-        token = serializer.dumps({'email': email, 'password': password, 'confirm_password': confirm_password, 'name': name, 'surname': surname}, salt='email-confirmation-salt')
-        confirm_url = url_for('auth.confirm_email', token=token, _external=True) # url de confirmación
-        html = render_template('auth/activate.html', confirm_url=confirm_url) # html del correo de confirmación
-        subject = "Please confirm your email"
-        mail_service.send_email(subject, recipients=[email], html_body=html)
+        session['pack'] = {
+            'email': email,
+            'password': password,
+            'confirm_password': confirm_password,
+            'name': name,
+            'surname': surname,
+        }
 
         flash('A confirmation email has been sent via email.', 'success')
         return redirect(url_for('auth.check_inbox'))
 
     return render_template("auth/signup_form.html", form=form)
 
-@auth_bp.route('/check-inbox')
+
+@auth_bp.route('/check-inbox/', methods=["GET", "POST"])
 def check_inbox():
+    email = session['pack']['email']
+    password = session['pack']['password']
+    confirm_password = session['pack']['confirm_password']
+    name = session['pack']['name']
+    surname = session['pack']['surname']
+    
+    serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+    token = serializer.dumps({'email': email, 'password': password, 'confirm_password': confirm_password, 'name': name, 'surname': surname}, salt='email-confirmation-salt')
+    confirm_url = url_for('auth.confirm_email', token=token, _external=True)
+    html = render_template('auth/activate.html', confirm_url=confirm_url)
+    subject = "Please confirm your email"
+
+    mail_service.send_email(subject, recipients=[email], html_body=html)
+    flash('A confirmation email has been sent via email.', 'success')
     return render_template("auth/check_inbox.html")
+
 
 @auth_bp.route('/confirm/<token>')
 def confirm_email(token):
@@ -82,6 +97,7 @@ def confirm_email(token):
         return redirect(url_for('auth.show_signup_form'))
 
     return redirect(url_for('auth.email_confirmed'))
+
 
 @auth_bp.route('/email-confirmed')
 def email_confirmed():
