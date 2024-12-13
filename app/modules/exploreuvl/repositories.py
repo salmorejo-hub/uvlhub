@@ -74,7 +74,7 @@ class ExploreUVL(BaseRepository):
         if tags:
             uvls = uvls.filter(FMMetaData.tags.ilike(any_(f"%{tag}%" for tag in tags)))
   
-        if q_bytes is not None:
+        if isinstance(q_bytes, int):
             return list(filter(lambda uvl: uvl.get_total_files_size() <= q_bytes, uvls.all()))
                 
         return uvls.all()

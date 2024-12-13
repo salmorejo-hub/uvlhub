@@ -175,9 +175,16 @@ function get_total_size(files) {
 }
 
 function set_tag_as_query(tagName) {
-    const queryInput = document.getElementById('query');
-    queryInput.value = tagName.trim();
-    queryInput.dispatchEvent(new Event('input', { bubbles: true }));
+    const section1 = document.getElementById('normal-search');
+    if (section1.style.display === 'block') {
+        const queryInput = document.getElementById('query');
+        queryInput.value = tagName.trim();
+        queryInput.dispatchEvent(new Event('input', { bubbles: true }));
+    } else {
+        const queryInput = document.getElementById('query-tags');
+        queryInput.value = tagName.trim();
+        queryInput.dispatchEvent(new Event('input', { bubbles: true }));
+    }
 }
 
 function set_publication_type_as_query(publicationType) {
