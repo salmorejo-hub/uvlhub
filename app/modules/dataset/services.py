@@ -190,7 +190,7 @@ class DataSetService(BaseService):
             logger.error(f"Exception setting dataset to published: {exc}")
             self.repository.session.rollback()
 
-    def zip_datasets(path: str):
+    def zip_datasets(self, path: str):
         working_dir = os.getenv("WORKING_DIR", "")
         uploads_dir = os.path.join(working_dir, "uploads")
 
