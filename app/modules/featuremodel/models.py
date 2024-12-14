@@ -2,6 +2,7 @@ from app import db
 from sqlalchemy import Enum as SQLAlchemyEnum
 
 from app.modules.dataset.models import Author, PublicationType
+from datetime import date
 
 
 class FeatureModel(db.Model):
@@ -16,9 +17,13 @@ class FeatureModel(db.Model):
 
     def get_cleaned_publication_type(self):
         return self.fm_meta_data.publication_type.name.replace('_', ' ').title()
-
+    
     def get_total_files_size(self):
         return sum(f.size for f in self.files)
+    
+    def get_publication_date(self):
+        from app.modules.dataset.repositories import DataSetRepository
+        return DataSetRepository().get_by_id(self.data_set_id).created_at
 
     def to_dict(self):
         return {
@@ -29,6 +34,8 @@ class FeatureModel(db.Model):
             'tags': self.fm_meta_data.tags.split(",") if self.fm_meta_data.tags else [],
             'id': self.id,
             'files': [file.to_dict() for file in self.files],
+            'publication_date': self.get_publication_date(),
+
         }
 
 
