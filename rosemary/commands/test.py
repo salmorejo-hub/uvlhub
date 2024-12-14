@@ -33,6 +33,7 @@ def test(module_name, keyword):
     if not module_name:
         _test_discord_bot()
         _test_rosemary()
+        _test_fakenodo()
 
 
 def _test_discord_bot():
@@ -68,6 +69,16 @@ def _test_rosemary():
     rosemary_test_cmd = ['pytest', '-v', '--ignore-glob=*selenium*', rosemary_test_path]
     try:
         subprocess.run(rosemary_test_cmd, check=True)
+    except subprocess.CalledProcessError as e:
+        click.echo(click.style(f"Error running rosemary tests: {e}.", fg='red'))
+
+
+def _test_fakenodo():
+    click.echo("Running tests for fakenodo...")
+    fakenodo_test_path = os.path.join(os.getenv('WORKING_DIR', ''), 'fakenodo')
+    fakenodo_test_cmd = ['pytest', '-v', '--ignore-glob=*selenium*', fakenodo_test_path]
+    try:
+        subprocess.run(fakenodo_test_cmd, check=True)
     except subprocess.CalledProcessError as e:
         click.echo(click.style(f"Error running rosemary tests: {e}.", fg='red'))
 
