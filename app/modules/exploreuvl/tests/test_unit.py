@@ -60,7 +60,7 @@ def test_filter(exploreuvl_service):
 
 def test_access_filter(test_client):
 
-    response = test_client.get(f'/exploreuvl?query=')
+    response = test_client.get('/exploreuvl?query=')
     assert response.status_code == 200, "The page could not be accessed."
 
     response = test_client.post('/exploreuvl', json={

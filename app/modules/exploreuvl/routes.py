@@ -1,8 +1,4 @@
-import io
-from zipfile import ZipFile
-from flask import render_template, request, jsonify, send_file
-import os
-
+from flask import render_template, request, jsonify
 
 from app.modules.exploreuvl import exploreuvl_bp
 from app.modules.exploreuvl.forms import ExploreFormUvl
