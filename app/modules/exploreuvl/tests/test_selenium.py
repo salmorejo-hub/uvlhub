@@ -13,10 +13,10 @@ def test_exploreuvl():
     driver.set_window_size(1850, 1053)
     try:
         WebDriverWait(driver, 10).until(
-          EC.element_to_be_clickable((By.XPATH, "//span[contains(.,'Explore UVLs')]"))
+            EC.element_to_be_clickable((By.XPATH, "//span[contains(.,'Explore UVLs')]"))
         ).click()
         WebDriverWait(driver, 10).until(
-          EC.element_to_be_clickable((By.CSS_SELECTOR, ".col-12:nth-child(1) .row .badge:nth-child(1)"))
+            EC.element_to_be_clickable((By.CSS_SELECTOR, ".col-12:nth-child(1) .row .badge:nth-child(1)"))
         ).click()
         dropdown = driver.find_element(By.ID, "publication_type")
         dropdown.find_element(By.XPATH, "//option[. = 'Software Documentation']").click()

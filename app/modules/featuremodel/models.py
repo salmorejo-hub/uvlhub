@@ -16,7 +16,7 @@ class FeatureModel(db.Model):
 
     def get_cleaned_publication_type(self):
         return self.fm_meta_data.publication_type.name.replace('_', ' ').title()
-    
+
     def get_total_files_size(self):
         return sum(f.size for f in self.files)
 

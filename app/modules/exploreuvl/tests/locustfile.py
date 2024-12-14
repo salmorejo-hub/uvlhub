@@ -8,10 +8,11 @@ class ExploreUvlBehaviour(TaskSet):
 
     @task
     def load(self):
-        
+
         response = self.client.get("/exploreuvl")
         if response.status_code != 200:
             print(f"Request failed with status code: {response.status_code}")
+
 
 class SearchBehaviour(TaskSet):
     def on_start(self):
@@ -19,11 +20,11 @@ class SearchBehaviour(TaskSet):
 
     @task
     def search(self):
-        
+
         response = self.client.get("/exploreuvl?query=author")
         if response.status_code != 200:
             print(f"Request failed with status code: {response.status_code}")
-    
+
 
 class ExploreUvlUser(HttpUser):
     tasks = [ExploreUvlBehaviour, SearchBehaviour]
