@@ -23,7 +23,7 @@ jobs:
 
       - name: Set up git
         run: |
-          git config user.name "Javier Santos"
+          git config user.name "salmorejo-hub-1"
           git config user.email "javsanmar5@us.es"
 
       - name: Add the parent repository as a remote
@@ -34,7 +34,7 @@ jobs:
       - name: Attempt to merge main into develop
         run: |
           git checkout -b temp-develop upstream/develop
-          git merge --no-ff main --allow-unrelated-histories 
+          git merge --no-ff main --allow-unrelated-histories --message "[Auto-merge to sync changes from salmorejo-hub-1/main into salmorejo-hub/develop]"
 
       - name: Push changes if merge is successful
         if: success()
