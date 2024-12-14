@@ -10,9 +10,11 @@ from app.modules.auth.forms import (LoginForm, RememberMyPasswordForm,
 from app.modules.auth.models import User
 from app.modules.auth.services import AuthenticationService
 from app.modules.profile.services import UserProfileService
+from app.modules.mail.services import MailService
 
 authentication_service = AuthenticationService()
 user_profile_service = UserProfileService()
+mail_service = MailService()
 
 @auth_bp.route("/signup/", methods=["GET", "POST"])
 def show_signup_form():
@@ -39,27 +41,56 @@ def show_signup_form():
 
         flash('A confirmation email has been sent via email.', 'success')
         return redirect(url_for('auth.check_inbox'))
+    else:
+        print(f"DEBUG: Errores del formulario: {form.errors}")
+        return render_template("auth/signup_form.html", form=form)
 
-    return render_template("auth/signup_form.html", form=form)
+    # return render_template("auth/signup_form.html", form=form)
 
 
-@auth_bp.route('/check-inbox/', methods=["GET", "POST"])
+@auth_bp.route('/check-inbox/', methods=["GET"])
 def check_inbox():
-    email = session['pack']['email']
-    password = session['pack']['password']
-    confirm_password = session['pack']['confirm_password']
-    name = session['pack']['name']
-    surname = session['pack']['surname']
-    
-    serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
-    token = serializer.dumps({'email': email, 'password': password, 'confirm_password': confirm_password, 'name': name, 'surname': surname}, salt='email-confirmation-salt')
-    confirm_url = url_for('auth.confirm_email', token=token, _external=True)
-    html = render_template('auth/activate.html', confirm_url=confirm_url)
-    subject = "Please confirm your email"
+    if 'pack' not in session:
+        flash('Session expired or invalid access.', 'danger')
+        return redirect(url_for('auth.show_signup_form'))
 
-    mail_service.send_email(subject, recipients=[email], html_body=html)
-    flash('A confirmation email has been sent via email.', 'success')
+    # Inicializar el contador de intentos si no existe
+    if 'confirmation_email_attempts' not in session:
+        session['confirmation_email_attempts'] = 0
+
+    # Enviar correo si los intentos son menores a 2
+    if session['confirmation_email_attempts'] < 2:
+        email = session['pack']['email']
+        password = session['pack']['password']
+        confirm_password = session['pack']['confirm_password']
+        name = session['pack']['name']
+        surname = session['pack']['surname']
+
+        # Generar y enviar correo de confirmación
+        serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+        token = serializer.dumps(
+            {'email': email, 'password': password, 'confirm_password': confirm_password, 'name': name, 'surname': surname},
+            salt='email-confirmation-salt'
+        )
+        confirm_url = url_for('auth.confirm_email', token=token, _external=True)
+        html = render_template('auth/activate.html', confirm_url=confirm_url)
+        subject = "Please confirm your email"
+
+        mail_service.send_email(subject, recipients=[email], html_body=html)
+
+        # Incrementar el contador de intentos
+        session['confirmation_email_attempts'] += 1
+
+        if session['confirmation_email_attempts'] == 2:
+            flash('This is your last confirmation email. Please check your inbox.', 'info')
+        else:
+            flash('A confirmation email has been sent to your email address.', 'success')
+
+    else:
+        flash('You have reached the maximum number of confirmation emails allowed.', 'danger')
+
     return render_template("auth/check_inbox.html")
+
 
 
 @auth_bp.route('/confirm/<token>')

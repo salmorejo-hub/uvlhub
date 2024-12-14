@@ -1,11 +1,12 @@
 from itsdangerous import SignatureExpired, URLSafeTimedSerializer
 import pytest
+from unittest.mock import patch
 from flask import url_for, current_app
 import secrets
 from app.modules.auth.repositories import UserRepository
 from app.modules.auth.services import AuthenticationService
 from app.modules.profile.repositories import UserProfileRepository
-
+from app import mail_service
 
 @pytest.fixture(scope="module")
 def test_client(test_client):
@@ -226,10 +227,41 @@ def test_invalid_token(test_client):
     assert response.status_code == 302  # Redirige al formulario de registro
     assert response.headers["Location"] == url_for("auth.invalid_token")
 
-def test_resend_confirmation_email(test_client, mocker):
-    mock_send_email = mocker.patch("app.mail_service.send_email")
+# def test_resend_confirmation_email(test_client, mocker):
+#     mock_send_email = mocker.patch("app.mail_service.send_email")
 
-    response = test_client.post('/auth/resend-confirmation/', data={'email': 'test@example.com'})
-    assert response.status_code == 200
-    mock_send_email.assert_called_once()
-    assert b'A new confirmation email has been sent.' in response.data
+#     response = test_client.post('/auth/resend-confirmation/', data={'email': 'test@example.com'})
+#     assert response.status_code == 200
+#     mock_send_email.assert_called_once()
+#     assert b'A new confirmation email has been sent.' in response.data
+
+def test_resend_confirmation_email_maximum_two_times(test_client):
+    # Mockear el servicio de correo desde donde se usa en auth.routes
+    with patch('app.modules.auth.routes.mail_service.send_email') as mock_send_email:
+        # Datos de prueba para el signup
+        signup_data = {
+            'email': 'test8@example.com',
+            'password': 'securepassword',
+            'confirm_password': 'securepassword',
+            'name': 'Test',
+            'surname': 'User'
+        }
+
+        # Simular el formulario de signup
+        response = test_client.post('/signup/', data=signup_data, follow_redirects=False)
+        assert response.status_code == 302  # Redirección a /check-inbox/
+
+        # Acceder a /check-inbox/ por primera vez (primer envío)
+        response = test_client.get('/check-inbox/', follow_redirects=False)
+        assert response.status_code == 200
+        assert mock_send_email.call_count == 1, "El correo no fue enviado tras el primer acceso a /check-inbox/"
+
+        # Acceder a /check-inbox/ por segunda vez (segundo envío)
+        response = test_client.get('/check-inbox/', follow_redirects=False)
+        assert response.status_code == 200
+        assert mock_send_email.call_count == 2, "El correo no fue enviado tras el segundo acceso a /check-inbox/"
+
+        # Intentar acceder a /check-inbox/ por tercera vez (no debe enviar correo)
+        response = test_client.get('/check-inbox/', follow_redirects=False)
+        assert response.status_code == 200
+        assert mock_send_email.call_count == 2, "Algo falla: se envió un correo adicional después de alcanzar el límite"
