@@ -11,7 +11,7 @@ def run_app():
     terminal = None
     flask_run_command = "flask run --host=0.0.0.0 --reload --debug"
     fakenodo_run_command = "python fakenodo/run.py"
-    discord_bot_run_command = "python discordbot/__init__.py"
+    discord_bot_run_command = "python discordbot/run.py"
 
     # Get the first terminal  that is available
     terminal = next((term for term in TERMINAL_OPTIONS if shutil.which(term) is not None), None)
