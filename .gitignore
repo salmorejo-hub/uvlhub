@@ -18,3 +18,4 @@ entrypoint.sh
 deployments.log
 test_file.txt
 .vscode/
+app/modules/dataset/uvl_examples/
