@@ -83,8 +83,8 @@ def test_filter_min_date(test_client, exploreuvl_service):
     assert len(featuremodels) == 0, f"Error al haber más de 0 modelos para fechas imposibles. Hay {len(featuremodels)}"
 
     featuremodels = exploreuvl_service.filter(min_date="2023-08-04", bytes='5000000')
-    assert len(featuremodels) == 3, f"Error al haber algo distinto a 3 modelos para fechas imposibles, puede que por los bytes o algo. Hay {
-        len(featuremodels)} modelos"
+    assert len(featuremodels) == 3, f"Error al haber algo distinto a 3 modelos para fechas imposibles, puede que por\
+        los bytes o algo. Hay {len(featuremodels)} modelos"
 
     featuremodels = exploreuvl_service.filter(min_date="1900-01-01")
     assert len(featuremodels) == 12, f"Error al haber algo distinto a 12 modelos para fechas imposibles. Hay {
@@ -97,8 +97,8 @@ def test_filter_max_date(test_client, exploreuvl_service):
 
     featuremodels = exploreuvl_service.filter(max_date="2023-08-04", bytes='5000000')
     assert len(
-        featuremodels) == 9, f"Error al haber algo distinto a 9 modelos para fechas imposibles, puede que por los bytes o\
-        algo. Hay {len(featuremodels)} modelos"
+        featuremodels) == 9, f"Error al haber algo distinto a 9 modelos para fechas imposibles, puede que por los\
+              bytes o algo. Hay {len(featuremodels)} modelos"
 
     featuremodels = exploreuvl_service.filter(max_date="2024-12-22")
     assert len(featuremodels) == 12, f"Error al haber algo distinto a 12 modelos para fechas imposibles. Hay {
@@ -113,9 +113,8 @@ def test_filter_min_and_max_date(test_client, exploreuvl_service):
     assert len(featuremodels) == 0, f"Error al haber más de 0 modelos para fechas imposibles. Hay {len(featuremodels)}"
 
     featuremodels = exploreuvl_service.filter(min_date="2022-01-01", max_date="2023-12-31", bytes='5000000')
-    assert len(
-        featuremodels) == 6, f"Error al haber algo distinto a 6 modelos para fechas imposibles, puede que por los bytes o\
-        algo. Hay {len(featuremodels)} modelos"
+    assert len(featuremodels) == 6, f"Error al haber algo distinto a 6 modelos para fechas imposibles, puede que por\
+          los bytes o algo. Hay {len(featuremodels)} modelos"
 
     featuremodels = exploreuvl_service.filter(min_date="1900-01-01", max_date="2024-12-22")
     assert len(featuremodels) == 12, f"Error al haber algo distinto a 12 modelos para fechas imposibles. Hay {
