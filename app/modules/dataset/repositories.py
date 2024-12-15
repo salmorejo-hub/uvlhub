@@ -58,11 +58,11 @@ class DSViewRecordRepository(BaseRepository):
 
     def create_new_record(self, dataset: DataSet, user_cookie: str) -> DSViewRecord:
         return self.create(
-                user_id=current_user.id if current_user.is_authenticated else None,
-                dataset_id=dataset.id,
-                view_date=datetime.now(timezone.utc),
-                view_cookie=user_cookie,
-            )
+            user_id=current_user.id if current_user.is_authenticated else None,
+            dataset_id=dataset.id,
+            view_date=datetime.now(timezone.utc),
+            view_cookie=user_cookie,
+        )
 
 
 class DataSetRepository(BaseRepository):
@@ -115,23 +115,26 @@ class DataSetRepository(BaseRepository):
             .all()
         )
 
+    # New methods to define the different states of the datasets
 
-    ## New methods to define the different states of the datasets
     def get_user_staged_datasets(self, current_user_id: int):
         return (
             self.model.query.join(DSMetaData)
-            .filter(DataSet.user_id ==  current_user_id, DSMetaData.dataset_status == DatasetStatus.STAGED).all()
+            .filter(DataSet.user_id == current_user_id, DSMetaData.dataset_status == DatasetStatus.STAGED).all()
         )
+
     def get_user_unstaged_datasets(self, current_user_id: int):
         return (
             self.model.query.join(DSMetaData)
             .filter(DataSet.user_id == current_user_id, DSMetaData.dataset_status == DatasetStatus.UNSTAGED).all()
         )
+
     def get_user_published_datasets(self, current_user_id: int):
         return (
             self.model.query.join(DSMetaData)
             .filter(DataSet.user_id == current_user_id, DSMetaData.dataset_status == DatasetStatus.PUBLISHED).all()
         )
+
 
 class DOIMappingRepository(BaseRepository):
     def __init__(self):

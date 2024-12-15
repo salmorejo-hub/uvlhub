@@ -54,7 +54,8 @@ def make_module(name):
         'assets/scripts.js': 'module_scripts.js.j2',
         'tests/test_unit.py': 'module_tests_test_unit.py.j2',
         'tests/locustfile.py': 'module_tests_locustfile.py.j2',
-        'tests/test_selenium.py': 'module_tests_test_selenium.py.j2'
+        'tests/test_selenium.py': 'module_tests_test_selenium.py.j2',
+        'tests/test_integration.py': 'module_tests_test_integration.py.j2'
     }
 
     # Create the necessary directories, explicitly excluding 'tests' from the creation of subfolders.

@@ -47,5 +47,22 @@ def test_login_and_check_element():
         close_driver(driver)
 
 
+def test_remember_my_password():
+
+    driver = initialize_driver()
+
+    driver.get("http://localhost:5000/remember-my-password")
+    driver.set_window_size(840, 813)
+    driver.find_element(By.LINK_TEXT, "Login").click()
+    driver.find_element(By.LINK_TEXT, "Remember my password").click()
+    driver.find_element(By.ID, "email").click()
+    driver.find_element(By.ID, "email").send_keys("ho")
+    driver.find_element(By.ID, "email").send_keys("user")
+    driver.find_element(By.ID, "email").send_keys(Keys.DOWN)
+    driver.find_element(By.ID, "email").send_keys("user1@example.com")
+    driver.find_element(By.ID, "submit").click()
+
+
 # Call the test function
 test_login_and_check_element()
+test_remember_my_password()
