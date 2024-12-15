@@ -1,12 +1,10 @@
 from itsdangerous import SignatureExpired, URLSafeTimedSerializer
 import pytest
-from unittest.mock import patch
 from flask import url_for, current_app
 import secrets
 from app.modules.auth.repositories import UserRepository
 from app.modules.auth.services import AuthenticationService
 from app.modules.profile.repositories import UserProfileRepository
-from app import mail_service
 
 
 @pytest.fixture(scope="module")
