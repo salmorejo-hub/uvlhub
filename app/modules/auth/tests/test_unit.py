@@ -1,8 +1,7 @@
-import secrets
-
+from itsdangerous import SignatureExpired, URLSafeTimedSerializer
 import pytest
-from flask import url_for
-
+from flask import url_for, current_app
+import secrets
 from app.modules.auth.repositories import UserRepository
 from app.modules.auth.services import AuthenticationService
 from app.modules.profile.repositories import UserProfileRepository
@@ -123,19 +122,32 @@ def test_signup_user_no_name(test_client):
 def test_signup_user_unsuccessful(test_client):
     email = "test@example.com"
     response = test_client.post(
-        "/signup", data=dict(name="Test", surname="Foo", email=email, password="test1234"), follow_redirects=True
+        "/signup", data=dict(
+            name="Test",
+            surname="Foo",
+            email=email,
+            password="test1234",
+            confirm_password="test1234"
+        ), follow_redirects=True
     )
     assert response.request.path == url_for("auth.show_signup_form"), "Signup was unsuccessful"
     assert f"Email {email} in use".encode("utf-8") in response.data
 
 
 def test_signup_user_successful(test_client):
+    email = 'foo@example.com'
     response = test_client.post(
         "/signup",
-        data=dict(name="Foo", surname="Example", email="foo@example.com", password="foo1234"),
+        data=dict(
+            name="Foo",
+            surname="Example",
+            email=email,
+            password="foo1234",
+            confirm_password="foo1234"),
         follow_redirects=True,
     )
-    assert response.request.path == url_for("public.index"), "Signup was unsuccessful"
+    assert response.request.path == url_for(
+        "auth.check_inbox"), "User was not redirected to the check-inbox page after sumbitting the form"
 
 
 def test_service_create_with_profie_success(clean_database):
@@ -180,3 +192,76 @@ def test_service_create_with_profile_fail_no_password(clean_database):
 
     assert UserRepository().count() == 0
     assert UserProfileRepository().count() == 0
+
+
+def test_email_confirmation(test_client, mocker):
+    # Generar token
+    serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+    token = serializer.dumps({'email': 'test7@example.com',
+                              'password': 'password123',
+                              'confirm_password': 'password123',
+                              'name': 'Test',
+                              'surname': 'User'},
+                             salt='email-confirmation-salt')
+
+    response = test_client.get(f'/confirm/{token}')
+
+    # Verifica que se redirige correctamente
+    assert response.status_code == 302
+    assert response.headers["Location"] == "/email-confirmed"  # O el endpoint al que debe redirigir
+
+
+def test_expired_token(test_client, mocker):
+    # Generar token con expiración simulada
+    serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+    token = serializer.dumps({'email': 'test7@example.com',
+                              'password': 'password123',
+                              'confirm_password': 'password123',
+                              'name': 'Test',
+                              'surname': 'User'},
+                             salt='email-confirmation-salt')
+
+    mocker.patch("app.modules.auth.routes.URLSafeTimedSerializer.loads", side_effect=SignatureExpired("Token expired"))
+
+    response = test_client.get(f'/confirm/{token}')
+    assert response.status_code == 302  # Redirige al formulario de registro
+    assert response.headers["Location"] == url_for("auth.token_expired")
+
+
+def test_invalid_token(test_client):
+    invalid_token = "invalid-token"
+
+    response = test_client.get(f'/confirm/{invalid_token}')
+    assert response.status_code == 302  # Redirige al formulario de registro
+    assert response.headers["Location"] == url_for("auth.invalid_token")
+
+
+def test_resend_confirmation_email_maximum_two_times(test_client):
+    # Configurar la sesión manualmente para simular el registro
+    with test_client.session_transaction() as session:
+        session['pack'] = {
+            'email': 'test12@example.com',
+            'password': 'securepassword',
+            'confirm_password': 'securepassword',
+            'name': 'Test',
+            'surname': 'User'
+        }
+        session['confirmation_email_attempts'] = 0  # Inicializar el contador en 0
+
+    # Primera visita a /check-inbox/
+    response = test_client.get('/check-inbox/', follow_redirects=True)
+    assert response.status_code == 200
+    with test_client.session_transaction() as session:
+        assert session['confirmation_email_attempts'] == 1, "El contador no se incrementó tras el primer envío"
+
+    # Segunda visita a /check-inbox/
+    response = test_client.get('/check-inbox/', follow_redirects=True)
+    assert response.status_code == 200
+    with test_client.session_transaction() as session:
+        assert session['confirmation_email_attempts'] == 2, "El contador no se incrementó tras el segundo envío"
+
+    # Tercera visita a /check-inbox/ (no debería incrementar el contador)
+    response = test_client.get('/check-inbox/', follow_redirects=True)
+    assert response.status_code == 200
+    with test_client.session_transaction() as session:
+        assert session['confirmation_email_attempts'] == 2, "El contador incrementó más allá del límite permitido"
