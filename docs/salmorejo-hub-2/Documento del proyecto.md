@@ -21,7 +21,9 @@
 
 ### Enlaces de interes
 * [Repositorio del equipo](https://github.com/salmorejo-hub-2/uvlhub)
-*
+* [Repositorio Upstream](https://github.com/salmorejo-hub/uvlhub)
+* [Despliegue en Render](https://uvlhub-salmorejo-hub.onrender.com/)
+
 ---
 ## Indicadores
 
@@ -35,6 +37,7 @@
 | Álvaro Sevilla Cabrera    |       |         |     |      |        |           |
 
 ## Integración 
+
 
 ---
 ## Resumen Ejecutivo
