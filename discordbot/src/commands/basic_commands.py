@@ -1,5 +1,5 @@
 import discord
-from src.database.models import ServerPrefix
+from discordbot.src.database.models import ServerPrefix
 
 
 async def setup_basic_commands(client, session):
