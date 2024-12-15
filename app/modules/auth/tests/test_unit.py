@@ -8,6 +8,7 @@ from app.modules.auth.services import AuthenticationService
 from app.modules.profile.repositories import UserProfileRepository
 from app import mail_service
 
+
 @pytest.fixture(scope="module")
 def test_client(test_client):
     """
@@ -120,21 +121,19 @@ def test_signup_user_no_name(test_client):
     assert b"This field is required" in response.data, response.data
 
 
-
 def test_signup_user_unsuccessful(test_client):
     email = "test@example.com"
     response = test_client.post(
         "/signup", data=dict(
-            name="Test", 
-            surname="Foo", 
-            email=email, 
-            password="test1234", 
+            name="Test",
+            surname="Foo",
+            email=email,
+            password="test1234",
             confirm_password="test1234"
         ), follow_redirects=True
     )
     assert response.request.path == url_for("auth.show_signup_form"), "Signup was unsuccessful"
     assert f"Email {email} in use".encode("utf-8") in response.data
-
 
 
 def test_signup_user_successful(test_client):
@@ -143,13 +142,15 @@ def test_signup_user_successful(test_client):
         "/signup",
         data=dict(
             name="Foo",
-            surname="Example", 
-            email=email, 
+            surname="Example",
+            email=email,
             password="foo1234",
-            confirm_password="foo1234"), 
+            confirm_password="foo1234"),
         follow_redirects=True,
     )
-    assert response.request.path == url_for("auth.check_inbox"), "User was not redirected to the check-inbox page after sumbitting the form"
+    assert response.request.path == url_for(
+        "auth.check_inbox"), "User was not redirected to the check-inbox page after sumbitting the form"
+
 
 def test_service_create_with_profie_success(clean_database):
     data = {
@@ -195,11 +196,15 @@ def test_service_create_with_profile_fail_no_password(clean_database):
     assert UserProfileRepository().count() == 0
 
 
-
 def test_email_confirmation(test_client, mocker):
     # Generar token
     serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
-    token = serializer.dumps({'email': 'test7@example.com', 'password': 'password123', 'confirm_password': 'password123', 'name': 'Test', 'surname': 'User'}, salt='email-confirmation-salt')
+    token = serializer.dumps({'email': 'test7@example.com',
+                              'password': 'password123',
+                              'confirm_password': 'password123',
+                              'name': 'Test',
+                              'surname': 'User'},
+                             salt='email-confirmation-salt')
 
     response = test_client.get(f'/confirm/{token}')
 
@@ -211,7 +216,12 @@ def test_email_confirmation(test_client, mocker):
 def test_expired_token(test_client, mocker):
     # Generar token con expiración simulada
     serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
-    token = serializer.dumps({'email': 'test7@example.com', 'password': 'password123', 'confirm_password': 'password123', 'name': 'Test', 'surname': 'User'}, salt='email-confirmation-salt')
+    token = serializer.dumps({'email': 'test7@example.com',
+                              'password': 'password123',
+                              'confirm_password': 'password123',
+                              'name': 'Test',
+                              'surname': 'User'},
+                             salt='email-confirmation-salt')
 
     mocker.patch("app.modules.auth.routes.URLSafeTimedSerializer.loads", side_effect=SignatureExpired("Token expired"))
 

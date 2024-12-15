@@ -40,7 +40,7 @@ class MailService(BaseService):
 
             Best regards,\n
             The salmorejo-hub-1 Team"""
-    
+
     def send_email(self, subject, recipients, html_body):
         msg = Message(subject, recipients=recipients)
         msg.html = html_body
