@@ -20,17 +20,17 @@ def test_api_token():
         time.sleep(2)
 
         try:
-            driver.find_element(By.CSS_SELECTOR, ".sidebar-item:nth-child(6) .align-middle:nth-child(2)").click()
+            driver.find_element(By.LINK_TEXT, "Login").click()
             driver.find_element(By.ID, "email").click()
             driver.find_element(By.ID, "email").send_keys("user1@example.com")
             driver.find_element(By.ID, "password").send_keys("1234")
             driver.find_element(By.ID, "submit").click()
 
-            driver.find_element(By.CSS_SELECTOR, ".sidebar-item:nth-child(10) .align-middle:nth-child(2)").click()
+            driver.find_element(By.LINK_TEXT, "API Configuration").click()
             driver.find_element(By.ID, "token-expiration").click()
             driver.find_element(By.ID, "token-expiration").send_keys("100")
 
-            driver.find_element(By.CSS_SELECTOR, ".btn").click()
+            driver.find_element(By.CLASS_NAME, "btn-primary").click()
             driver.find_element(By.ID, "token-expiration").click()
 
             print('Test passed!')
