@@ -20,7 +20,6 @@ jobs:
           MYSQL_DATABASE: uvlhubdb_test
           MYSQL_USER: uvlhub_user
           MYSQL_PASSWORD: uvlhub_password
-          MAIL_USERNAME: salmorejohub1@gmail.com
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -52,6 +51,7 @@ jobs:
         MARIADB_TEST_DATABASE: uvlhubdb_test
         MARIADB_USER: uvlhub_user
         MARIADB_PASSWORD: uvlhub_password
+        MAIL_USERNAME: salmorejohub1@gmail.com
         CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
         SECRET_KEY_JWT: ${{ secrets.SECRET_KEY_JWT }}
 
