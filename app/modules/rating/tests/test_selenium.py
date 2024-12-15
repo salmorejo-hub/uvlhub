@@ -15,7 +15,7 @@ def test_average_rating_logged_in():
         # Log in
         driver.get(f'{host}/login')
         time.sleep(4)
-        
+
         email_field = driver.find_element(By.NAME, 'email')
         password_field = driver.find_element(By.NAME, 'password')
         email_field.send_keys('user1@example.com')
@@ -43,7 +43,7 @@ def test_your_rating_logged_in():
         # Log in
         driver.get(f'{host}/login')
         time.sleep(4)
-        
+
         email_field = driver.find_element(By.NAME, 'email')
         password_field = driver.find_element(By.NAME, 'password')
         email_field.send_keys('user1@example.com')
@@ -88,7 +88,7 @@ def test_rating_options_logged_in():
         # Log in
         driver.get(f'{host}/login')
         time.sleep(4)
-        
+
         email_field = driver.find_element(By.NAME, 'email')
         password_field = driver.find_element(By.NAME, 'password')
         email_field.send_keys('user1@example.com')
@@ -103,7 +103,7 @@ def test_rating_options_logged_in():
         # Check for the rating select options
         select_element = driver.find_element(By.XPATH, "//*[@id='user-rating']")
         options = select_element.find_elements(By.TAG_NAME, 'option')
-        
+
         # Expected options
         expected_options = [
             "Select rating",
@@ -113,7 +113,7 @@ def test_rating_options_logged_in():
             "4 - Very Good",
             "5 - Excellent"
         ]
-        
+
         actual_options = [option.text for option in options]
         assert actual_options == expected_options, \
             f'Test failed: Rating options are incorrect. Expected {expected_options}, but got {actual_options}.'

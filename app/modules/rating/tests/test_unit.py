@@ -6,6 +6,7 @@ from app.modules.dataset.models import DataSet, DSMetaData  # Import DSMetaData
 from app.modules.rating.models import Rating
 from app.modules.dataset.models import PublicationType, DatasetStatus  # Import necessary enums
 
+
 @pytest.fixture(scope="module")
 def test_client(test_client):
     """
@@ -76,7 +77,6 @@ def test_invalid_rating(test_client):
         assert saved_rating.rating == 6, "Invalid rating value was not saved correctly."
 
 
-
 def test_delete_user_cascades_rating(test_client):
     """
     Tests that deleting a user's ratings manually removes them from the database.
@@ -103,8 +103,6 @@ def test_delete_user_cascades_rating(test_client):
         assert existing_user is not None, "User should not have been deleted in this test."
 
 
-
-
 def test_repr_method(test_client):
     """
     Tests the __repr__ method of the Rating model.
@@ -119,4 +117,6 @@ def test_repr_method(test_client):
         db.session.commit()
 
         # Check the __repr__ output
-        assert repr(rating) == f'<Rating user_id={user.id} dataset_id={dataset.id} rating=5>', "The __repr__ output is incorrect."
+        assert repr(rating) == f'<Rating user_id={
+            user.id} dataset_id={
+            dataset.id} rating=5>', "The __repr__ output is incorrect."
