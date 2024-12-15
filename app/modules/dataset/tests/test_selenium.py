@@ -144,7 +144,8 @@ def test_file_previsualize():
 
         # Click the button to open the file content
         try:
-            button = driver.find_element(By.XPATH, "/html/body/div/div/main/div/div[3]/div[2]/div/div[2]/div/div[2]/button")
+            button = driver.find_element(
+                By.XPATH, "/html/body/div/div/main/div/div[3]/div[2]/div/div[2]/div/div[2]/button")
             button.click()
             time.sleep(2)
         except NoSuchElementException:
@@ -188,4 +189,3 @@ constraints
 
 test_upload_dataset()
 test_file_previsualize()
-

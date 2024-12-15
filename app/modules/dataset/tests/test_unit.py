@@ -14,17 +14,17 @@ from app.modules.dataset.services import DataSetService, DSMetaDataService
 from app.modules.conftest import login, logout
 from app import create_app, db
 
+
 @pytest.fixture(scope="function")
 def test_client():
-    
+
     test_app = create_app("testing")
 
     with test_app.app_context():
-        db.create_all()  
+        db.create_all()
         user_test = User(email='user_dataset@example.com', password='test1234')
         db.session.add(user_test)
         db.session.commit()
-
 
         ds_meta_data = DSMetaData(
             title="UnitTest Dataset",
@@ -38,12 +38,10 @@ def test_client():
         db.session.add(ds_meta_data)
         db.session.commit()
 
-       
         dataset_test = DataSet(user_id=user_test.id, ds_meta_data_id=ds_meta_data.id)
         db.session.add(dataset_test)
         db.session.commit()
 
-        
         fm_meta_data = FMMetaData(
             uvl_filename="example.uvl",
             title="Test Feature Model",
@@ -58,24 +56,17 @@ def test_client():
         db.session.add(feature_model)
         db.session.commit()
 
-        
         uploads_path = os.path.join('uploads', f'user_{user_test.id}', f'dataset_{dataset_test.id}')
         os.makedirs(uploads_path, exist_ok=True)
         file_path = os.path.join(uploads_path, "example.uvl")
         with open(file_path, "w") as f:
             f.write("// Example UVL file content for preview test\n")
 
-        
         with test_app.test_client() as testing_client:
             yield testing_client
 
-        
         db.session.remove()
         db.drop_all()
-
-
-
-
 
 
 def test_dataset_creation(test_client):
@@ -133,8 +124,6 @@ def test_uvl_preview(test_client):
         assert response.status_code == 200, "Error al cerrar sesión."
 
 
-
-
 def test_dataset_to_dict(test_client):
 
     with test_client.application.app_context():
@@ -150,10 +139,8 @@ def test_dataset_to_dict(test_client):
             assert dataset_dict['title'] == dataset.ds_meta_data.title
 
 
-
-
 def test_dsmetadata_service(test_client):
-   
+
     with test_client.application.app_context():
         dsmetadata_service = DSMetaDataService()
         dataset = DataSet.query.first()
@@ -164,5 +151,3 @@ def test_dsmetadata_service(test_client):
         db.session.refresh(dataset.ds_meta_data)
 
         assert dataset.ds_meta_data.dataset_doi == new_doi, "El DOI de DSMetaData no se actualizó correctamente."
-
-
