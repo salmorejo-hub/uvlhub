@@ -2,7 +2,7 @@
 
 #myDropzone {
   min-height: auto;
-  border: 2px dashed #666; /* Darker border color */
+  border: 2px dashed #147abb; /* Darker border color */
   border-radius: 10px;
   padding: 20px;
   display: flex;
@@ -41,8 +41,8 @@
 #file-list li {
   margin-bottom: 10px;
   padding: 10px;
-  background-color: #333333; /* Dark background */
-  border: 1px solid #555555; /* Darker border */
+  background-color: #06060c; /* Dark background */
+  border: 1px solid #147abb; /* Darker border */
   color: #ffffff; /* Light text color */
 }
 
