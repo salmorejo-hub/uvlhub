@@ -30,14 +30,15 @@ jobs:
  
     - name: Format with autopep8
       run: |
-        autopep8 --in-place --aggressive --recursive app
+        autopep8 --in-place --aggressive --aggressive --recursive app
+      
+    - uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842
+      with:
+        commit_message: "refactor: Apply flake8 autopep8 formatting"
 
     - name: Lint with flake8
       run: |
         flake8 app
 
-    - uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842
-      with:
-        commit_message: "refactor: Apply flake8 autopep8 formatting"
 
     
