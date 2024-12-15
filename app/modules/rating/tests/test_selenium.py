@@ -117,9 +117,10 @@ def test_rating_options_logged_in():
         ]
 
         actual_options = [option.text for option in options]
-        assert actual_options == expected_options, \
-            f'Test failed: Rating options are incorrect. 
-            Expected {expected_options}, but got {actual_options}.'
+        assert actual_options == expected_options, (
+            f'Test failed: Rating options are incorrect. '
+            f'Expected {expected_options}, but got {actual_options}.'
+        )
 
     finally:
         close_driver(driver)
