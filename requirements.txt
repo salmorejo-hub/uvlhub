@@ -85,7 +85,6 @@ python-sat==1.8.dev13
 pytz==2024.1
 pyzmq==26.0.3
 requests==2.32.3
--e git+ssh://git@github.com/salmorejo-hub-1/uvlhub.git@4c7ac56661b0fec7af4ea2ccf1b5360c175d45f9#egg=rosemary
 selenium==4.22.0
 selenium-wire==5.1.0
 setuptools==70.3.0
