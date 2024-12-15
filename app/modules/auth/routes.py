@@ -10,7 +10,7 @@ from app.modules.auth.forms import (LoginForm, RememberMyPasswordForm,
 from app.modules.auth.models import User
 from app.modules.auth.services import AuthenticationService
 from app.modules.profile.services import UserProfileService
-from app.modules.mail.services import MailService
+
 
 authentication_service = AuthenticationService()
 user_profile_service = UserProfileService()
