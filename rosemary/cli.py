@@ -19,6 +19,9 @@ from rosemary.commands.info import info, info2
 from rosemary.commands.make_module import make_module
 from rosemary.commands.env import env
 from rosemary.commands.test import test
+from rosemary.commands.db_tables import db_tables
+from rosemary.commands.db_table import db_table
+from rosemary.commands.run_app import run_app
 
 
 class RosemaryCLI(click.Group):
@@ -52,9 +55,12 @@ cli.add_command(db_reset)
 cli.add_command(db_migrate)
 cli.add_command(db_console)
 cli.add_command(db_seed)
+cli.add_command(db_tables)
+cli.add_command(db_table)
 cli.add_command(route_list)
 cli.add_command(compose_env)
 cli.add_command(locust)
+cli.add_command(run_app)
 cli.add_command(stop)
 cli.add_command(selenium)
 cli.add_command(module_list)

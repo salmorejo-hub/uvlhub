@@ -1,6 +1,7 @@
 from app.modules.rating.models import Rating
 from core.repositories.BaseRepository import BaseRepository
 
+
 class RatingRepository(BaseRepository):
     def __init__(self):
         super().__init__(Rating)

@@ -28,6 +28,7 @@ class PublicationType(Enum):
     WORKING_PAPER = 'workingpaper'
     OTHER = 'other'
 
+
 class DatasetStatus(Enum):
     STAGED = "staged"
     UNSTAGED = "unstaged"
