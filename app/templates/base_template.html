@@ -1,13 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html >
+<html lang = "en" >
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Repository of feature models in UVL format integrated with Zenodo and FlamaPy">
-    <meta name="author" content="University of Seville">
-    <meta name="keywords" content="diversolab, uvl, feature models, software product line, university of seville,
+<head >
+    <meta charset = "utf-8" >
+    <meta http - equiv = "X-UA-Compatible" content = "IE=edge" >
+    <meta name = "viewport" content = "width=device-width, initial-scale=1, shrink-to-fit=no" >
+    <meta name = "description"
+          content = "Repository of feature models in UVL format integrated with Zenodo and FlamaPy" >
+    <meta name = "author" content = "University of Seville" >
+    <meta name = "keywords"
+          content ="diversolab, uvl, feature models, software product line, university of seville,
            university of malaga, university of ulm, david romero, david benavides, jose a galindo, jose miguel horcas,
            chico sundermann">
 
@@ -32,6 +34,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
@@ -95,6 +98,17 @@
                         </a>
                     </li>
 
+                    <li class="sidebar-header">
+                        Invite Nova to your discord server
+                    </li>
+
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" href="https://discord.com/oauth2/authorize?client_id=1303492608022151249&permissions=274878168113&integration_type=0&scope=bot">
+                            <i class="align-middle fab fa-discord"></i> <span 
+                                class="align-middle">Discord bot</span>
+                        </a>
+                    </li>
+
                 {% else %}
 
                     <li class="sidebar-header">
@@ -116,6 +130,17 @@
                     </li>
 
                     <li class="sidebar-header">
+                        Invite Nova to your discord server
+                    </li>
+
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" href="https://discord.com/oauth2/authorize?client_id=1303492608022151249&permissions=274878168113&integration_type=0&scope=bot">
+                            <i class="align-middle fab fa-discord"></i> <span 
+                                class="align-middle">Discord bot</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-header">
                         Options
                     </li>
 
@@ -125,6 +150,13 @@
                                 class="align-middle">Edit profile</span>
                         </a>
                     </li>
+
+                    <li class="sidebar-item {{ 'active' if request.endpoint == 'api.generate' else '' }}">
+                        <a class="sidebar-link" href="{{ url_for('api.generate') }}">
+                            <i class="align-middle" data-feather="code"></i> <span 
+                                class="align-middle">API Configuration</span>
+                        </a>
+                    </li>                    
 
                     <li class="sidebar-item">
                         <a class="sidebar-link" href="{{ url_for('auth.logout') }}">
@@ -230,7 +262,7 @@
                     <div class="col-6 text-end">
                         <ul class="list-inline">
                             <li class="list-inline-item">
-                                <a class="text-muted" href="https://github.com/diverso-lab/uvlhub"
+                                <a class="text-muted" href="https://github.com/salmorejo-hub/uvlhub"
                                    target="_blank">
                                     <i class="align-middle" data-feather="github"></i>
                                     Repository on GitHub</a>

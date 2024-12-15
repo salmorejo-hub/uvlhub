@@ -1,5 +1,6 @@
 from app.modules.rating.repositories import RatingRepository
 
+
 class RatingService:
     def __init__(self):
         self.rating_repository = RatingRepository()
@@ -12,4 +13,3 @@ class RatingService:
 
     def get_user_rating(self, user_id, dataset_id):
         return self.rating_repository.get_user_rating(user_id, dataset_id)
-

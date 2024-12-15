@@ -14,7 +14,7 @@ class TestSignup():
         self.driver.quit()
 
     def test_signup(self):
-        
+
         self.driver.get(get_host_for_selenium_testing())
         self.driver.find_element(By.XPATH, "//a[span[text()='Sign Up']]").click()
         self.driver.find_element(By.ID, "email").send_keys("user1@example.com")

@@ -17,10 +17,14 @@ RUN apt-get clean \
 # Set the working directory in the container to /app
 WORKDIR /app
 
+#Set PYTHONPATH
+ENV PYTHONPATH=/app
+
 # Copy files
 COPY app/ ./app
 COPY core/ ./core
 COPY migrations/ ./migrations
+COPY discordbot/ ./discordbot
 
 # Copy requirements.txt into the working directory /app
 COPY requirements.txt .

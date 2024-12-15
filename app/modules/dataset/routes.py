@@ -1,46 +1,34 @@
+import json
 import logging
 import os
-import json
 import shutil
 import tempfile
 import uuid
 from datetime import datetime, timezone
 from zipfile import ZipFile
+from app.modules.api.decorators import token_required
 
-from flask import (
-    redirect,
-    render_template,
-    request,
-    jsonify,
-    send_from_directory,
-    make_response,
-    abort,
-    url_for,
-)
-from flask_login import login_required, current_user
+from flask import (abort, jsonify, make_response, redirect, render_template,
+                   request, send_from_directory, url_for)
+from flask_login import current_user, login_required
 
-from app.modules.dataset.forms import DataSetForm
-from app.modules.dataset.models import (
-    DSDownloadRecord
-)
 from app.modules.dataset import dataset_bp
-from app.modules.dataset.services import (
-    AuthorService,
-    DSDownloadRecordService,
-    DSMetaDataService,
-    DSViewRecordService,
-    DataSetService,
-    DOIMappingService
-)
+from app.modules.dataset.forms import DataSetForm
+from app.modules.dataset.models import DSDownloadRecord
+from app.modules.dataset.services import (AuthorService, DataSetService,
+                                          DOIMappingService,
+                                          DSDownloadRecordService,
+                                          DSMetaDataService,
+                                          DSViewRecordService)
 from app.modules.zenodo.services import ZenodoService
 
 logger = logging.getLogger(__name__)
 
 
+service = ZenodoService()
 dataset_service = DataSetService()
 author_service = AuthorService()
 dsmetadata_service = DSMetaDataService()
-zenodo_service = ZenodoService()
 doi_mapping_service = DOIMappingService()
 ds_view_record_service = DSViewRecordService()
 
@@ -65,16 +53,20 @@ def create_dataset():
             logger.exception(f"Exception while create dataset data in local {exc}")
             return jsonify({"Exception while create dataset data in local: ": str(exc)}), 400
 
-        # send dataset as deposition to Zenodo
+        # send dataset as deposition to Zenodo or Fakenodo
         data = {}
         try:
-            zenodo_response_json = zenodo_service.create_new_deposition(dataset)
+
+            zenodo_response_json = service.create_new_deposition(dataset)
             response_data = json.dumps(zenodo_response_json)
             data = json.loads(response_data)
+
         except Exception as exc:
             data = {}
             zenodo_response_json = {}
             logger.exception(f"Exception while create dataset data in Zenodo {exc}")
+
+        logger.info(f"Datos enviados: {data}")
 
         if data.get("conceptrecid"):
             deposition_id = data.get("id")
@@ -85,13 +77,13 @@ def create_dataset():
             try:
                 # iterate for each feature model (one feature model = one request to Zenodo)
                 for feature_model in dataset.feature_models:
-                    zenodo_service.upload_file(dataset, deposition_id, feature_model)
+                    service.upload_file(dataset, deposition_id, feature_model)
 
                 # publish deposition
-                zenodo_service.publish_deposition(deposition_id)
+                service.publish_deposition(deposition_id)
 
                 # update DOI
-                deposition_doi = zenodo_service.get_doi(deposition_id)
+                deposition_doi = service.get_doi(deposition_id)
                 dataset_service.update_dsmetadata(dataset.ds_meta_data_id, dataset_doi=deposition_doi)
             except Exception as e:
                 msg = f"it has not been possible upload feature models in Zenodo and update the DOI: {e}"
@@ -118,11 +110,7 @@ def list_dataset():
     )
 
 
-
-
-
-
-## Funcion para sincronizar los datasets
+# Funcion para sincronizar los datasets
 @dataset_bp.route("/dataset/stage/<int:dataset_id>", methods=["GET"])
 @login_required
 def stage_dataset(dataset_id):
@@ -133,7 +121,9 @@ def stage_dataset(dataset_id):
         local_datasets=dataset_service.get_unsynchronized(current_user.id),
     )
 
-## Funcion para desincronizar los datasets
+# Funcion para desincronizar los datasets
+
+
 @dataset_bp.route("/dataset/unstage/<int:dataset_id>", methods=["GET"])
 @login_required
 def unstage_dataset(dataset_id):
@@ -144,7 +134,9 @@ def unstage_dataset(dataset_id):
         local_datasets=dataset_service.get_unsynchronized(current_user.id),
     )
 
-## Funcion para publicar los datasets sincronizados
+# Funcion para publicar los datasets sincronizados
+
+
 @dataset_bp.route("/dataset/publish", methods=["GET"])
 @login_required
 def publish_datasets():
@@ -154,11 +146,6 @@ def publish_datasets():
         datasets=dataset_service.get_synchronized(current_user.id),
         local_datasets=dataset_service.get_unsynchronized(current_user.id),
     )
-
-
-
-
-
 
 
 @dataset_bp.route("/dataset/file/upload", methods=["POST"])
@@ -323,6 +310,17 @@ def get_unsynchronized_dataset(dataset_id):
     return render_template("dataset/view_dataset.html", dataset=dataset)
 
 
+# ==================================================================================================
+# Routes with token_required decorator without HTML rendering for bot requests
+
+
+@dataset_bp.route("/api/dataset", methods=["GET"])
+@token_required
+def list_datasets():
+    datasets = dataset_service.get_synchronized(current_user.id)
+    return jsonify([dataset.to_dict() for dataset in datasets])
+
+
 @dataset_bp.route('/file/view/<int:uvl_id>', methods=['GET'])
 def view_uvl(uvl_id):
     file_record = dataset_service.get_file_by_id(uvl_id)
@@ -351,5 +349,3 @@ def view_uvl(uvl_id):
         abort(404, description="File not found on disk")
 
     return jsonify({"content": content})
-
-

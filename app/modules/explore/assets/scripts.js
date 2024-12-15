@@ -21,6 +21,15 @@ function send_query() {
                 query: document.querySelector('#query').value,
                 publication_type: document.querySelector('#publication_type').value,
                 sorting: document.querySelector('[name="sorting"]:checked').value,
+                min_number_of_models: document.querySelector('#min_number_of_models').value || 0,
+                max_number_of_models: document.querySelector('#max_number_of_models').value || 100,
+                min_number_of_features: document.querySelector('#min_number_of_features').value || 0,
+                max_number_of_features: document.querySelector('#max_number_of_features').value || 100,
+                day: document.querySelector('#day').value,
+                month: document.querySelector('#month').value,
+                year: document.querySelector('#year').value,
+                max_size: parseFloat(document.querySelector('#max_size').value),
+                size_unit: document.querySelector('#size_unit').value,
             };
 
             console.log(document.querySelector('#publication_type').value);
@@ -178,6 +187,38 @@ function clearFilters() {
         option.checked = option.value == "newest"; // replace "default" with whatever your default value is
         // option.dispatchEvent(new Event('input', {bubbles: true}));
     });
+
+    // Reset the number of models and features filters
+    let minNumberOfModelsInput = document.querySelector('#min_number_of_models');
+    minNumberOfModelsInput.value = "0";
+    document.getElementById('min_models_output').value = "0";
+
+    let maxNumberOfModelsInput = document.querySelector('#max_number_of_models');
+    maxNumberOfModelsInput.value = "100";
+    document.getElementById('max_models_output').value = "100";
+
+    let minNumberOfFeaturesInput = document.querySelector('#min_number_of_features');
+    minNumberOfFeaturesInput.value = "0";
+    document.getElementById('min_features_output').value = "0";
+
+    let maxNumberOfFeaturesInput = document.querySelector('#max_number_of_features');
+    maxNumberOfFeaturesInput.value = "100";
+    document.getElementById('max_features_output').value = "100";
+
+    let dayInput = document.querySelector('#day');
+    dayInput.value = "";
+
+    let monthInput = document.querySelector('#month');
+    monthInput.value = "";
+
+    let yearInput = document.querySelector('#year');
+    yearInput.value = "";
+
+    let maxSizeInput = document.querySelector('#max_size');
+    maxSizeInput.value = "";
+
+    let sizeUnitSelect = document.querySelector('#size_unit');
+    sizeUnitSelect.value = "bytes";
 
     // Perform a new search with the reset filters
     queryInput.dispatchEvent(new Event('input', {bubbles: true}));
