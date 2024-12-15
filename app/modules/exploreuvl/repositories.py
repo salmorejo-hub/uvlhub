@@ -105,5 +105,5 @@ def is_date(date_to_try):
     try:
         good_date = datetime.strptime(date_to_try, "%Y-%m-%d").date
         return good_date
-    except:
+    except BaseException:
         return None
