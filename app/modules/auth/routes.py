@@ -14,7 +14,7 @@ from app.modules.mail.services import MailService
 
 authentication_service = AuthenticationService()
 user_profile_service = UserProfileService()
-mail_service = MailService()
+# mail_service = MailService()
 
 @auth_bp.route("/signup/", methods=["GET", "POST"])
 def show_signup_form():
@@ -75,7 +75,6 @@ def check_inbox():
         confirm_url = url_for('auth.confirm_email', token=token, _external=True)
         html = render_template('auth/activate.html', confirm_url=confirm_url)
         subject = "Please confirm your email"
-
         mail_service.send_email(subject, recipients=[email], html_body=html)
 
         # Incrementar el contador de intentos

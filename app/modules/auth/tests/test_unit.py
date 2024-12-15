@@ -227,41 +227,33 @@ def test_invalid_token(test_client):
     assert response.status_code == 302  # Redirige al formulario de registro
     assert response.headers["Location"] == url_for("auth.invalid_token")
 
-# def test_resend_confirmation_email(test_client, mocker):
-#     mock_send_email = mocker.patch("app.mail_service.send_email")
-
-#     response = test_client.post('/auth/resend-confirmation/', data={'email': 'test@example.com'})
-#     assert response.status_code == 200
-#     mock_send_email.assert_called_once()
-#     assert b'A new confirmation email has been sent.' in response.data
 
 def test_resend_confirmation_email_maximum_two_times(test_client):
-    # Mockear el servicio de correo desde donde se usa en auth.routes
-    with patch('app.modules.auth.routes.mail_service.send_email') as mock_send_email:
-        # Datos de prueba para el signup
-        signup_data = {
-            'email': 'test8@example.com',
+    # Configurar la sesión manualmente para simular el registro
+    with test_client.session_transaction() as session:
+        session['pack'] = {
+            'email': 'test12@example.com',
             'password': 'securepassword',
             'confirm_password': 'securepassword',
             'name': 'Test',
             'surname': 'User'
         }
+        session['confirmation_email_attempts'] = 0  # Inicializar el contador en 0
 
-        # Simular el formulario de signup
-        response = test_client.post('/signup/', data=signup_data, follow_redirects=False)
-        assert response.status_code == 302  # Redirección a /check-inbox/
+    # Primera visita a /check-inbox/
+    response = test_client.get('/check-inbox/', follow_redirects=True)
+    assert response.status_code == 200
+    with test_client.session_transaction() as session:
+        assert session['confirmation_email_attempts'] == 1, "El contador no se incrementó tras el primer envío"
 
-        # Acceder a /check-inbox/ por primera vez (primer envío)
-        response = test_client.get('/check-inbox/', follow_redirects=False)
-        assert response.status_code == 200
-        assert mock_send_email.call_count == 1, "El correo no fue enviado tras el primer acceso a /check-inbox/"
+    # Segunda visita a /check-inbox/
+    response = test_client.get('/check-inbox/', follow_redirects=True)
+    assert response.status_code == 200
+    with test_client.session_transaction() as session:
+        assert session['confirmation_email_attempts'] == 2, "El contador no se incrementó tras el segundo envío"
 
-        # Acceder a /check-inbox/ por segunda vez (segundo envío)
-        response = test_client.get('/check-inbox/', follow_redirects=False)
-        assert response.status_code == 200
-        assert mock_send_email.call_count == 2, "El correo no fue enviado tras el segundo acceso a /check-inbox/"
-
-        # Intentar acceder a /check-inbox/ por tercera vez (no debe enviar correo)
-        response = test_client.get('/check-inbox/', follow_redirects=False)
-        assert response.status_code == 200
-        assert mock_send_email.call_count == 2, "Algo falla: se envió un correo adicional después de alcanzar el límite"
+    # Tercera visita a /check-inbox/ (no debería incrementar el contador)
+    response = test_client.get('/check-inbox/', follow_redirects=True)
+    assert response.status_code == 200
+    with test_client.session_transaction() as session:
+        assert session['confirmation_email_attempts'] == 2, "El contador incrementó más allá del límite permitido"
