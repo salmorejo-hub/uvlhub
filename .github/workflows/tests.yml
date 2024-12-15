@@ -3,7 +3,7 @@ name: Run tests
 on:
   push:
     branches: [main, develop]
-  pull_request:
+  pull_request_target:
     branches: [main, develop]
 
 jobs:
@@ -37,6 +37,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install -e ./
 
     - name: Run Tests
       env:
@@ -49,3 +50,33 @@ jobs:
         SECRET_KEY_JWT: ${{ secrets.SECRET_KEY_JWT }}
       run: |
         pytest app/modules/ --ignore-glob='*selenium*'
+
+    - name: Run Tests for discordbot
+      env:
+        FLASK_ENV: testing
+        MARIADB_HOSTNAME: 127.0.0.1
+        MARIADB_PORT: 3306
+        MARIADB_DATABASE: uvlhubdb_test
+        MARIADB_TEST_DATABASE: uvlhubdb_test
+        MARIADB_USER: uvlhub_user
+        MARIADB_PASSWORD: uvlhub_password
+        SECRET_KEY_JWT: ${{ secrets.SECRET_KEY_JWT }}
+        API_URL: http://127.0.0.1:5000/api/
+      run: |
+        flask db upgrade
+        rosemary db:migrate
+        rosemary db:seed
+        flask run --host=0.0.0.0 --reload --debug &
+        pytest discordbot/ --ignore-glob='*selenium*'
+      shell: bash
+
+    - name: Run Tests for rosemary
+      env:
+        FLASK_ENV: testing
+        MARIADB_HOSTNAME: 127.0.0.1
+        MARIADB_PORT: 3306
+        MARIADB_TEST_DATABASE: uvlhubdb_test
+        MARIADB_USER: uvlhub_user
+        MARIADB_PASSWORD: uvlhub_password
+      run: |
+        pytest rosemary/ --ignore-glob='*selenium*'
