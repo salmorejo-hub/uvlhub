@@ -27,8 +27,9 @@ def test_average_rating_logged_in():
         time.sleep(4)
 
         # Check for "Average Rating"
-        assert driver.find_element(By.XPATH, "/html/body/div/div/main/div/div[3]/div[1]/div[1]/div[1]/div[5]/div[1]/span"), \
-            'Test failed: "Average Rating" is not visible.'
+        xpath = "/html/body/div/div/main/div/div[3]/div[1]/div[1]/div[1]/div[5]/div[1]/span"
+        error_msg = 'Test failed: "Average Rating" is not visible.'
+        assert driver.find_element(By.XPATH, xpath), error_msg
 
     finally:
         close_driver(driver)
@@ -55,8 +56,9 @@ def test_your_rating_logged_in():
         time.sleep(4)
 
         # Check for "Your Rating"
-        assert driver.find_element(By.XPATH, "//*[@id='user-rating-section']/div[1]/span"), \
-            'Test failed: "Your Rating" is not visible.'
+        xpath = "//*[@id='user-rating-section']/div[1]/span"
+        error_msg = 'Test failed: "Your Rating" is not visible.'
+        assert driver.find_element(By.XPATH, xpath), error_msg
 
     finally:
         close_driver(driver)
