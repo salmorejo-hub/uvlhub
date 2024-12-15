@@ -101,6 +101,7 @@ class ExploreUVL(BaseRepository):
 
         return uvls.all()
 
+
 def is_date(date_to_try):
     try:
         good_date = datetime.strptime(date_to_try, "%Y-%m-%d").date

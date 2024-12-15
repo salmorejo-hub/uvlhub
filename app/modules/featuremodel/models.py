@@ -17,10 +17,10 @@ class FeatureModel(db.Model):
 
     def get_cleaned_publication_type(self):
         return self.fm_meta_data.publication_type.name.replace('_', ' ').title()
-    
+
     def get_total_files_size(self):
         return sum(f.size for f in self.files)
-    
+
     def get_publication_date(self):
         from app.modules.dataset.repositories import DataSetRepository
         return DataSetRepository().get_by_id(self.data_set_id).created_at
