@@ -1,6 +1,5 @@
 import pytest
 from app import db
-from app.modules.conftest import login, logout
 from app.modules.auth.models import User
 from app.modules.dataset.models import DataSet, DSMetaData  # Import DSMetaData
 from app.modules.rating.models import Rating
