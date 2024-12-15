@@ -47,7 +47,8 @@ def test_filter(exploreuvl_service):
 
         assert advanced_search == mock_fm
         assert len(advanced_search) == 3
-        mock_filter.assert_called_with(query, title, description, authors, q_tags, bytes, min_date, max_date, publication_type, tags)
+        mock_filter.assert_called_with(query, title, description, authors, q_tags, bytes, min_date, max_date,\
+                                       publication_type, tags)
 
         query = "any"
         normal_search = exploreuvl_service.filter(
@@ -55,14 +56,16 @@ def test_filter(exploreuvl_service):
 
         assert normal_search == mock_fm
         assert len(normal_search) == 3
-        mock_filter.assert_called_with(query, title, description, authors, q_tags, bytes, min_date, max_date, publication_type, tags)
+        mock_filter.assert_called_with(query, title, description, authors, q_tags, bytes, min_date, max_date,\
+                                       publication_type, tags)
 
 def test_filter_min_date(test_client, exploreuvl_service):
     featuremodels = exploreuvl_service.filter(min_date="2024-12-22")
     assert len(featuremodels) == 0, f"Error al haber más de 0 modelos para fechas imposibles. Hay {len(featuremodels)}"
 
     featuremodels = exploreuvl_service.filter(min_date="2023-08-04", bytes='5000000')
-    assert len(featuremodels) == 3, f"Error al haber algo distinto a 3 modelos para fechas imposibles, puede que por los bytes o algo. Hay {len(featuremodels)} modelos"
+    assert len(featuremodels) == 3, f"Error al haber algo distinto a 3 modelos para fechas imposibles, puede que por los bytes o\
+          algo. Hay {len(featuremodels)} modelos"
 
     featuremodels = exploreuvl_service.filter(min_date="1900-01-01")
     assert len(featuremodels) == 12, f"Error al haber algo distinto a 12 modelos para fechas imposibles. Hay {len(featuremodels)}"

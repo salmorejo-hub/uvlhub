@@ -2,7 +2,6 @@ from app import db
 from sqlalchemy import Enum as SQLAlchemyEnum
 
 from app.modules.dataset.models import Author, PublicationType
-from datetime import date
 
 
 class FeatureModel(db.Model):

@@ -1,9 +1,8 @@
 import re
-from sqlalchemy import any_, and_, or_, func
+from sqlalchemy import any_, and_, or_
 import unidecode
 from app.modules.dataset.models import Author, PublicationType, DataSet
 from app.modules.featuremodel.models import FMMetaData, FeatureModel
-from app.modules.hubfile.models import Hubfile
 from core.repositories.BaseRepository import BaseRepository
 from datetime import datetime
 
@@ -105,5 +104,5 @@ def is_date(date_to_try):
     try:
         good_date = datetime.strptime(date_to_try, "%Y-%m-%d").date
         return good_date
-    except Exception as e:
+    except:
         return None
