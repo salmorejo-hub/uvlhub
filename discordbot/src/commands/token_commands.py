@@ -1,5 +1,5 @@
 import discord
-from src.database.models import UserToken
+from discordbot.src.database.models import UserToken
 
 
 async def setup_token_commands(client, session):

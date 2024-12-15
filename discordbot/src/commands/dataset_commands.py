@@ -1,7 +1,7 @@
 import discord
-from src.util.token import get_token
-from src.util.embeds import embed_dataset, PaginationView
-from src.util.api_request import request_api
+from discordbot.src.util.token import get_token
+from discordbot.src.util.embeds import embed_dataset, PaginationView
+from discordbot.src.util.api_request import request_api
 import requests
 import os
 

@@ -90,7 +90,7 @@ def test_featuremodel_list_query():
 
         searcher_field = driver.find_element(By.ID, "search-uvl-query")
         time.sleep(2)
-        searcher_field.send_keys('0000-0000-0000-0005')
+        searcher_field.send_keys('0000-0000-0000-1000')
         searcher_field.send_keys(Keys.RETURN)
         time.sleep(2)
 
