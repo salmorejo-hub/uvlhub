@@ -144,6 +144,7 @@ def publish_deposition(deposition_id) -> tuple:
     try:
         # Target deposition
         deposition = service.get_deposition(deposition_id)
+        service.generate_doi(deposition_id)
         service.publish_deposition(deposition)
         return jsonify(f"Deposition with id {deposition_id} published succesfully"), 201
 
