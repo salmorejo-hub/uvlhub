@@ -1,8 +1,9 @@
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from flask import url_for
 from app import create_app
 import os
+from app.modules.dataset.routes import dataset_service
 
 
 @pytest.fixture(scope='module')
@@ -59,3 +60,16 @@ def test_download_all_datasets_empty_directory(test_client, mock_dataset_service
         assert b'\x00' in response.data
         assert len(response.data) == 22  # Header length
 
+
+def test_download_all_datasets_error(test_client):
+    with patch.object(dataset_service, 'zip_datasets', side_effect=Exception("Error al crear el ZIP")):
+        response = test_client.get(url_for('dataset.download_all_datasets'))
+        assert response.status_code == 500
+        assert response.json['error'] == "Error al crear el ZIP"
+
+
+@patch('os.remove')
+def test_download_all_datasets_cleanup(mock_remove, test_client):
+    response = test_client.get(url_for('dataset.download_all_datasets'))
+    assert response.status_code == 200
+    mock_remove.assert_called_once()
