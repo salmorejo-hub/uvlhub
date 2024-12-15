@@ -16,6 +16,7 @@ authentication_service = AuthenticationService()
 user_profile_service = UserProfileService()
 # mail_service = MailService()
 
+
 @auth_bp.route("/signup/", methods=["GET", "POST"])
 def show_signup_form():
     if current_user.is_authenticated:
@@ -68,10 +69,12 @@ def check_inbox():
 
         # Generar y enviar correo de confirmación
         serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
-        token = serializer.dumps(
-            {'email': email, 'password': password, 'confirm_password': confirm_password, 'name': name, 'surname': surname},
-            salt='email-confirmation-salt'
-        )
+        token = serializer.dumps({'email': email,
+                                  'password': password,
+                                  'confirm_password': confirm_password,
+                                  'name': name,
+                                  'surname': surname},
+                                 salt='email-confirmation-salt')
         confirm_url = url_for('auth.confirm_email', token=token, _external=True)
         html = render_template('auth/activate.html', confirm_url=confirm_url)
         subject = "Please confirm your email"
@@ -89,7 +92,6 @@ def check_inbox():
         flash('You have reached the maximum number of confirmation emails allowed.', 'danger')
 
     return render_template("auth/check_inbox.html")
-
 
 
 @auth_bp.route('/confirm/<token>')
