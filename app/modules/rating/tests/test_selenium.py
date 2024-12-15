@@ -74,8 +74,9 @@ def test_average_rating_not_logged_in():
         time.sleep(4)
 
         # Check for "Average Rating"
-        assert driver.find_element(By.XPATH, "/html/body/div/div/main/div/div[3]/div[1]/div[1]/div[1]/div[5]/div[1]/span"), \
-            'Test failed: "Average Rating" is not visible.'
+        xpath = "/html/body/div/div/main/div/div[3]/div[1]/div[1]/div[1]/div[5]/div[1]/span"
+        error_msg = 'Test failed: "Average Rating" is not visible.'
+        assert driver.find_element(By.XPATH, xpath), error_msg
 
     finally:
         close_driver(driver)
@@ -117,7 +118,8 @@ def test_rating_options_logged_in():
 
         actual_options = [option.text for option in options]
         assert actual_options == expected_options, \
-            f'Test failed: Rating options are incorrect. Expected {expected_options}, but got {actual_options}.'
+            f'Test failed: Rating options are incorrect. 
+            Expected {expected_options}, but got {actual_options}.'
 
     finally:
         close_driver(driver)
