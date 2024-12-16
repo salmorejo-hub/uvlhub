@@ -8,6 +8,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from core.environment.host import get_host_for_selenium_testing
 from core.selenium.common import initialize_driver, close_driver
 
+from selenium.common.exceptions import NoSuchElementException
+
 
 def wait_for_page_to_load(driver, timeout=4):
     WebDriverWait(driver, timeout).until(
@@ -131,5 +133,60 @@ def test_upload_dataset():
         close_driver(driver)
 
 
-# Call the test function
+def test_file_previsualize():
+    driver = initialize_driver()
+    try:
+        host = get_host_for_selenium_testing()
+
+        # Navigate to the dataset page
+        driver.get(f'{host}/doi/10.1234/dataset4/')
+        time.sleep(4)
+
+        # Click the button to open the file content
+        try:
+            button = driver.find_element(
+                By.XPATH, "/html/body/div/div/main/div/div[3]/div[2]/div/div[2]/div/div[2]/button")
+            button.click()
+            time.sleep(2)
+        except NoSuchElementException:
+            raise AssertionError('Test failed: Button to open file content is not visible.')
+
+        # Check that the file content is displayed
+        try:
+            file_content_element = driver.find_element(By.XPATH, "//*[@id='fileContent']")
+            file_content_text = file_content_element.text
+
+            # Expected content
+            expected_content = """features
+    Chat
+        mandatory
+            Connection
+                alternative
+                    "Peer 2 Peer"
+                    Server
+            Messages
+                or
+                    Text
+                    Video
+                    Audio
+        optional
+            "Data Storage"
+            "Media Player"
+
+constraints
+    Server => "Data Storage"
+    Video | Audio => "Media Player\""""
+
+            # Verify content matches expected
+            test = "Test failed: File content does not match expected content."
+            assert file_content_text.strip() == expected_content.strip(), \
+                f'{test}\nExpected:\n{expected_content}\nGot:\n{file_content_text}'
+        except NoSuchElementException:
+            raise AssertionError('Test failed: File content is not visible.')
+
+    finally:
+        close_driver(driver)
+
+
 test_upload_dataset()
+test_file_previsualize()

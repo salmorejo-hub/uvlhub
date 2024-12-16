@@ -47,6 +47,7 @@ jobs:
         MARIADB_TEST_DATABASE: uvlhubdb_test
         MARIADB_USER: uvlhub_user
         MARIADB_PASSWORD: uvlhub_password
+        MAIL_USERNAME: salmorejohub1@gmail.com
         SECRET_KEY_JWT: ${{ secrets.SECRET_KEY_JWT }}
       run: |
         pytest app/modules/ --ignore-glob='*selenium*'
@@ -60,6 +61,7 @@ jobs:
         MARIADB_TEST_DATABASE: uvlhubdb_test
         MARIADB_USER: uvlhub_user
         MARIADB_PASSWORD: uvlhub_password
+        MAIL_USERNAME: salmorejohub1@gmail.com
         SECRET_KEY_JWT: ${{ secrets.SECRET_KEY_JWT }}
         API_URL: http://127.0.0.1:5000/api/
       run: |
@@ -78,5 +80,6 @@ jobs:
         MARIADB_TEST_DATABASE: uvlhubdb_test
         MARIADB_USER: uvlhub_user
         MARIADB_PASSWORD: uvlhub_password
+        MAIL_USERNAME: salmorejohub1@gmail.com
       run: |
         pytest rosemary/ --ignore-glob='*selenium*'

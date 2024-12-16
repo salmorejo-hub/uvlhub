@@ -17,6 +17,13 @@ class FeatureModel(db.Model):
     def get_cleaned_publication_type(self):
         return self.fm_meta_data.publication_type.name.replace('_', ' ').title()
 
+    def get_total_files_size(self):
+        return sum(f.size for f in self.files)
+
+    def get_publication_date(self):
+        from app.modules.dataset.repositories import DataSetRepository
+        return DataSetRepository().get_by_id(self.data_set_id).created_at
+
     def to_dict(self):
         return {
             'title': self.fm_meta_data.title,
@@ -24,7 +31,10 @@ class FeatureModel(db.Model):
             'description': self.fm_meta_data.description,
             'authors': [author.to_dict() for author in self.fm_meta_data.authors],
             'tags': self.fm_meta_data.tags.split(",") if self.fm_meta_data.tags else [],
-            'id': self.id
+            'id': self.id,
+            'files': [file.to_dict() for file in self.files],
+            'publication_date': self.get_publication_date(),
+
         }
 
 

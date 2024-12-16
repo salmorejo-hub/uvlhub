@@ -1,4 +1,4 @@
-from src.database.models import UserToken
+from discordbot.src.database.models import UserToken
 
 
 def get_token(user, session):
