@@ -178,11 +178,9 @@ constraints
     Video | Audio => "Media Player\""""
 
             # Verify content matches expected
-            assert file_content_text.strip() == expected_content.strip(), (
-                f'Test failed: File content does not match expected content.\n'
-                f'Expected:\n{expected_content}\n'
-                f'Got:\n{file_content_text}'
-            )
+            test = "Test failed: File content does not match expected content."
+            assert file_content_text.strip() == expected_content.strip(), \
+                f'{test}\nExpected:\n{expected_content}\nGot:\n{file_content_text}'
         except NoSuchElementException:
             raise AssertionError('Test failed: File content is not visible.')
 
