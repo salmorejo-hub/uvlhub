@@ -1,7 +1,7 @@
 import hashlib
 import logging
-
 import random
+
 from typing import List
 from fakenodo.app.models import Deposition, File
 from dotenv import load_dotenv
@@ -94,7 +94,7 @@ class Service(BaseService):
         """
         if deposition.doi is not None:
             deposition.published = True
-
+            
         return deposition.to_dict()
 
     def delete_deposition(self, deposition: Deposition) -> None:
@@ -116,20 +116,18 @@ class Service(BaseService):
             dict | None: The deposition with the given ID, or None if not found.
         """
         return [deposition for deposition in depositions if deposition_id == deposition.id][0]
-
+    
     def generate_doi_id(self):
         while True:
             identifier = str(random.randint(10000, 99999))
             if identifier not in generated_ids:
                 generated_ids.add(identifier)
                 return identifier
-
+            
     def generate_doi(self, deposition_id: int) -> None:
         """Generate doi to publish deposition
-
         Args:
             deposition_id(int): id of target deposition
-
         Returns:
             str: Doi of the target deposition
         """
@@ -138,11 +136,10 @@ class Service(BaseService):
         doi_id = self.generate_doi_id()
 
         target_deposition.doi = f"http://localhost/doi/{doi_id}/dataset.{doi_id}"
-
+            
     def get_doi(self, deposition_id: int) -> str:
         """
         Get doi of a deposition, this function is only for api simulation purposes,
-        fakenodo doesn´t generate doi.
 
         Args:
             deposition_id(int): id of target deposition
