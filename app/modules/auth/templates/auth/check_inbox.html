@@ -8,7 +8,7 @@
     <p>Click the link in the email to complete the sign up process.</p>
     <p>After you confirm your email address, you can log in to your account.</p>
     <p>Already confirmed your email address? <a href="{{ url_for('auth.login') }}">Log in</a></p>
-    <form method="POST" action="{{ url_for('auth.check_inbox') }}">
+    <form method="GET" action="{{ url_for('auth.check_inbox') }}">
         <input type="hidden" name="email" value="{{ session['pack']['email'] }}">
         <button type="submit" class="btn btn-primary">Resend Confirmation Email</button>
     </form>

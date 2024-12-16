@@ -59,10 +59,12 @@ function send_query() {
                 authors: document.querySelector('#query-authors').value,
                 q_tags: document.querySelector('#query-tags').value,
                 bytes: sizeInBytes,
+                min_date: document.querySelector("#form-min-date").value,
+                max_date: document.querySelector("#form-max-date").value,
                 publication_type: document.querySelector('#publication_type').value
             };
 
-            console.log(document.querySelector('#publication_type').value);
+            console.log(document.querySelector('#form-min-date').value);
 
             fetch('/exploreuvl', {
                 method: 'POST',
@@ -101,6 +103,7 @@ function send_query() {
                                             <span class="badge bg-primary" style="cursor: pointer;" onclick="set_publication_type_as_query('${dataset.publication_type}')">${dataset.publication_type}</span>
                                         </div>
                                     </div>
+                                    <p class="text-secondary">${formatDate(dataset.publication_date)}</p>
 
                                     <div class="row mb-2">
 
@@ -174,6 +177,12 @@ function get_total_size(files) {
 
 }
 
+function formatDate(dateString) {
+    const options = {day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric'};
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', options);
+}
+
 function set_tag_as_query(tagName) {
     const section1 = document.getElementById('normal-search');
     if (section1.style.display === 'block') {
@@ -210,6 +219,8 @@ function clearFilters() {
     let queryTags = document.querySelector('#query-tags');
     let queryDescription = document.querySelector('#query-description');
     let queryBytes = document.querySelector('#query-max-size');
+    document.querySelector('#form-max-date').value = "";
+    document.querySelector('#form-min-date').value = "";
     queryTitle.value = "";
     queryAuthors.value = "";
     queryTags.value = "";
