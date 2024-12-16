@@ -1,9 +1,10 @@
 import re
 from sqlalchemy import any_, and_, or_
 import unidecode
-from app.modules.dataset.models import Author, PublicationType
+from app.modules.dataset.models import Author, PublicationType, DataSet
 from app.modules.featuremodel.models import FMMetaData, FeatureModel
 from core.repositories.BaseRepository import BaseRepository
+from datetime import datetime
 
 
 class ExploreUVL(BaseRepository):
@@ -11,17 +12,19 @@ class ExploreUVL(BaseRepository):
         super().__init__(FeatureModel)
 
     def filter(
-            self,
-            query="",
-            q_title="",
-            q_description="",
-            q_authors="",
-            q_tags="",
-            q_bytes="",
-            publication_type="any",
-            tags=[],
-            **kwargs):
-
+        self,
+        query="",
+        q_title="",
+        q_description="",
+        q_authors="",
+        q_tags="",
+        q_bytes="",
+        q_min_date="",
+        q_max_date="",
+        publication_type="any",
+        tags=[],
+        **kwargs,
+    ):
         if query == "":
             filters = {'title': q_title, 'description': q_description, 'authors': q_authors, 'tags': q_tags}
             q_filters = []
@@ -44,6 +47,7 @@ class ExploreUVL(BaseRepository):
                 self.model.query
                 .join(FeatureModel.fm_meta_data)
                 .join(FMMetaData.authors)
+                .join(DataSet, FeatureModel.data_set_id == DataSet.id)
                 .filter(or_(*author_filters))
                 .filter(and_(*q_filters))
                 .filter(FMMetaData.publication_doi.isnot(None))
@@ -67,6 +71,7 @@ class ExploreUVL(BaseRepository):
                 self.model.query
                 .join(FeatureModel.fm_meta_data)
                 .join(FMMetaData.authors)
+                .join(DataSet, FeatureModel.data_set_id == DataSet.id)
                 .filter(or_(*filters))
                 .filter(FMMetaData.publication_doi.isnot(None))
             )
@@ -84,7 +89,21 @@ class ExploreUVL(BaseRepository):
         if tags:
             uvls = uvls.filter(FMMetaData.tags.ilike(any_(f"%{tag}%" for tag in tags)))
 
+        # Filtrar por fechas
+        if is_date(q_min_date):
+            uvls = uvls.filter(DataSet.created_at >= q_min_date)
+        if is_date(q_max_date):
+            uvls = uvls.filter(DataSet.created_at <= q_max_date)
+
         if isinstance(q_bytes, int):
             return list(filter(lambda uvl: uvl.get_total_files_size() <= q_bytes, uvls.all()))
 
         return uvls.all()
+
+
+def is_date(date_to_try):
+    try:
+        good_date = datetime.strptime(date_to_try, "%Y-%m-%d").date
+        return good_date
+    except BaseException:
+        return None

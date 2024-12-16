@@ -142,6 +142,11 @@
                                 {% endfor %}
                             </tbody>
                         </table>
+                        <button type="button" class="btn btn-primary">
+                            <a href="{{ url_for('dataset.stage_datasets', current_user_id=current_user.id) }}" class="text-white">
+                                Stage all unstaged datasets <i data-feather="upload-cloud"></i>
+                            </a>
+                        </button>
                     </div>
                 </div>
             </div>
