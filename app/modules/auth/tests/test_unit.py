@@ -198,11 +198,11 @@ def test_email_confirmation(test_client, mocker):
     # Generar token
     serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
     token = serializer.dumps({'email': 'test7@example.com',
-                              'password': 'password123',
-                              'confirm_password': 'password123',
-                              'name': 'Test',
-                              'surname': 'User'},
-                             salt='email-confirmation-salt')
+                            'password': 'password123',
+                            'confirm_password': 'password123',
+                            'name': 'Test',
+                            'surname': 'User'},
+                            salt='email-confirmation-salt')
 
     response = test_client.get(f'/confirm/{token}')
 
@@ -215,11 +215,11 @@ def test_expired_token(test_client, mocker):
     # Generar token con expiración simulada
     serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
     token = serializer.dumps({'email': 'test7@example.com',
-                              'password': 'password123',
-                              'confirm_password': 'password123',
-                              'name': 'Test',
-                              'surname': 'User'},
-                             salt='email-confirmation-salt')
+                            'password': 'password123',
+                            'confirm_password': 'password123',
+                            'name': 'Test',
+                            'surname': 'User'},
+                            salt='email-confirmation-salt')
 
     mocker.patch("app.modules.auth.routes.URLSafeTimedSerializer.loads", side_effect=SignatureExpired("Token expired"))
 
