@@ -14,8 +14,10 @@ class ExploreServiceUvl(BaseService):
             authors="",
             q_tags="",
             bytes="",
+            min_date="",
+            max_date="",
             publication_type="any",
             tags=[],
             **kwargs):
-        return self.repository.filter(query, title, description, authors, q_tags,
-                                      bytes, publication_type, tags, **kwargs)
+        return self.repository.filter(query, title, description, authors, q_tags, bytes,
+                                      min_date, max_date, publication_type, tags, **kwargs)
