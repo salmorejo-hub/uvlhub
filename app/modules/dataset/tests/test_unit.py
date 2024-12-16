@@ -1,5 +1,6 @@
 import os
 import pytest
+from app import db
 from app.modules.auth.models import User
 from app.modules.dataset.models import (
     DataSet, DSMetaData, DatasetStatus, PublicationType
@@ -7,7 +8,7 @@ from app.modules.dataset.models import (
 from app.modules.featuremodel.models import FeatureModel, FMMetaData
 from app.modules.dataset.services import DataSetService, DSMetaDataService
 from app.modules.conftest import login, logout
-from app import create_app, db
+from app import create_app
 
 
 @pytest.fixture(scope="function")
