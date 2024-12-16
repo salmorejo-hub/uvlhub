@@ -80,10 +80,10 @@ class DataSetService(BaseService):
 
     def get_user_unstaged_datasets(self, current_user_id: int):
         return self.repository.get_user_unstaged_datasets(current_user_id)
-    
+
     def get_user_staged_datasets(self, current_user_id: int):
         return self.repository.get_user_staged_datasets(current_user_id)
-    
+
     def count_feature_models(self):
         return self.feature_model_service.count_feature_models()
 
@@ -182,7 +182,7 @@ class DataSetService(BaseService):
             logger.error(f"Exception setting dataset to unstaged: {exc}")
             self.repository.session.rollback()
             raise exc
-    
+
     # Method to set dataset to published
 
     def stage_datasets(self, current_user_id):
@@ -197,9 +197,8 @@ class DataSetService(BaseService):
             logger.error(f"Exception setting dataset to staged: {exc}")
             self.repository.session.rollback()
 
-
     # Method to set dataset to published
-    
+
     def publish_datasets(self, current_user_id):
         try:
             datasets = self.repository.get_user_staged_datasets(current_user_id)
