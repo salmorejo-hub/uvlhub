@@ -30,8 +30,8 @@
 | Miembro del equipo        | Horas | Commits | LoC | Test | Issues | Work Item |
 | ------------------------- | ----- | ------- | --- | ---- | ------ | --------- |
 | Javier Aponte Pozón       |   35    |    14     |  791   |  6    |  1      |     2.5      |
-| Javier Muñoz Romero       |    45   |  17       |   661  |   9   |   7     |   (2.1, 2.2, 2.4)        | 
-| Juan Núñez Sánchez        |       |         |     |      |        |           |
+| Javier Muñoz Romero       |    45   |  17       |   661  |   9   |   7     |   2.1, 2.2, 2.4        | 
+| Juan Núñez Sánchez        |   40    |    11     |  915   |   9   |    6    |     2.1, 2.2, 2.4      |
 | Jose María Portela Huerta | 55    | 18      | 1086 | 10   | 7     | 2.6       |
 | Juan Luis Ruano Muriedas  | 60    | 53      | 1114 | 8    | 6     | 2.6       |
 | Álvaro Sevilla Cabrera    |  28   |    5    |  1000|  2   |  3    |    3      |
