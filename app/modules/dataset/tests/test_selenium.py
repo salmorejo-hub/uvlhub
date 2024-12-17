@@ -98,8 +98,10 @@ def test_upload_dataset():
         affiliation_field1.send_keys("Club1")
 
         # Obtén las rutas absolutas de los archivos
-        ruta_file_1 = f"app/modules/dataset/uvl_examples/file{str(datetime.datetime.now()).replace(':', '-').replace(' ', '-')}.uvl"
-        ruta_file_2 = f"app/modules/dataset/uvl_examples/file{str(datetime.datetime.now()).replace(':', '-').replace(' ', '-')}.uvl"
+        ruta_file_1 = f"app/modules/dataset/uvl_examples/file\
+            {str(datetime.datetime.now()).replace(':', '-').replace(' ', '-')}.uvl"
+        ruta_file_2 = f"app/modules/dataset/uvl_examples/file\
+            {str(datetime.datetime.now()).replace(':', '-').replace(' ', '-')}.uvl"
         shutil.copy2("app/modules/dataset/uvl_examples/file1.uvl", ruta_file_1)
         shutil.copy2("app/modules/dataset/uvl_examples/file2.uvl", ruta_file_2)
 
