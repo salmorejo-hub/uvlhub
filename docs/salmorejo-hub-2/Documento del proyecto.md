@@ -33,7 +33,7 @@
 | Javier Muñoz Romero       |       |         |     |      |        |           |
 | Juan Núñez Sánchez        |       |         |     |      |        |           |
 | Jose María Portela Huerta |       |         |     |      |        |           |
-| Juan Luis Ruano Muriedas  |       |         |     |      |        |           |
+| Juan Luis Ruano Muriedas  | 60    | 53      | 489 | 8    | 6      | 2.6       |
 | Álvaro Sevilla Cabrera    |       |         |     |      |        |           |
 
 ## Integración 
