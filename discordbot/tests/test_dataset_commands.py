@@ -1,8 +1,8 @@
 import pytest
 import discord.ext.test as dpytest
 
-user_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX2VtYWlsIjoidXNlcjFAZXhhbXBsZS5jb20iLCJleHAiOjE3Mzg3NzkzODcsImlhdCI6MTczMzU5NTM4N30.JMbVIPOTI_SIDlx2vGp48w9bjiwCbYV4JSiwLer88-8"
-
+user1_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX2VtYWlsIjoidXNlcjFAZXhhbXBsZS5jb20iLCJleHAiOjE3Mzg3NzkzODcsImlhdCI6MTczMzU5NTM4N30.JMbVIPOTI_SIDlx2vGp48w9bjiwCbYV4JSiwLer88-8"
+user3_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJ1c2VyX2VtYWlsIjoidXNlcjNAZXhhbXBsZS5jb20iLCJleHAiOjE3Mzc4ODUzMDAsImlhdCI6MTczNDQyOTMwMH0.EqFxzjOieHcIEMCt4PkxgfFx5SgAk6aQsPk263YF4ks"
 
 @pytest.mark.asyncio
 async def test_datasets_command_no_token(bot):
@@ -38,7 +38,7 @@ async def test_datasets_command(bot):
 
     # Check command in a guild with valid token and embed response
     await dpytest.empty_queue()
-    await dpytest.message(f"!token {user_token}", dm)
+    await dpytest.message(f"!token {user1_token}", dm)
     await dpytest.empty_queue()
     await dpytest.message("!datasets", channel=channel, member=user)
 
@@ -53,6 +53,20 @@ async def test_datasets_command(bot):
 
     assert embed.fields[0].name == "Sample dataset 3", "The embed name is incorrect."
     assert "Description for dataset 3" in embed.fields[0].value, "The embed description is incorrect."
+    
+@pytest.mark.asyncio
+async def test_datasets_command_no_datasets(bot):
+    channel = bot.guilds[0].text_channels[0]
+    user = bot.guilds[0].members[0]
+    dm = await user.create_dm()
+
+    # Check command in a guild with valid token but no datasets in the response
+    await dpytest.empty_queue()
+    await dpytest.message(f"!token {user3_token}", dm)
+    await dpytest.empty_queue()
+    await dpytest.message("!datasets", channel=channel, member=user)
+    
+    assert dpytest.verify().message().content("No datasets found."), "The bot did not respond with the expected message when no datasets were found."
 
 
 @pytest.mark.asyncio
@@ -104,7 +118,7 @@ async def test_search_command_valid_query(bot):
 
     # Check command when a valid query is provided
     dm = await user.create_dm()
-    await dpytest.message(f"!token {user_token}", dm)
+    await dpytest.message(f"!token {user1_token}", dm)
     await dpytest.empty_queue()
     await dpytest.message("!search test", channel=channel, member=user)
 
@@ -129,7 +143,7 @@ async def test_search_command_no_results(bot):
 
     # Check command when a query returns no results
     dm = await user.create_dm()
-    await dpytest.message(f"!token {user_token}", dm)
+    await dpytest.message(f"!token {user1_token}", dm)
     await dpytest.empty_queue()
     await dpytest.message("!search invalid_query", channel=channel, member=user)
     assert dpytest.verify().message().content(
