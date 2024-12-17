@@ -29,11 +29,11 @@
 
 | Miembro del equipo        | Horas | Commits | LoC | Test | Issues | Work Item |
 | ------------------------- | ----- | ------- | --- | ---- | ------ | --------- |
-| Javier Aponte Pozón       |   35    |    10     |  791   |  6    |  1      |     5      |
-| Javier Muñoz Romero       |    45   |  17       |   661  |   9   |   7     |   3  (2.1, 2.2, 2.4)        | 
+| Javier Aponte Pozón       |   35    |    10     |  791   |  6    |  1      |     2.5      |
+| Javier Muñoz Romero       |    45   |  17       |   661  |   9   |   7     |   (2.1, 2.2, 2.4)        | 
 | Juan Núñez Sánchez        |       |         |     |      |        |           |
-| Jose María Portela Huerta |       |         |     |      |        |           |
-| Juan Luis Ruano Muriedas  | 60    | 53      | 489 | 8    | 6      | 2.6       |
+| Jose María Portela Huerta | 55    | 18      | 1086 | 10   | 7      | 2.6       |
+| Juan Luis Ruano Muriedas  | 60    | 53      | 1114 | 8    | 6      | 2.6       |
 | Álvaro Sevilla Cabrera    |       |         |     |      |        |           |
 
 ## Integración 
@@ -438,3 +438,55 @@ Si se quiere repetir para vaciar la base de datos, los pasos a seguir son pocos 
    - El despliegue es automático y se realiza directamente desde la rama `main` del repositorio principal.
    
 ### Conclusiones y trabajo futuro
+
+#### **Conclusiones**
+
+Durante el desarrollo del proyecto, **Salmorejo-hub-2** ha alcanzado importantes logros en la mejora del sistema **UVLHub**. Las principales conclusiones son:
+
+1. **Mejora de la Experiencia de Usuario**: Funcionalidades como la **previsualización de UVLs**, el **modo oscuro** y la **búsqueda avanzada** han hecho la plataforma más intuitiva y accesible.
+2. **Eficiencia en la Gestión de Recursos**: La creación de módulos específicos y una **zona de staging** han permitido un control de calidad más riguroso y una mejor organización de los recursos.
+3. **Colaboración Efectiva del Equipo**: La adopción de metodologías ágiles y herramientas como **GitHub Actions** y **Render** han facilitado una integración continua y un despliegue eficiente.
+4. **Calidad del Código y Automatización**: Los workflows automatizados han asegurado que el código cumpla con altos estándares de calidad y funcionalidad.
+5. **Adaptabilidad del Entorno de Desarrollo**: La estandarización en **Linux Ubuntu 22.04 LTS** y **Python 3.12** ha minimizado problemas de compatibilidad y acelerado el desarrollo.
+
+#### **Trabajo Futuro**
+
+Para seguir mejorando **UVLHub**, se proponen las siguientes mejoras para el próximo curso:
+
+1. **Autenticación Avanzada**:
+   - Implementar **Autenticación de Dos Factores (2FA)**.
+   - Integrar inicio de sesión con servicios externos como Google o GitHub.
+
+2. **Mejoras en la Visualización de Datos**:
+   - Incorporar **visualizaciones gráficas** de UVLs.
+   - Desarrollar un **dashboard personalizado** para estadísticas y métricas.
+
+3. **Optimización del Rendimiento**:
+   - Mejorar la **indexación en MariaDB**.
+   - Implementar **caching de resultados** para reducir tiempos de carga.
+
+4. **Automatización de Tareas Administrativas**:
+   - Crear **scripts de mantenimiento automatizados**.
+   - Integrar herramientas de **monitorización avanzada**.
+
+5. **Ampliación de Funcionalidades de Colaboración**:
+   - Permitir **comentarios y revisiones** en UVLs.
+   - Implementar **notificaciones en tiempo real** para actualizaciones y cambios.
+
+6. **Internacionalización y Accesibilidad**:
+   - Añadir **soporte multilingüe**.
+   - Mejorar la **accesibilidad** para usuarios con discapacidades.
+
+7. **Integración con Herramientas de Análisis de Datos**:
+   - Desarrollar una **API** para integración con herramientas como Jupyter Notebook.
+   - Facilitar la **automatización de pipelines de datos**.
+
+8. **Expansión de Capacidades de Seguridad**:
+   - Implementar **encriptación de datos sensibles**.
+   - Realizar **auditorías de seguridad periódicas**.
+
+#### **Conclusión Final**
+
+El desarrollo de **UVLHub** por parte de **Salmorejo-hub-2** ha establecido una base sólida y funcional, mejorando significativamente la plataforma. Las propuestas de trabajo futuro buscan potenciar aún más la usabilidad, seguridad y eficiencia de **UVLHub**, asegurando su crecimiento y adaptación a las necesidades de los usuarios.
+
+---
