@@ -18,7 +18,7 @@ from app import create_app
 def test_client():
 
     test_app = create_app("testing")
-        
+
     test_app.config['SERVER_NAME'] = 'localhost'
     test_app.config['APPLICATION_ROOT'] = '/'
     test_app.config['PREFERRED_URL_SCHEME'] = 'http'
