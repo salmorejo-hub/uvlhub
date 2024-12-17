@@ -129,7 +129,7 @@ def test_upload_dataset():
         upload_btn = driver.find_element(By.ID, "upload_button")
         upload_btn.send_keys(Keys.RETURN)
         wait_for_page_to_load(driver)
-        time.sleep(10)  # Force wait time
+        time.sleep(2)  # Force wait time
 
         assert driver.current_url == f"{host}/dataset/list", "Test failed!"
 
