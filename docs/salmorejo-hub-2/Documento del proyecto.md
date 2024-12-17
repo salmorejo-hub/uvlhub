@@ -29,7 +29,7 @@
 
 | Miembro del equipo        | Horas | Commits | LoC | Test | Issues | Work Item |
 | ------------------------- | ----- | ------- | --- | ---- | ------ | --------- |
-| Javier Aponte Pozón       |   35    |    8     |  791   |  6    |  1      |     5      |
+| Javier Aponte Pozón       |   35    |    10     |  791   |  6    |  1      |     5      |
 | Javier Muñoz Romero       |       |         |     |      |        |           |
 | Juan Núñez Sánchez        |       |         |     |      |        |           |
 | Jose María Portela Huerta |       |         |     |      |        |           |
