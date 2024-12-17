@@ -32,9 +32,9 @@
 | Javier Aponte Pozón       |   35    |    14     |  791   |  6    |  1      |     2.5      |
 | Javier Muñoz Romero       |    45   |  17       |   661  |   9   |   7     |   (2.1, 2.2, 2.4)        | 
 | Juan Núñez Sánchez        |       |         |     |      |        |           |
-| Jose María Portela Huerta | 55    | 18      | 1086 | 10   | 7      | 2.6       |
-| Juan Luis Ruano Muriedas  | 60    | 53      | 1114 | 8    | 6      | 2.6       |
-| Álvaro Sevilla Cabrera    |       |         |     |      |        |           |
+| Jose María Portela Huerta | 55    | 18      | 1086 | 10   | 7     | 2.6       |
+| Juan Luis Ruano Muriedas  | 60    | 53      | 1114 | 8    | 6     | 2.6       |
+| Álvaro Sevilla Cabrera    |  28   |    5    |  1000|  2   |  3    |    3      |
 
 ## Integración 
 * [Salmorejo-hub-1](https://github.com/salmorejo-hub-1/uvlhub): Hemos hecho integración con este grupo para tener un alcance más amplio para nuestro proyecto y queremos optar a la nota máxima. 
