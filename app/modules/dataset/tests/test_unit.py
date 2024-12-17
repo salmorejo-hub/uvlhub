@@ -24,6 +24,8 @@ def test_client():
     test_app.config['PREFERRED_URL_SCHEME'] = 'http'
 
     with test_app.app_context():
+
+        db.drop_all()
         db.create_all()
         user_test = User(email='user_dataset@example.com', password='test1234')
         db.session.add(user_test)
@@ -72,6 +74,11 @@ def test_client():
         db.drop_all()
 
 
+@pytest.fixture
+def datasetservice():
+    return DataSetService()
+
+
 @pytest.fixture(scope="function")
 def mock_dataset_service():
     with patch('app.modules.dataset.services.DataSetService') as mock:
@@ -89,30 +96,6 @@ def test_dataset_creation(test_client):
         assert dataset.ds_meta_data.title == "UnitTest Dataset"
         assert dataset.ds_meta_data.dataset_status == DatasetStatus.UNSTAGED
         assert dataset.ds_meta_data.dataset_doi is None
-
-
-def test_dataset_status(test_client):
-    with test_client.application.app_context():
-        dataset_service = DataSetService()
-        dataset = DataSet.query.first()
-
-        assert dataset.ds_meta_data.dataset_status == DatasetStatus.UNSTAGED
-
-        dataset_service.set_dataset_to_staged(dataset.id)
-        db.session.refresh(dataset)
-        assert dataset.ds_meta_data.dataset_status == DatasetStatus.STAGED
-
-        dataset_service.set_dataset_to_unstaged(dataset.id)
-        db.session.refresh(dataset)
-        assert dataset.ds_meta_data.dataset_status == DatasetStatus.UNSTAGED
-
-        dataset_service.set_dataset_to_staged(dataset.id)
-        db.session.refresh(dataset)
-        assert dataset.ds_meta_data.dataset_status == DatasetStatus.STAGED
-
-        dataset_service.publish_datasets(current_user_id=dataset.user_id)
-        db.session.refresh(dataset)
-        assert dataset.ds_meta_data.dataset_status == DatasetStatus.PUBLISHED
 
 
 def test_uvl_preview(test_client):
@@ -160,6 +143,90 @@ def test_dsmetadata_service(test_client):
         db.session.refresh(dataset.ds_meta_data)
 
         assert dataset.ds_meta_data.dataset_doi == new_doi, "El DOI de DSMetaData no se actualizó correctamente."
+
+
+def test_stage_dataset_positive(test_client, datasetservice):
+
+    with test_client.application.app_context():
+        dataset = DataSet.query.first()
+        dataset_id = dataset.id
+
+        datasetservice.set_dataset_to_staged(dataset_id)
+        db.session.refresh(dataset)
+
+        assert dataset.ds_meta_data.dataset_status == DatasetStatus.STAGED, \
+            "El dataset no se pudo pasar a estado STAGED."
+
+
+def test_stage_dataset_negative(test_client, datasetservice):
+
+    with test_client.application.app_context():
+        with pytest.raises(ValueError) as excinfo:
+            dataset = DataSet.query.first()
+            dataset_id = dataset.id
+
+            datasetservice.set_dataset_to_staged(dataset_id)
+            db.session.refresh(dataset)
+
+            # Comprobamos que no se puede volver a sincronizar el mismo dataset
+
+            datasetservice.set_dataset_to_staged(dataset_id)
+            db.session.refresh(dataset)
+        assert str(excinfo.value) == "Dataset is not in 'UNSTAGED' status", \
+            "No debería volver a sincronizar un dataset ya en STAGED"
+
+
+def test_unstage_dataset_positive(test_client, datasetservice):
+
+    with test_client.application.app_context():
+        dataset = DataSet.query.first()
+        dataset_id = dataset.id
+
+        # Poniendo el dataset de prueba en estado STAGED
+        datasetservice.set_dataset_to_staged(dataset_id)
+        db.session.refresh(dataset)
+        assert dataset.ds_meta_data.dataset_status == DatasetStatus.STAGED, \
+            "El dataset no se pudo pasar a estado STAGED."
+
+        datasetservice.set_dataset_to_unstaged(dataset_id)
+        db.session.refresh(dataset)
+
+        assert dataset.ds_meta_data.dataset_status == DatasetStatus.UNSTAGED, \
+            "El dataset no se pudo pasar a estado UNSTAGED."
+
+
+def test_unstage_dataset_negative(test_client, datasetservice):
+
+    with test_client.application.app_context():
+        with pytest.raises(ValueError) as excinfo:
+            dataset = DataSet.query.first()
+            dataset_id = dataset.id
+
+            # Comprobamos que no se puede volver a sincronizar el mismo dataset
+
+            datasetservice.set_dataset_to_unstaged(dataset_id)
+            db.session.refresh(dataset)
+        assert str(excinfo.value) == "Dataset is not in 'STAGED' status", \
+            "No debería volver a dessincronizar un dataset ya en UNSTAGED"
+
+
+def test_publish_all_datasets_positive(test_client, datasetservice):
+
+    with test_client.application.app_context():
+        dataset = DataSet.query.first()
+        dataset_id = dataset.id
+
+        # Poniendo el dataset de prueba en estado STAGED
+        datasetservice.set_dataset_to_staged(dataset_id)
+        db.session.refresh(dataset)
+        assert dataset.ds_meta_data.dataset_status == DatasetStatus.STAGED, \
+            "El dataset no se pudo pasar a estado STAGED."
+
+        datasetservice.publish_datasets(User.query.first().id)
+        db.session.refresh(dataset)
+
+        assert dataset.ds_meta_data.dataset_status == DatasetStatus.PUBLISHED, \
+            "El dataset no se pudo pasar a estado PUBLISHED."
 
 
 def test_download_all(test_client, mock_dataset_service):
