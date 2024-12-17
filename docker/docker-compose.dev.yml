@@ -33,6 +33,8 @@ services:
       - db
       - web
     command: [ "sh", "/app/docker/entrypoints/discordbot_entrypoint.sh" ]
+    networks:
+      - uvlhub_network
   
   fakenodo:
     container_name: fakenodo
