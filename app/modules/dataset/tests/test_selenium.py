@@ -1,4 +1,6 @@
+import datetime
 import os
+import shutil
 import time
 
 from selenium.webdriver.common.by import By
@@ -96,8 +98,15 @@ def test_upload_dataset():
         affiliation_field1.send_keys("Club1")
 
         # Obtén las rutas absolutas de los archivos
-        file1_path = os.path.abspath("app/modules/dataset/uvl_examples/file1.uvl")
-        file2_path = os.path.abspath("app/modules/dataset/uvl_examples/file2.uvl")
+        ruta_file_1 = f"app/modules/dataset/uvl_examples/file\
+            {str(datetime.datetime.now()).replace(':', '-').replace(' ', '-')}.uvl"
+        ruta_file_2 = f"app/modules/dataset/uvl_examples/file\
+            {str(datetime.datetime.now()).replace(':', '-').replace(' ', '-')}.uvl"
+        shutil.copy2("app/modules/dataset/uvl_examples/file1.uvl", ruta_file_1)
+        shutil.copy2("app/modules/dataset/uvl_examples/file2.uvl", ruta_file_2)
+
+        file1_path = os.path.abspath(ruta_file_1)
+        file2_path = os.path.abspath(ruta_file_2)
 
         # Subir el primer archivo
         dropzone = driver.find_element(By.CLASS_NAME, "dz-hidden-input")
@@ -130,6 +139,8 @@ def test_upload_dataset():
         upload_btn.send_keys(Keys.RETURN)
         wait_for_page_to_load(driver)
         time.sleep(2)  # Force wait time
+        os.remove(ruta_file_1)
+        os.remove(ruta_file_2)
 
         assert driver.current_url == f"{host}/dataset/list", "Test failed!"
 
