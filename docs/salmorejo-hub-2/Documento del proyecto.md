@@ -313,7 +313,97 @@ Estos workflows se ejecutan en momentos específicos del desarrollo, proporciona
 
 ### Entorno de Desarrollo
 
----
+Ahora pasaremos a una explicación exhausta del entorno de desarrollo. Aquí, entre otras cosas, podemos comprobar cómo se ha de instalar la herramienta, además de cómo ha trabajado el equipo de desarrollo en el trabajo a nivel de entorno de desarrollo.
+
+Para empezar, comentaremos que se ha usado un mismo entorno de desarrollo por parte de todos los miembros del equipo. Esta decisión se tomo, si se puede llegar a decir así, por la recomendación de los profesores de la asignatura, siendo el sistema operativo `Linux Ubuntu 22.04 LTS`. No elegimos en ningún momento máquinas virtuales ni hacerlo en `Windows` porque sabíamos de antemano los fallos que podía llegar a dar, caso de `Windows`; y lo lento que iría según avanzara el proyecto y las prácticas, caso de las máquinas virtuales.
+
+Para continuar, comentaremos las versiones usadas, recalcando la de `Python3.12`. Esto es de vital importancia, pues usando `Python3.10` no se puede ejecutar el proyecto, ni usarlo. De ahí la importancia de usar este versionado. Además, como es lógico, hemos usado muchas más herramientas. Todas ellas se encuentran almacenadas en el `requirements.txt`.
+
+Luego, para simplificación de la instalación de la herramienta, se deben seguir los siguientes pasos:
+
+1. Descargar el repositorio del proyecto en su dispositivo. Para ello, ejecutamos:
+```
+git clone https://github.com/salmorejo-hub-2/uvlhub.git
+cd uvlhub
+```
+
+2. Una vez tengamos la herramienta instalada, necesitamos instalar la base de datos. Nosotros usamos MariaDB. Con MariaDB instalado, hay que configurarlo. Todo esto lo podemos realizar con:
+``` 
+sudo apt install mariadb-server -y
+sudo systemctl start mariadb
+sudo mysql_secure_installation
+```
+
+3. Ahora, podemos visualizar cómo entramos en la configuración de MySQL. Necesitamos configurar nuestra base de datos. Esto se hace contestando de la siguiente forma:
+``` 
+- Enter current password for root (enter for none): (enter)
+- Switch to unix_socket authentication [Y/n]: `y`
+- Change the root password? [Y/n]: `y`
+    - New password: `uvlhubdb_root_password`
+    - Re-enter new password: `uvlhubdb_root_password`
+- Remove anonymous users? [Y/n]: `y`
+- Disallow root login remotely? [Y/n]: `y` 
+- Remove test database and access to it? [Y/n]: `y`
+- Reload privilege tables now? [Y/n] : `y`
+```
+
+4. Crearemos en este punto la base de datos. Accedemos a ella con:
+```
+sudo mysql -u root -p
+```
+- Pero, si estás repitiendo estos pasos, primero bórrala con esto (este paso es **opcional**, recuerda):
+``` 
+DROP DATABASE uvlhubdb;
+DROP DATABASE uvlhubdb_test;
+```
+- Ahora seguimos con la creación
+``` 
+CREATE DATABASE uvlhubdb;
+CREATE DATABASE uvlhubdb_test;
+CREATE USER 'uvlhubdb_user'@'localhost' IDENTIFIED BY 'uvlhubdb_password';
+GRANT ALL PRIVILEGES ON uvlhubdb.* TO 'uvlhubdb_user'@'localhost';
+GRANT ALL PRIVILEGES ON uvlhubdb_test.* TO 'uvlhubdb_user'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+```
+
+5. Es importante para el proyecto que te lleves los cambios de ejemplo de env para tener el tuyo propio, y así poder usar el proyecto. Esto se hace con:
+```
+cp .env.local.example .env
+```
+
+6. Y, una vez instalemos las dependencias con los siguiente comandos, podremos poner a funcionar la aplicación:
+- Para instalar las dependencias:
+```
+sudo apt install python3.12-venv
+python3.12 -m venv venv
+source venv/bin/activate
+```
+```
+sudo apt install python3.12-venv
+python3.12 -m venv venv
+source venv/bin/activate
+```
+```
+pip install --upgrade pip
+pip install -r requirements.txt
+pip install -e ./
+```
+
+7. Aplicando las migraciones y llenando las bases de datos son necesarios. Lo conseguimos con:
+```
+flask db upgrade
+rosemary db:seed
+```
+
+8. Y tu aplicación ya debe estar instalada. Solo tienes que usar el siguiente comando para poder usarla.
+```
+flask run --host=0.0.0.0 --reload --debug
+```
+
+Si se quiere repetir para vaciar la base de datos, los pasos a seguir son pocos por suerte. Usamos el paso 4 entero, luego el paso 7 y con ello estaría todo.
+
+
 
 ### Ejercicio de Propuesta de Cambio
 
