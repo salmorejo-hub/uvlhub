@@ -313,7 +313,11 @@ Estos workflows se ejecutan en momentos específicos del desarrollo, proporciona
 
 ---
 
-#### Ejemplo de Propuesta de Cambio
+### Entorno de Desarrollo
+
+---
+
+### Ejercicio de Propuesta de Cambio
 
 1. Se identifica una mejora o problema a resolver.
    - Puede tratarse de un bug, una mejora, o una nueva funcionalidad detectada.
@@ -344,10 +348,5 @@ Estos workflows se ejecutan en momentos específicos del desarrollo, proporciona
 8. Una vez validada en la rama `develop`, se promueve a la rama `main` del repositorio principal.
    - Esto marca el paso final antes del despliegue.
    - El despliegue es automático y se realiza directamente desde la rama `main` del repositorio principal.
-
-
-### Entorno de Desarrollo
-
-### Ejercicio de Propuesta de Cambio
-
+   
 ### Conclusiones y trabajo futuro
