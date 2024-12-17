@@ -9,7 +9,7 @@ from zipfile import ZipFile
 from app.modules.api.decorators import token_required
 
 from flask import (abort, jsonify, make_response, redirect, render_template,
-                   request, send_file, send_from_directory, url_for)
+                   request, send_from_directory, url_for)
 from flask_login import current_user, login_required
 
 from app.modules.dataset import dataset_bp
@@ -141,18 +141,6 @@ def unstage_dataset(dataset_id):
 @login_required
 def stage_datasets():
     dataset_service.stage_datasets(current_user_id=current_user.id)
-    return render_template(
-        "dataset/list_datasets.html",
-        datasets=dataset_service.get_synchronized(current_user.id),
-        local_datasets=dataset_service.get_unsynchronized(current_user.id),
-    )
-
-
-# Funcion para desincronizar TODOS los datasets
-@dataset_bp.route("/dataset/unstage", methods=["GET", "POST"])
-@login_required
-def unstage_datasets():
-    dataset_service.unstage_datasets(current_user_id=current_user.id)
     return render_template(
         "dataset/list_datasets.html",
         datasets=dataset_service.get_synchronized(current_user.id),
@@ -374,21 +362,3 @@ def view_uvl(uvl_id):
 
     return jsonify({"content": content})
 
-
-@dataset_bp.route('/dataset/download/all', methods=['GET'])
-def download_all_datasets():
-    try:
-        zip_filename = 'all_datasets.zip'
-        tmp = tempfile.mkdtemp()
-        zip_path = os.path.join(tmp, zip_filename)
-
-        dataset_service.zip_datasets(zip_path)
-
-        return send_file(zip_path, as_attachment=True, download_name=zip_filename)
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-    finally:
-        if os.path.exists(zip_path):
-            os.remove(zip_path)

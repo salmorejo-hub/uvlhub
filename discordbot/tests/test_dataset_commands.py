@@ -1,151 +1,85 @@
 import pytest
 import discord.ext.test as dpytest
 
-user2_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJ1c2VyX2VtYWlsIjoidXNlcjJAZXhhbXBsZS5jb20iLCJleHAiOjE3Mzc4ODUyNTcsImlhdCI6MTczNDQyOTI1N30.8QmKz8kySHKDnlKj1gT9ykGDNpRX9-HfBCyY-nNiQTs"
-user3_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozLCJ1c2VyX2VtYWlsIjoidXNlcjNAZXhhbXBsZS5jb20iLCJleHAiOjE3Mzc4ODUzMDAsImlhdCI6MTczNDQyOTMwMH0.EqFxzjOieHcIEMCt4PkxgfFx5SgAk6aQsPk263YF4ks"
 
 @pytest.mark.asyncio
-async def test_datasets_command_no_token(bot):
+async def test_hello_command_guild(bot):
     channel = bot.guilds[0].text_channels[0]
     user = bot.guilds[0].members[0]
 
-    # Check command when the user has not registered a token
-    await dpytest.message("!datasets", channel=channel, member=user)
-    assert dpytest.verify().message().contains().content(
-        "You have not registered your token"
-    ), "The bot did not respond with the expected message when no token used."
+    # Check bot response in a guild
+    await dpytest.message("!hello", channel=channel, member=user)
+    assert dpytest.verify().message().peek().content("Hello!"), "The bot did not respond with the expected message"
+    message = dpytest.get_message()
+    assert message.channel == channel, "No message was sent in the correct channel"
+    assert dpytest.verify().message().nothing(), "The bot sent more messages than expected"
 
 
 @pytest.mark.asyncio
-async def test_datasets_command_invalid_token(bot):
-    channel = bot.guilds[0].text_channels[0]
+async def test_hello_command_dm(bot):
     user = bot.guilds[0].members[0]
+
+    # Check bot response in a DM
     dm = await user.create_dm()
+    await dpytest.message("!hello", dm)
+    assert dpytest.verify().message().content("Hello!"), "The bot did not respond to the DM"
+    assert dpytest.verify().message().nothing(), "The bot sent more messages than expected on a DM message"
 
-    await dpytest.message("!token false_token", dm)
-    await dpytest.empty_queue()
-    await dpytest.message("!datasets", channel=channel, member=user)
+
+@pytest.mark.asyncio
+async def test_prefix_command_no_prefix(bot):
+    channel = bot.guilds[0].text_channels[0]
+    user = bot.guilds[0].members[0]
+
+    await dpytest.message("!prefix", channel=channel, member=user)
+    assert dpytest.verify().message().contains().content("No prefix provided"), "Error when no prefix is provided"
+
+
+@pytest.mark.asyncio
+async def test_prefix_command_first_time(bot):
+    channel = bot.guilds[0].text_channels[0]
+    user = bot.guilds[0].members[0]
+
+    await dpytest.message("!prefix ?", channel=channel, member=user)
     assert dpytest.verify().message().content(
-        "Access token not valid."
-    ), "The bot did not respond with the expected message when an invalid token is used."
+        "Prefix configured successfully!"), "Error when changing the prefix for the first time in a guild"
+
+    await dpytest.message("?hello", channel=channel, member=user)
+    assert dpytest.verify().message().content("Hello!"), "Prefix change did not work correctly"
+
+    await dpytest.message("!hello", channel=channel, member=user)
+    assert dpytest.verify().message().nothing(), "Bot still using old prefix"
 
 
 @pytest.mark.asyncio
-async def test_datasets_command(bot):
-    channel = bot.guilds[0].text_channels[0]
-    user = bot.guilds[0].members[0]
-    dm = await user.create_dm()
-
-    # Check command in a guild with valid token and embed response
-    await dpytest.empty_queue()
-    await dpytest.message(f"!token {user2_token}", dm)
-    await dpytest.empty_queue()
-    await dpytest.message("!datasets", channel=channel, member=user)
-
-    # Verify the embed response
-    response = dpytest.get_message()  # Get the bot's response
-    assert response.embeds, "The bot did not respond with an embed."
-
-    # Access the first embed
-    embed = response.embeds[0]
-    assert embed.title == "List of Datasets", "The embed title is incorrect."
-    print(embed.fields[0])
-
-    assert embed.fields[0].name == "Test dataset for discord bot", "The embed name is incorrect."
-    assert "Test dataset for testing explore command in discord bot." in embed.fields[0].value, "The embed description is incorrect."
-    
-@pytest.mark.asyncio
-async def test_datasets_command_no_datasets(bot):
-    channel = bot.guilds[0].text_channels[0]
-    user = bot.guilds[0].members[0]
-    dm = await user.create_dm()
-
-    # Check command in a guild with valid token but no datasets in the response
-    await dpytest.empty_queue()
-    await dpytest.message(f"!token {user3_token}", dm)
-    await dpytest.empty_queue()
-    await dpytest.message("!datasets", channel=channel, member=user)
-    
-    assert dpytest.verify().message().content("No datasets found."), "The bot did not respond with the expected message when no datasets were found."
-
-
-@pytest.mark.asyncio
-async def test_search_command_no_token(bot):
+async def test_prefix_command_update(bot):
     channel = bot.guilds[0].text_channels[0]
     user = bot.guilds[0].members[0]
 
-    # Check command when the user has not registered a token
-    await dpytest.message("!search test", channel=channel, member=user)
-    assert dpytest.verify().message().contains().content(
-        "You have not registered your token"
-    ), "The bot did not respond with the expected message when no token used."
-
-
-@pytest.mark.asyncio
-async def test_search_command_invalid_token(bot):
-    channel = bot.guilds[0].text_channels[0]
-    user = bot.guilds[0].members[0]
-
-    # Check command when an invalid token is used
-    dm = await user.create_dm()
-    await dpytest.message("!token false_token", dm)
+    await dpytest.message("!prefix ?")
     await dpytest.empty_queue()
-    await dpytest.message("!search test", channel=channel, member=user)
+    await dpytest.message("?prefix $", channel=channel, member=user)
     assert dpytest.verify().message().content(
-        "Access token not valid."
-    ), "The bot did not respond with the expected message when an invalid token is used."
+        "Prefix updated successfully!"), "Error when updating the prefix for the second time in a guild"
+
+    await dpytest.message("$hello", channel=channel, member=user)
+    assert dpytest.verify().message().content("Hello!"), "Prefix change did not work correctly second time"
 
 
 @pytest.mark.asyncio
-async def test_search_command_no_query(bot):
-    channel = bot.guilds[0].text_channels[0]
-    user = bot.guilds[0].members[0]
+async def test_prefix_command_affect_other_guild(bot):
+    channel1 = bot.guilds[0].text_channels[0]
+    user1 = bot.guilds[0].members[0]
 
-    # Check command when no query is provided
-    dm = await user.create_dm()
-    await dpytest.message("!token false_token", dm)
+    channel2 = bot.guilds[1].text_channels[0]
+    user2 = bot.guilds[1].members[0]
+
+    await dpytest.message("!prefix ?", channel=channel1, member=user1)
     await dpytest.empty_queue()
-    await dpytest.message("!search", channel=channel, member=user)
-    assert dpytest.verify().message().content(
-        "Please provide a query."
-    ), "The bot did not respond with the expected message when no query is provided."
 
+    # Check prefix did not affect other guilds
+    await dpytest.message("!hello", channel=channel2, member=user2)
+    assert dpytest.verify().message().content("Hello!"), "Prefix change affected other guilds"
 
-@pytest.mark.asyncio
-async def test_search_command_valid_query(bot):
-    channel = bot.guilds[0].text_channels[0]
-    user = bot.guilds[0].members[0]
-
-    # Check command when a valid query is provided
-    dm = await user.create_dm()
-    await dpytest.message(f"!token {user2_token}", dm)
-    await dpytest.empty_queue()
-    await dpytest.message("!search test", channel=channel, member=user)
-
-    # Verify the embed response
-    response = dpytest.get_message()  # Get the bot's response
-    assert response.embeds, "The bot did not respond with an embed."
-
-    # Access the first embed
-    embed = response.embeds[0]
-    assert embed.title == "List of Datasets", "The embed title is incorrect."
-    print(embed.fields[0])
-
-    assert embed.fields[0].name == "Test dataset for discord bot", "The embed name is incorrect."
-    assert "Test dataset for testing explore command in discord bot." in embed.fields[
-        0].value, "The embed description is incorrect."
-
-
-@pytest.mark.asyncio
-async def test_search_command_no_results(bot):
-    channel = bot.guilds[0].text_channels[0]
-    user = bot.guilds[0].members[0]
-
-    # Check command when a query returns no results
-    dm = await user.create_dm()
-    await dpytest.message(f"!token {user2_token}", dm)
-    await dpytest.empty_queue()
-    await dpytest.message("!search invalid_query", channel=channel, member=user)
-    assert dpytest.verify().message().content(
-        "No datasets found."
-    ), "The bot did not respond with the expected message when no results were found."
+    await dpytest.message("$hello", channel=channel2, member=user2)
+    assert dpytest.verify().message().nothing(), "Bot still using old prefix in other guilds"
