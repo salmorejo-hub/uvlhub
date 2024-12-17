@@ -196,13 +196,155 @@ Las mejoras implementadas en **UVLHub** han elevado su funcionalidad, eficiencia
 
 
 
-
-
-
 ### Visión Global del Proceso de Desarrollo
+
+#### Introducción
+
+El proceso de desarrollo del sistema ha sido diseñado para implementar prácticas de integración continua mientras se mantiene un flujo de trabajo eficiente y colaborativo. Nuestro enfoque se centra en la segmentación del proyecto en elementos manejables, conocidos como Work Items (WI), y en el manejo de ramas de desarrollo para garantizar la integración y despliegue controlados.
+
+Para asegurar un flujo organizado y consistente, se han establecido convenciones claras para el manejo de tareas, ramas, commits y Pull Requests. Las tareas se gestionan mediante issues en GitHub, donde se especifican prioridades, tipos y relaciones con los WI. Estas convenciones permiten priorizar actividades, identificar problemas de manera temprana y asegurar que cada etapa del desarrollo esté alineada con los objetivos del proyecto.
+
+El despliegue sigue un flujo riguroso que involucra tres repositorios: dos repositorios de grupo y un repositorio principal. El sistema solo se despliega cuando los cambios están validados en la rama `main` del repositorio principal, garantizando que solo el código completamente integrado y probado llegue a producción.
+
+---
+
+#### Metodología Adoptada
+
+- **Enfoque general**: Se sigue un flujo de trabajo iterativo, basado en una división clara de tareas y una estructura organizada para la gestión del desarrollo.
+- **Organización del trabajo**: 
+  1. El proyecto se divide en Work Items (WI), cada uno asignado a un equipo o grupo de trabajo.
+  2. Cada WI se desglosa en un issue que se gestionan y rastrean en GitHub.
+  3. Las tareas se organizan por prioridad y tipo, lo que permite un manejo estructurado del trabajo.
+  4. Se establecen convenciones de nombres para ramas y commits, asegurando cohesión y trazabilidad.
+- **Estructura de repositorios**:
+  - Cada grupo tiene su propio repositorio con una rama `main` para consolidar el trabajo del equipo y ramas específicas para cada WI.
+  - Existe un repositorio principal con las ramas `develop` y `main`, donde se realiza la integración final, ademas de ramas `fix` para resolver errores y una rama para `fakenodo`.
+- **Flujo general**:
+  - Desarrollo en ramas específicas por WI en los repositorios de grupo.
+  - Integración en la rama `main` del repositorio de grupo.
+  - Fusión en la rama `develop` del repositorio principal para validación.
+  - Promoción a la rama `main` del repositorio principal para el despliegue final.
+
+---
+
+#### Herramientas Utilizadas
+
+- **Gestión de tareas**: GitHub Projects, con etiquetas y prioridades definidas para cada issue.
+- **Control de versiones**: Git y GitHub.
+- **Integración y despliegue continuos**: GitHub Actions y Render, con workflows automatizados.
+- **Pruebas**: Pytest para pruebas unitarias, Selenium para pruebas de interfaz, y Locust para pruebas de carga.
+- **Documentación**: Markdown.
+
+---
+
+#### Workflows Automatizados
+
+Para garantizar la calidad y consistencia del código en cada etapa del desarrollo, se utilizan varios workflows automatizados configurados en GitHub Actions. Estos incluyen:
+
+- **Verificación de Commits**:
+  - Asegura que los mensajes de commit sigan las convenciones establecidas, como el uso de formatos específicos (`fix`, `feat`, `docs`, etc.).
+  - Garantiza trazabilidad y claridad en los cambios realizados.
+
+- **Codacy**:
+  - Realiza análisis estático del código para detectar errores, mejorar la calidad y garantizar que el código cumpla con los estándares de estilo definidos.
+
+- **Lint**:
+  - Verifica automáticamente que el código siga las reglas de formato especificadas, evitando inconsistencias.
+
+- **Pruebas Automatizadas**:
+  - Ejecuta pruebas unitarias con **Pytest** para validar la funcionalidad básica.
+  
+- **Render**:
+  - Despliegue automatizado del sistema basado en el contenido de la rama `main` del repositorio principal, asegurando que solo el código completamente validado llegue a los entornos de producción.
+
+- **CI2.yml**:
+  - Si los cambios en la rama `main` de un repositorio de grupo pasan todas las validaciones, se genera automáticamente una Pull Request hacia la rama `develop` del repositorio principal.
+
+Estos workflows se ejecutan en momentos específicos del desarrollo, proporcionando una capa adicional de confianza en la calidad y estabilidad del sistema:
+
+- **Verificación de Commits**: 
+  - Se ejecuta al realizar un commit para garantizar que los mensajes cumplan con las convenciones establecidas y la trazabilidad sea clara.
+
+- **Test, Codacy y Lint**:
+  - Estos workflows se ejecutan automáticamente en las Pull Requests (PR) para validar que el código propuesto cumple con los estándares de calidad, funcionalidad y estilo.
+
+- **Render**:
+  - Este workflow se activa automáticamente cuando se fusionan cambios en la rama `main` del repositorio principal, desplegando el sistema en el entorno de producción.
+
+- **CI2.yml**:
+  - Se ejecuta automáticamente cuando los cambios en la rama `main` de un repositorio de grupo pasan todas las validaciones. Genera una Pull Request hacia la rama `develop` del repositorio principal para integrar los cambios del grupo al repositorio padre.
+
+---
+
+#### Ciclo de Vida del Desarrollo
+
+1. **Identificación de Requisitos**
+   - Cada Work Item (WI) se gestiona como una única issue en GitHub, representando una funcionalidad o tarea principal del proyecto.
+   - Los equipos trabajan directamente en los WI sin necesidad de dividirlos en sub-issues.
+
+2. **Planificación**
+   - Las issues se crean en GitHub con un formato estructurado (e.g., `2.X Nombre del WI`).
+   - Se asignan etiquetas para definir la prioridad (#priority: critical, medium, low) y el tipo (#type: bug, documentation, enhancement, etc.).
+
+3. **Desarrollo**
+   - Cada issue se trabaja en una rama específica del WI (e.g., `feat/WI-2.X-nombre`) dentro del repositorio del grupo.
+   - Los commits siguen convenciones establecidas para indicar el tipo de cambio (`fix`, `feat`, `docs`) y su relación con issues (#Ref o #Closes).
+
+4. **Pruebas**
+   - **Unitarias**: Pytest se utiliza para validar la lógica de funciones y módulos.
+   - **De interfaz**: Selenium asegura que las interacciones gráficas operan correctamente.
+   - **De carga**: Locust simula múltiples usuarios para evaluar el rendimiento bajo diferentes condiciones.
+   - Los workflows automatizados en GitHub verifican que las pruebas se ejecuten correctamente antes de cualquier integración.
+
+5. **Revisión e Integración**
+   - Las PRs son revisadas por otros miembros del equipo para garantizar la calidad.
+   - Los cambios de las ramas de grupo se integran en la rama `develop` del repositorio principal, donde se ejecutan pruebas adicionales y validaciones.
+   - Solo los cambios aprobados se fusionan en la rama `main` del repositorio principal.
+
+6. **Despliegue**
+   - El despliegue está automatizado mediante Render y solo ocurre desde la rama `main` del repositorio principal.
+   - Esto garantiza que solo el código completamente validado e integrado llegue a producción.
+
+7. **Monitorización y Feedback**
+   - Render proporciona herramientas básicas de monitoreo para supervisar el sistema en producción.
+   - Los problemas detectados generan nuevas incidencias, que se gestionan dentro del flujo habitual.
+
+---
 
 ### Entorno de Desarrollo
 
+---
+
 ### Ejercicio de Propuesta de Cambio
 
+1. Se identifica una mejora o problema a resolver.
+   - Puede tratarse de un bug, una mejora, o una nueva funcionalidad detectada.
+
+2. Se crea una nueva issue en GitHub, categorizada por prioridad y tipo.
+   - Se asignan etiquetas de prioridad (`critical`, `medium`, `low`) y tipo (`bug`, `enhancement`, etc.) para clasificar el trabajo de forma clara.
+
+3. El trabajo se asigna a un WI si el problema está relacionado con un cambio realizado previamente en ese WI.
+   - Por ejemplo, si un bug ocurre debido a algo desarrollado en el WI-2, el fix se asigna al mismo WI.
+   - Si no está relacionado con ningún WI, se gestiona como una tarea independiente.
+
+4. Si el fix está relacionado con un WI en desarrollo:
+   - El trabajo se realiza dentro de la rama de ese WI correspondiente, manteniendo la relación entre el problema y su solución.
+   - Esto asegura que las correcciones relacionadas con un WI en curso se integren directamente en su rama.
+
+5. Si el fix corresponde a algo ya integrado en el repositorio principal:
+   - Se crea una nueva rama de tipo `fix` desde la rama relevante del repositorio principal (`develop` o `main`).
+   - Esto es necesario para corregir problemas en código ya integrado y validado previamente.
+
+6. Cuando los cambios en la rama `main` de un repositorio de grupo pasan las pruebas automáticas de los workflows:
+   - Se genera automáticamente una Pull Request (PR) desde la rama `main` del grupo hacia la rama `develop` del repositorio principal.
+   - Esto permite integrar el trabajo del grupo en el repositorio padre de forma controlada.
+
+7. La PR es revisada y fusionada en la rama `develop` del repositorio principal.
+   - Otro miembro del equipo revisa el código para garantizar su calidad.
+   - Los workflows automáticos verifican la validez del código mediante pruebas adicionales.
+
+8. Una vez validada en la rama `develop`, se promueve a la rama `main` del repositorio principal.
+   - Esto marca el paso final antes del despliegue.
+   - El despliegue es automático y se realiza directamente desde la rama `main` del repositorio principal.
+   
 ### Conclusiones y trabajo futuro
