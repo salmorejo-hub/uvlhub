@@ -20,9 +20,6 @@ async def setup_dataset_commands(client, session):
 
         try:
             data = request_api(url, token)
-            if len(data) == 0:
-                await ctx.send("No datasets found.")
-                return
             view = PaginationView(data)
             view.children[1].disabled = len(data) == 1
             await ctx.send(embed=embed_dataset(data[0]), view=view)
