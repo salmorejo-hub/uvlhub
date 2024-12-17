@@ -78,6 +78,12 @@ class DataSetService(BaseService):
     def count_synchronized_datasets(self):
         return self.repository.count_synchronized_datasets()
 
+    def get_user_unstaged_datasets(self, current_user_id: int):
+        return self.repository.get_user_unstaged_datasets(current_user_id)
+
+    def get_user_staged_datasets(self, current_user_id: int):
+        return self.repository.get_user_staged_datasets(current_user_id)
+
     def count_feature_models(self):
         return self.feature_model_service.count_feature_models()
 
@@ -162,6 +168,7 @@ class DataSetService(BaseService):
             raise exc
 
     # Method to set dataset to unstaged
+
     def set_dataset_to_unstaged(self, dataset_id):
         try:
             dataset = self.repository.get_by_id(dataset_id)
@@ -177,6 +184,21 @@ class DataSetService(BaseService):
             raise exc
 
     # Method to set dataset to published
+
+    def stage_datasets(self, current_user_id):
+        try:
+            datasets = self.repository.get_user_unstaged_datasets(current_user_id)
+            for dataset in datasets:
+                dataset.ds_meta_data.dataset_status = DatasetStatus.STAGED
+                self.repository.session.commit()
+            else:
+                raise ValueError("Dataset is not in 'UNSTAGED' status")
+        except Exception as exc:
+            logger.error(f"Exception setting dataset to staged: {exc}")
+            self.repository.session.rollback()
+
+    # Method to set dataset to published
+
     def publish_datasets(self, current_user_id):
         try:
             datasets = self.repository.get_user_staged_datasets(current_user_id)

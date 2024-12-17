@@ -1,7 +1,7 @@
 import os
 
 from flask_mail import Mail, Message
-
+from flask import current_app
 from app.modules.mail.repositories import MailRepository
 from core.services.BaseService import BaseService
 
@@ -25,11 +25,12 @@ class MailService(BaseService):
         self.sender = app.config['MAIL_USERNAME']
 
     def send_reset_email(self, recipients, reset_url) -> None:
-        subject = "Reset your password."
-        body = self._build_body(reset_url)
-        msg = Message(subject, sender=self.sender, recipients=recipients)
-        msg.body = body
-        self.mail.send(msg)
+        with current_app.app_context():
+            subject = "Reset your password."
+            body = self._build_body(reset_url)
+            msg = Message(subject, sender=self.sender, recipients=recipients)
+            msg.body = body
+            self.mail.send(msg)
 
     def _build_body(self, reset_url) -> str:
         return f"""Hi there,\n
@@ -39,3 +40,8 @@ class MailService(BaseService):
 
             Best regards,\n
             The salmorejo-hub-1 Team"""
+
+    def send_email(self, subject, recipients, html_body):
+        msg = Message(subject, recipients=recipients)
+        msg.html = html_body
+        self.mail.send(msg)
