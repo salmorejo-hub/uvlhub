@@ -30,7 +30,7 @@
 | Miembro del equipo        | Horas | Commits | LoC | Test | Issues | Work Item |
 | ------------------------- | ----- | ------- | --- | ---- | ------ | --------- |
 | Javier Aponte Pozón       |   35    |    10     |  791   |  6    |  1      |     5      |
-| Javier Muñoz Romero       |       |         |     |      |        |           |
+| Javier Muñoz Romero       |    45   |  17       |   661  |   9   |   7     |   3  (2.1, 2.2, 2.4)        | 
 | Juan Núñez Sánchez        |       |         |     |      |        |           |
 | Jose María Portela Huerta |       |         |     |      |        |           |
 | Juan Luis Ruano Muriedas  | 60    | 53      | 489 | 8    | 6      | 2.6       |
