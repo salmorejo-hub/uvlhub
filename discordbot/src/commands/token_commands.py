@@ -46,4 +46,3 @@ async def setup_token_commands(client, session):
                 session.remove()
         else:
             await ctx.send("For security reasons, please  change your token and configurate it in a private message.")
-

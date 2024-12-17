@@ -43733,43 +43733,4 @@
     })();
 })();
 
-document.addEventListener("DOMContentLoaded", () => {
-  const themeToggleButton = document.getElementById("theme-toggle");
-
-  if (!themeToggleButton) return;
-
-  // Set theme from localStorage or default to 'light'
-  const savedTheme = localStorage.getItem("theme") || "light";
-  applyTheme(savedTheme);
-  themeToggleButton.textContent =
-    savedTheme === "dark" ? "Light Mode" : "Dark Mode";
-
-  // Change theme on button click
-  themeToggleButton.addEventListener("click", () => {
-    const currentTheme = document.documentElement.getAttribute("data-theme");
-    const newTheme = currentTheme === "light" ? "dark" : "light";
-    applyTheme(newTheme);
-
-    // Save theme preference in localStorage
-    localStorage.setItem("theme", newTheme);
-    themeToggleButton.textContent =
-      newTheme === "dark" ? "Light Mode" : "Dark Mode";
-  });
-});
-
-// Function to apply the correct theme
-function applyTheme(theme) {
-  const isDark = theme === "dark";
-  document.getElementById("app-css").disabled = isDark;
-  document.getElementById("own-css").disabled = isDark;
-  document.getElementById("dropzone-css").disabled = isDark;
-
-  document.getElementById("app-dark-css").disabled = !isDark;
-  document.getElementById("own-dark-css").disabled = !isDark;
-  document.getElementById("dropzone-dark-css").disabled = !isDark;
-
-  document.documentElement.setAttribute("data-theme", theme);
-  localStorage.setItem("theme", theme);
-}
-
 //# sourceMappingURL=app.js.map
