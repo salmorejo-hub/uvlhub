@@ -1,4 +1,6 @@
 import os
+from unittest.mock import patch
+from flask import url_for
 import pytest
 from app import db
 from app.modules.auth.models import User
@@ -6,6 +8,7 @@ from app.modules.dataset.models import (
     DataSet, DSMetaData, DatasetStatus, PublicationType
 )
 from app.modules.featuremodel.models import FeatureModel, FMMetaData
+from app.modules.dataset.routes import dataset_service
 from app.modules.dataset.services import DataSetService, DSMetaDataService
 from app.modules.conftest import login, logout
 from app import create_app
@@ -15,6 +18,10 @@ from app import create_app
 def test_client():
 
     test_app = create_app("testing")
+
+    test_app.config['SERVER_NAME'] = 'localhost'
+    test_app.config['APPLICATION_ROOT'] = '/'
+    test_app.config['PREFERRED_URL_SCHEME'] = 'http'
 
     with test_app.app_context():
         db.create_all()
@@ -63,6 +70,12 @@ def test_client():
 
         db.session.remove()
         db.drop_all()
+
+
+@pytest.fixture(scope="function")
+def mock_dataset_service():
+    with patch('app.modules.dataset.services.DataSetService') as mock:
+        yield mock
 
 
 def test_dataset_creation(test_client):
@@ -147,3 +160,42 @@ def test_dsmetadata_service(test_client):
         db.session.refresh(dataset.ds_meta_data)
 
         assert dataset.ds_meta_data.dataset_doi == new_doi, "El DOI de DSMetaData no se actualizó correctamente."
+
+
+def test_download_all(test_client, mock_dataset_service):
+    with test_client.application.app_context():
+        mock_service = mock_dataset_service.return_value
+        mock_service.zip_datasets.return_value = None
+
+        with patch('app.modules.dataset.routes.send_file') as mock_send_file:
+            mock_send_file.return_value = "Zip sent"
+
+            response = test_client.get(url_for('dataset.download_all_datasets'))
+            assert response.status_code == 200, response.status_code
+            assert response.data == b"Zip sent", response.data
+
+
+def test_download_all_datasets_empty_directory(test_client, mock_dataset_service):
+    mock_service_instance = mock_dataset_service.return_value
+    mock_service_instance.zip_datasets.return_value = None
+
+    with patch('os.listdir', return_value=[]):
+        response = test_client.get(url_for('dataset.download_all_datasets'))
+
+        assert response.status_code == 200
+        assert b'\x00' in response.data
+        assert len(response.data) == 22  # Header length
+
+
+def test_download_all_datasets_error(test_client):
+    with patch.object(dataset_service, 'zip_datasets', side_effect=Exception("Error al crear el ZIP")):
+        response = test_client.get(url_for('dataset.download_all_datasets'))
+        assert response.status_code == 500
+        assert response.json['error'] == "Error al crear el ZIP"
+
+
+@patch('os.remove')
+def test_download_all_datasets_cleanup(mock_remove, test_client):
+    response = test_client.get(url_for('dataset.download_all_datasets'))
+    assert response.status_code == 200
+    mock_remove.assert_called_once()

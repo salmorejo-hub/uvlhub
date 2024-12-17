@@ -47,19 +47,3 @@ async def setup_token_commands(client, session):
         else:
             await ctx.send("For security reasons, please  change your token and configurate it in a private message.")
 
-    # This command needs to be removed. It is only for testing purposes
-
-    @client.command(help="Get your access token")
-    async def GetToken(ctx):
-        user = ctx.message.author
-        db = session()
-        try:
-            user_token = db.query(UserToken).filter(UserToken.user_id == str(user.id)).first()
-            if user_token:
-                await ctx.send(f"Your token is: {user_token.token}")
-            else:
-                await ctx.send("You don't have a token configurated. Please type !token_config to configurate your token.")
-        except Exception as e:
-            await ctx.send(f"An error occurred: {str(e)}")
-        finally:
-            session.remove()
