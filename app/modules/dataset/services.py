@@ -4,6 +4,7 @@ import hashlib
 import shutil
 from typing import Optional
 import uuid
+from zipfile import ZipFile
 
 
 from flask import request
@@ -80,10 +81,10 @@ class DataSetService(BaseService):
 
     def get_user_unstaged_datasets(self, current_user_id: int):
         return self.repository.get_user_unstaged_datasets(current_user_id)
-    
+
     def get_user_staged_datasets(self, current_user_id: int):
         return self.repository.get_user_staged_datasets(current_user_id)
-    
+
     def count_feature_models(self):
         return self.feature_model_service.count_feature_models()
 
@@ -222,6 +223,27 @@ class DataSetService(BaseService):
         except Exception as exc:
             logger.error(f"Exception setting dataset to published: {exc}")
             self.repository.session.rollback()
+
+    def zip_datasets(self, path: str):
+        working_dir = os.getenv("WORKING_DIR", "")
+        uploads_dir = os.path.join(working_dir, "uploads")
+
+        with ZipFile(path, "w") as zip:
+            subdirs = os.listdir(uploads_dir)
+
+            for dir in subdirs:
+                user_dir = os.path.join(uploads_dir, dir)
+
+                if os.path.isdir(user_dir):
+                    for dataset in os.listdir(user_dir):
+                        dataset_dir = os.path.join(user_dir, dataset)
+
+                        if os.path.isdir(dataset_dir):
+                            for subdir, _, files in os.walk(dataset_dir):
+                                for file in files:
+                                    file_path = os.path.join(subdir, file)
+                                    rel_path = os.path.relpath(file_path, user_dir)
+                                    zip.write(file_path, arcname=rel_path)
 
 
 class AuthorService(BaseService):

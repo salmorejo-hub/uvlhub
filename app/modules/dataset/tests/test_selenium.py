@@ -28,6 +28,18 @@ def count_datasets(driver, host):
     return amount_datasets
 
 
+def test_download_all_datasets():
+    driver = initialize_driver()
+    try:
+        host = get_host_for_selenium_testing()
+        driver.get(host)
+        wait_for_page_to_load(driver)
+        driver.find_element(By.LINK_TEXT, "Get all datasets").click()
+
+    finally:
+        close_driver(driver)
+
+
 def test_upload_dataset():
     driver = initialize_driver()
 
@@ -157,25 +169,20 @@ def test_file_previsualize():
             file_content_text = file_content_element.text
 
             # Expected content
-            expected_content = """features
-    Chat
-        mandatory
-            Connection
-                alternative
-                    "Peer 2 Peer"
-                    Server
-            Messages
-                or
-                    Text
-                    Video
-                    Audio
-        optional
-            "Data Storage"
-            "Media Player"
-
-constraints
-    Server => "Data Storage"
-    Video | Audio => "Media Player\""""
+            expected_content = """{
+    "feature_model": {
+        "id": 10,
+        "title": "Feature Model 10",
+        "description": "Description for feature model 10",
+        "dataset_id": 4,
+        "user_id": 2,
+        "tags": [
+            "tag1",
+            "tag2"
+        ],
+        "uvl_version": "1.0"
+    }
+}   """
 
             # Verify content matches expected
             test = "Test failed: File content does not match expected content."
@@ -248,3 +255,4 @@ def test_stage_unstage_all_datasets():
     finally:
         # Close the browser
         driver.quit()
+

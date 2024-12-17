@@ -1,5 +1,6 @@
 import os
 import shutil
+import json
 from app.modules.auth.models import User
 from app.modules.featuremodel.models import FMMetaData, FeatureModel
 from app.modules.hubfile.models import Hubfile
@@ -59,7 +60,7 @@ class DataSetSeeder(BaseSeeder):
             ) for i in range(4)
         ]
 
-        # Change the title of the last dataset to addapt it to explore command tests in discord bot
+        # Change the title of the last dataset to adapt it to explore command tests in discord bot
         ds_meta_data_list[3].title = 'Test dataset for discord bot'
         ds_meta_data_list[3].description = 'Test dataset for testing explore command in discord bot.'
         seeded_ds_meta_data = self.seed(ds_meta_data_list)
@@ -119,7 +120,7 @@ class DataSetSeeder(BaseSeeder):
         ]
         seeded_feature_models = self.seed(feature_models)
 
-        # Create files with fixed sizes and associate them with FeatureModels
+        # Create files with structured JSON content and fixed sizes
         load_dotenv()
         working_dir = os.getenv('WORKING_DIR', '')
         src_folder = os.path.join(working_dir, 'app', 'modules', 'dataset', 'uvl_examples')
@@ -132,18 +133,39 @@ class DataSetSeeder(BaseSeeder):
             dest_folder = os.path.join(working_dir, 'uploads', f'user_{user_id}', f'dataset_{dataset.id}')
             os.makedirs(dest_folder, exist_ok=True)
 
-            # Create the file with a fixed size
-            fixed_size = fixed_sizes[i % len(fixed_sizes)]
-            with open(os.path.join(src_folder, file_name), 'wb') as f:
-                f.write(os.urandom(fixed_size))
+            # Create structured JSON content
+            uvl_content = {
+                "feature_model": {
+                    "id": feature_model.id,
+                    "title": f"Feature Model {i + 1}",
+                    "description": f"Description for feature model {i + 1}",
+                    "dataset_id": dataset.id,
+                    "user_id": user_id,
+                    "tags": ["tag1", "tag2"],
+                    "uvl_version": "1.0"
+                }
+            }
 
-            shutil.copy(os.path.join(src_folder, file_name), dest_folder)
+            # Write JSON content to the file
+            json_file_path = os.path.join(src_folder, file_name)
+            with open(json_file_path, 'w') as f:
+                json.dump(uvl_content, f, indent=4)
+
+            # Add padding to match the fixed size
+            fixed_size = fixed_sizes[i % len(fixed_sizes)]
+            with open(json_file_path, 'ab') as f:
+                current_size = f.tell()
+                if current_size < fixed_size:
+                    padding = fixed_size - current_size
+                    f.write(b' ' * padding)  # Add spaces as padding
+
+            # Copy the file to the destination
+            shutil.copy(json_file_path, dest_folder)
 
             uvl_file = Hubfile(
                 name=file_name,
                 checksum=f'checksum{i + 1}',
                 size=fixed_size,
-
                 feature_model_id=feature_model.id
             )
             self.seed([uvl_file])
