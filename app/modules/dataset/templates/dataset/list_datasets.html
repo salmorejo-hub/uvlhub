@@ -12,7 +12,7 @@
 
                 <div class="card-body">
                     <h5 class="card-title">Published datasets</h5>
-                    <table class="table">
+                    <table class="table" id="published-table">
                         <thead>
                         <tr>
                             <th>Title</th>
@@ -57,7 +57,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Staged Datasets</h5>
-                        <table class="table">
+                        <table class="table" id="staged-table">
                             <thead>
                                 <tr>
                                     <th>Title</th>
@@ -95,8 +95,15 @@
                     </div>
                 </table>
                 <button type="button" class="btn btn-primary">
-                    <a href="{{ url_for('dataset.publish_datasets', current_user_id=current_user.id) }}" class="text-white">
+                    <a href="{{ url_for('dataset.publish_datasets', current_user_id=current_user.id) }}" class="text-white"
+                    id="publish-all-datasets">
                         Publish all staged datasets <i data-feather="upload-cloud"></i>
+                    </a>
+                </button>
+                <button type="button" class="btn btn-primary">
+                    <a href="{{ url_for('dataset.unstage_datasets', current_user_id=current_user.id) }}" class="text-white"
+                    id="unstage-all-datasets">
+                        Unstage all unstaged datasets <i data-feather="refresh-cw"></i><i data-feather="x"></i>
                     </a>
                 </button>
                 </div>
@@ -106,7 +113,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Unstaged Datasets</h5>
-                        <table class="table">
+                        <table class="table" id="unstaged-table">
                             <thead>
                                 <tr>
                                     <th>Title</th>
@@ -143,8 +150,9 @@
                             </tbody>
                         </table>
                         <button type="button" class="btn btn-primary">
-                            <a href="{{ url_for('dataset.stage_datasets', current_user_id=current_user.id) }}" class="text-white">
-                                Stage all unstaged datasets <i data-feather="upload-cloud"></i>
+                            <a href="{{ url_for('dataset.stage_datasets', current_user_id=current_user.id) }}" class="text-white"
+                            id="stage-all-datasets">
+                                Stage all unstaged datasets <i data-feather="refresh-cw"></i>
                             </a>
                         </button>
                     </div>

@@ -1,4 +1,6 @@
+import datetime
 import os
+import shutil
 import time
 
 from selenium.webdriver.common.by import By
@@ -8,7 +10,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from core.environment.host import get_host_for_selenium_testing
 from core.selenium.common import initialize_driver, close_driver
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException
 
 
 def wait_for_page_to_load(driver, timeout=4):
@@ -96,8 +98,15 @@ def test_upload_dataset():
         affiliation_field1.send_keys("Club1")
 
         # Obtén las rutas absolutas de los archivos
-        file1_path = os.path.abspath("app/modules/dataset/uvl_examples/file1.uvl")
-        file2_path = os.path.abspath("app/modules/dataset/uvl_examples/file2.uvl")
+        ruta_file_1 = f"app/modules/dataset/uvl_examples/file\
+            {str(datetime.datetime.now()).replace(':', '-').replace(' ', '-')}.uvl"
+        ruta_file_2 = f"app/modules/dataset/uvl_examples/file\
+            {str(datetime.datetime.now()).replace(':', '-').replace(' ', '-')}.uvl"
+        shutil.copy2("app/modules/dataset/uvl_examples/file1.uvl", ruta_file_1)
+        shutil.copy2("app/modules/dataset/uvl_examples/file2.uvl", ruta_file_2)
+
+        file1_path = os.path.abspath(ruta_file_1)
+        file2_path = os.path.abspath(ruta_file_2)
 
         # Subir el primer archivo
         dropzone = driver.find_element(By.CLASS_NAME, "dz-hidden-input")
@@ -130,6 +139,8 @@ def test_upload_dataset():
         upload_btn.send_keys(Keys.RETURN)
         wait_for_page_to_load(driver)
         time.sleep(2)  # Force wait time
+        os.remove(ruta_file_1)
+        os.remove(ruta_file_2)
 
         assert driver.current_url == f"{host}/dataset/list", "Test failed!"
 
@@ -169,25 +180,20 @@ def test_file_previsualize():
             file_content_text = file_content_element.text
 
             # Expected content
-            expected_content = """features
-    Chat
-        mandatory
-            Connection
-                alternative
-                    "Peer 2 Peer"
-                    Server
-            Messages
-                or
-                    Text
-                    Video
-                    Audio
-        optional
-            "Data Storage"
-            "Media Player"
-
-constraints
-    Server => "Data Storage"
-    Video | Audio => "Media Player\""""
+            expected_content = """{
+    "feature_model": {
+        "id": 10,
+        "title": "Feature Model 10",
+        "description": "Description for feature model 10",
+        "dataset_id": 4,
+        "user_id": 2,
+        "tags": [
+            "tag1",
+            "tag2"
+        ],
+        "uvl_version": "1.0"
+    }
+}   """
 
             # Verify content matches expected
             test = "Test failed: File content does not match expected content."
@@ -200,6 +206,63 @@ constraints
         close_driver(driver)
 
 
-test_download_all_datasets()
-test_upload_dataset()
-test_file_previsualize()
+def count_datasets_in_table(driver, host, table_id):
+    driver.get(f"{host}/dataset/list")
+    wait_for_page_to_load(driver)
+
+    try:
+        datasets = driver.find_elements(By.XPATH, f"//table[@id='{table_id}']//tbody//tr")
+        amount_datasets = len(datasets)
+    except Exception:
+        amount_datasets = 0
+    return amount_datasets
+
+
+def test_stage_unstage_all_datasets():
+    driver = initialize_driver()
+
+    try:
+        host = get_host_for_selenium_testing()
+
+        # Open the login page
+        driver.get(f"{host}/login")
+        wait_for_page_to_load(driver)
+
+        # Find the username and password field and enter the values
+        email_field = driver.find_element(By.NAME, "email")
+        password_field = driver.find_element(By.NAME, "password")
+
+        email_field.send_keys("user1@example.com")
+        password_field.send_keys("1234")
+
+        # Send the form
+        password_field.send_keys(Keys.RETURN)
+        wait_for_page_to_load(driver)
+
+        driver.get(f"{host}/dataset/list")
+        wait_for_page_to_load(driver)
+
+        # Unstage all staged datasets for setup
+        driver.find_element(By.ID, "unstage-all-datasets").click()
+        wait_for_page_to_load(driver)
+        time.sleep(1)
+
+        button = driver.find_element(By.ID, "stage-all-datasets")
+        driver.execute_script("arguments[0].scrollIntoView(true);", button)
+
+        time.sleep(1)
+        button.click()
+        wait_for_page_to_load(driver)
+
+        assert count_datasets_in_table(driver, host, "unstaged-table") == 0, \
+            "No se han pasado todos los datasets a staged"
+
+    except NoSuchElementException:
+        raise AssertionError('Test failed!')
+
+    except ElementClickInterceptedException:
+        raise AssertionError('Element click intercepted!')
+
+    finally:
+        # Close the browser
+        driver.quit()

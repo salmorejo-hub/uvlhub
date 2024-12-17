@@ -184,7 +184,7 @@ class DataSetService(BaseService):
             self.repository.session.rollback()
             raise exc
 
-    # Method to set dataset to published
+    # Method to set stage all unstaged datasets
 
     def stage_datasets(self, current_user_id):
         try:
@@ -198,8 +198,20 @@ class DataSetService(BaseService):
             logger.error(f"Exception setting dataset to staged: {exc}")
             self.repository.session.rollback()
 
-    # Method to set dataset to published
+    # Method to set unstage all staged datasets
+    def unstage_datasets(self, current_user_id):
+        try:
+            datasets = self.repository.get_user_staged_datasets(current_user_id)
+            for dataset in datasets:
+                dataset.ds_meta_data.dataset_status = DatasetStatus.UNSTAGED
+                self.repository.session.commit()
+            else:
+                raise ValueError("Dataset is not in 'STAGED' status")
+        except Exception as exc:
+            logger.error(f"Exception setting dataset to unstaged: {exc}")
+            self.repository.session.rollback()
 
+    # Method to set dataset to published
     def publish_datasets(self, current_user_id):
         try:
             datasets = self.repository.get_user_staged_datasets(current_user_id)
