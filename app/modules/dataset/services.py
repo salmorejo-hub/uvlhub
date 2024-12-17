@@ -183,7 +183,7 @@ class DataSetService(BaseService):
             logger.error(f"Exception setting dataset to unstaged: {exc}")
             self.repository.session.rollback()
             raise exc
-    
+
     # Method to set stage all unstaged datasets
 
     def stage_datasets(self, current_user_id):

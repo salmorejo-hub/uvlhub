@@ -255,4 +255,3 @@ def test_stage_unstage_all_datasets():
     finally:
         # Close the browser
         driver.quit()
-

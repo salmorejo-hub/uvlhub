@@ -169,19 +169,19 @@ def test_stage_dataset_negative(test_client, datasetservice):
             db.session.refresh(dataset)
 
             # Comprobamos que no se puede volver a sincronizar el mismo dataset
-            
+
             datasetservice.set_dataset_to_staged(dataset_id)
             db.session.refresh(dataset)
         assert str(excinfo.value) == "Dataset is not in 'UNSTAGED' status", \
             "No debería volver a sincronizar un dataset ya en STAGED"
-        
+
 
 def test_unstage_dataset_positive(test_client, datasetservice):
 
     with test_client.application.app_context():
         dataset = DataSet.query.first()
         dataset_id = dataset.id
-        
+
         # Poniendo el dataset de prueba en estado STAGED
         datasetservice.set_dataset_to_staged(dataset_id)
         db.session.refresh(dataset)
@@ -193,7 +193,7 @@ def test_unstage_dataset_positive(test_client, datasetservice):
 
         assert dataset.ds_meta_data.dataset_status == DatasetStatus.UNSTAGED, \
             "El dataset no se pudo pasar a estado UNSTAGED."
-        
+
 
 def test_unstage_dataset_negative(test_client, datasetservice):
 
@@ -203,7 +203,7 @@ def test_unstage_dataset_negative(test_client, datasetservice):
             dataset_id = dataset.id
 
             # Comprobamos que no se puede volver a sincronizar el mismo dataset
-            
+
             datasetservice.set_dataset_to_unstaged(dataset_id)
             db.session.refresh(dataset)
         assert str(excinfo.value) == "Dataset is not in 'STAGED' status", \
@@ -215,7 +215,7 @@ def test_publish_all_datasets_positive(test_client, datasetservice):
     with test_client.application.app_context():
         dataset = DataSet.query.first()
         dataset_id = dataset.id
-        
+
         # Poniendo el dataset de prueba en estado STAGED
         datasetservice.set_dataset_to_staged(dataset_id)
         db.session.refresh(dataset)
@@ -227,7 +227,7 @@ def test_publish_all_datasets_positive(test_client, datasetservice):
 
         assert dataset.ds_meta_data.dataset_status == DatasetStatus.PUBLISHED, \
             "El dataset no se pudo pasar a estado PUBLISHED."
-        
+
 
 def test_download_all(test_client, mock_dataset_service):
     with test_client.application.app_context():
