@@ -8,8 +8,8 @@ from app.modules.dataset.models import (
     DataSet, DSMetaData, DatasetStatus, PublicationType
 )
 from app.modules.featuremodel.models import FeatureModel, FMMetaData
-from app.modules.dataset.routes import mock_dataset_service
-from app.modules.dataset.services import DSMetaDataService
+from app.modules.dataset.routes import dataset_service
+from app.modules.dataset.services import DataSetService, DSMetaDataService
 from app.modules.conftest import login, logout
 from app import create_app
 
@@ -74,8 +74,13 @@ def test_client():
         db.drop_all()
 
 
+@pytest.fixture
+def datasetservice():
+    return DataSetService()
+
+
 @pytest.fixture(scope="function")
-def mock_mock_dataset_service():
+def mock_dataset_service():
     with patch('app.modules.dataset.services.DataSetService') as mock:
         yield mock
 
@@ -140,57 +145,57 @@ def test_dsmetadata_service(test_client):
         assert dataset.ds_meta_data.dataset_doi == new_doi, "El DOI de DSMetaData no se actualizó correctamente."
 
 
-def test_stage_dataset_positive(test_client, mock_dataset_service):
+def test_stage_dataset_positive(test_client, datasetservice):
 
     with test_client.application.app_context():
         dataset = DataSet.query.first()
         dataset_id = dataset.id
 
-        mock_dataset_service.set_dataset_to_staged(dataset_id)
+        datasetservice.set_dataset_to_staged(dataset_id)
         db.session.refresh(dataset)
 
         assert dataset.ds_meta_data.dataset_status == DatasetStatus.STAGED, \
             "El dataset no se pudo pasar a estado STAGED."
 
 
-def test_stage_dataset_negative(test_client, mock_dataset_service):
+def test_stage_dataset_negative(test_client, datasetservice):
 
     with test_client.application.app_context():
         with pytest.raises(ValueError) as excinfo:
             dataset = DataSet.query.first()
             dataset_id = dataset.id
 
-            mock_dataset_service.set_dataset_to_staged(dataset_id)
+            datasetservice.set_dataset_to_staged(dataset_id)
             db.session.refresh(dataset)
 
             # Comprobamos que no se puede volver a sincronizar el mismo dataset
             
-            mock_dataset_service.set_dataset_to_staged(dataset_id)
+            datasetservice.set_dataset_to_staged(dataset_id)
             db.session.refresh(dataset)
         assert str(excinfo.value) == "Dataset is not in 'UNSTAGED' status", \
             "No debería volver a sincronizar un dataset ya en STAGED"
         
 
-def test_unstage_dataset_positive(test_client, mock_dataset_service):
+def test_unstage_dataset_positive(test_client, datasetservice):
 
     with test_client.application.app_context():
         dataset = DataSet.query.first()
         dataset_id = dataset.id
         
         # Poniendo el dataset de prueba en estado STAGED
-        mock_dataset_service.set_dataset_to_staged(dataset_id)
+        datasetservice.set_dataset_to_staged(dataset_id)
         db.session.refresh(dataset)
         assert dataset.ds_meta_data.dataset_status == DatasetStatus.STAGED, \
             "El dataset no se pudo pasar a estado STAGED."
 
-        mock_dataset_service.set_dataset_to_unstaged(dataset_id)
+        datasetservice.set_dataset_to_unstaged(dataset_id)
         db.session.refresh(dataset)
 
         assert dataset.ds_meta_data.dataset_status == DatasetStatus.UNSTAGED, \
             "El dataset no se pudo pasar a estado UNSTAGED."
         
 
-def test_unstage_dataset_negative(test_client, mock_dataset_service):
+def test_unstage_dataset_negative(test_client, datasetservice):
 
     with test_client.application.app_context():
         with pytest.raises(ValueError) as excinfo:
@@ -199,34 +204,34 @@ def test_unstage_dataset_negative(test_client, mock_dataset_service):
 
             # Comprobamos que no se puede volver a sincronizar el mismo dataset
             
-            mock_dataset_service.set_dataset_to_unstaged(dataset_id)
+            datasetservice.set_dataset_to_unstaged(dataset_id)
             db.session.refresh(dataset)
         assert str(excinfo.value) == "Dataset is not in 'STAGED' status", \
             "No debería volver a dessincronizar un dataset ya en UNSTAGED"
 
 
-def test_publish_all_datasets_positive(test_client, mock_dataset_service):
+def test_publish_all_datasets_positive(test_client, datasetservice):
 
     with test_client.application.app_context():
         dataset = DataSet.query.first()
         dataset_id = dataset.id
         
         # Poniendo el dataset de prueba en estado STAGED
-        mock_dataset_service.set_dataset_to_staged(dataset_id)
+        datasetservice.set_dataset_to_staged(dataset_id)
         db.session.refresh(dataset)
         assert dataset.ds_meta_data.dataset_status == DatasetStatus.STAGED, \
             "El dataset no se pudo pasar a estado STAGED."
 
-        mock_dataset_service.publish_datasets(User.query.first().id)
+        datasetservice.publish_datasets(User.query.first().id)
         db.session.refresh(dataset)
 
         assert dataset.ds_meta_data.dataset_status == DatasetStatus.PUBLISHED, \
             "El dataset no se pudo pasar a estado PUBLISHED."
         
 
-def test_download_all(test_client, mock_mock_dataset_service):
+def test_download_all(test_client, mock_dataset_service):
     with test_client.application.app_context():
-        mock_service = mock_mock_dataset_service.return_value
+        mock_service = mock_dataset_service.return_value
         mock_service.zip_datasets.return_value = None
 
         with patch('app.modules.dataset.routes.send_file') as mock_send_file:
@@ -237,8 +242,8 @@ def test_download_all(test_client, mock_mock_dataset_service):
             assert response.data == b"Zip sent", response.data
 
 
-def test_download_all_datasets_empty_directory(test_client, mock_mock_dataset_service):
-    mock_service_instance = mock_mock_dataset_service.return_value
+def test_download_all_datasets_empty_directory(test_client, mock_dataset_service):
+    mock_service_instance = mock_dataset_service.return_value
     mock_service_instance.zip_datasets.return_value = None
 
     with patch('os.listdir', return_value=[]):
@@ -250,7 +255,7 @@ def test_download_all_datasets_empty_directory(test_client, mock_mock_dataset_se
 
 
 def test_download_all_datasets_error(test_client):
-    with patch.object(mock_dataset_service, 'zip_datasets', side_effect=Exception("Error al crear el ZIP")):
+    with patch.object(dataset_service, 'zip_datasets', side_effect=Exception("Error al crear el ZIP")):
         response = test_client.get(url_for('dataset.download_all_datasets'))
         assert response.status_code == 500
         assert response.json['error'] == "Error al crear el ZIP"
