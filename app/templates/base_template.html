@@ -50,10 +50,6 @@
 
             <ul class="sidebar-nav">
 
-                <li class="sidebar-header">
-                    Datasets
-                </li>
-
                 <li class="sidebar-item {{ 'active' if request.endpoint == 'public.index' else '' }}">
                     <a class="sidebar-link" href="{{ url_for('public.index') }}">
                         <i class="align-middle" data-feather="home"></i> <span class="align-middle">Home</span>
@@ -76,6 +72,17 @@
                     <a class="sidebar-link" href="{{ url_for('team.index') }}">
                         <i class="align-middle" data-feather="users"></i> <span
                             class="align-middle">Team</span>
+                    </a>
+                </li>
+                
+                <li class="sidebar-header">
+                    Datasets
+                </li>
+
+                <li class="sidebar-item">
+                    <a href="/dataset/download/all" class='sidebar-link'>
+                        <i data-feather="download"></i>
+                        Get all datasets
                     </a>
                 </li>
 
@@ -110,11 +117,6 @@
                     </li>
 
                 {% else %}
-
-                    <li class="sidebar-header">
-                        Datasets
-                    </li>
-
                     <li class="sidebar-item {{ 'active' if request.endpoint == 'dataset.create_dataset' else '' }}">
                         <a class="sidebar-link" href="{{ url_for('dataset.create_dataset') }}">
                             <i class="align-middle" data-feather="upload"></i> <span
@@ -235,7 +237,7 @@
                         <button id="theme-toggle" class="btn btn-secondary ms-2">Modo Oscuro</button>
 
                         {% endif %}
-
+                        
 
                     </li>
                 </ul>
