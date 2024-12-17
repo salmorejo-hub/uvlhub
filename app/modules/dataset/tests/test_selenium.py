@@ -205,6 +205,7 @@ def test_file_previsualize():
     finally:
         close_driver(driver)
 
+
 def count_datasets_in_table(driver, host, table_id):
     driver.get(f"{host}/dataset/list")
     wait_for_page_to_load(driver)
