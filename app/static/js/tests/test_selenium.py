@@ -40,10 +40,10 @@ def test_dark_without_logging():
         # error_elements = driver.find_elements(By.CLASS_NAME, "error")
         # for elem in error_elements:
         #     border_color = elem.value_of_css_property('border-color')
-        #     assert border_color == 'rgba(255, 77, 79, 1)', 
+        #     assert border_color == 'rgba(255, 77, 79, 1)',
         # f"El color del borde de .error no es el esperado: {border_color}"
 
-        # # 2. Verificar el fondo y color de elementos con clase 'alert-warning' 
+        # # 2. Verificar el fondo y color de elementos con clase 'alert-warning'
         # en upload_dataset, por comprobar colores de los errores
         # alert_warning = driver.find_element(By.CLASS_NAME, "alert-warning")
         # bg_color = alert_warning.value_of_css_property('background-color')
