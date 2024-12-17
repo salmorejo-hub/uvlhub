@@ -37,12 +37,10 @@
 | Álvaro Sevilla Cabrera    |       |         |     |      |        |           |
 
 ## Integración 
-
-
+* [Salmorejo-hub-1](https://github.com/salmorejo-hub-1/uvlhub): Hemos hecho integración con este grupo para tener un alcance más amplio para nuestro proyecto y queremos optar a la nota máxima. 
 ---
 ## Resumen Ejecutivo
-
-## Descripción del Sistema
+En *Salmorejo-hub-2* nos hemos encargado de crear las **mejoras de UI, mejoras en el perfil y de búsqueda de "Feature models"** de UVLHub". Hemos creado nuevos módulos que los incluimos al sistema existente para hacer un desarrollo cohesivo con el UVLHub original y modificamos en pequeña medida los modulos ya implementados para añadir fuciones que constituyan mejoras a la UI. **En cuanto a la visión global del proceso**, nos hemos intentado adherir a las metodologias ágiles con un proceso de desarrollo de integración y despliegue continuos junto con nuestros compañeros del equipo de Salmorejo-hub-1. Hemos acordado entre ambos equipos **usar el mismo versionado y la misma politica de incidencias y cambios** para todos nuestros repositorios y nos comunicaremos con el repositorio upstream de donde haremos la integración y nos pondremos las incidencias hacia otro grupo. Internamente, siguiendo la misma metodologia, tenemos nuestro propio ciclo para las incidencias y así trabajar en nuestro propio equipo. El sistema que hemos utilizado para nuestros proyectos es una especie de Gitflow modificado donde tratamos cada uno de nuestros repositorios como ramas glorificadas y en estos se pueden hacer ramas dedicadas a los work items de cada equipo y trabajar internamente. Al contrario que en el gitflow clásico, se podran reusar ramas de desarrollo siempre que se trate del mismo work item y este carece de rama develop para evitar más merges de los que sean necesarios. Dicha metetodologia consiste en hacer incidencias de los cambios o incidencias que surjan y asignarlas a los miembros para que empiecen a trabajar en ramas especificas para los Work Items o incidencias en especifico. Para ello hemos usado las herramientas de github como github proyect o el uso de la wiki del grupo para establecer las reglas del equipo y poder trabajar todos en sintonia. A lo largo de este proyecto hemos ganado disciplina a base de acostumbrandonos a las medidas que hemos implementado que consideramos que son de buenas prácticas para mejorar el proceso de desarrollo de proyectos futuros. En cuanto al entorno de desarrollo de nuestro equipo especificamente hemos usado herramientas comunes como VisualStudio code, Mariadb, selenium y locust para los test y el despliegue realizado en Render. El proceso de despliegue local comprende instalar la aplicación localmente y sus dependencias junto con la base de datos y realizar las migraciones consecuentes para poder establecerla, más adelante se profundizará este aspecto. Una parte clave para nuestro proyecto ha sido en el apartado de integración continua, nuestra organización entre los dos equipos requiere una implementación continua de los cambios y por tanto requiere hacer multitud de integraciones en el repositorio upstream, para ello nos hemos apoyado en varios workflows de github actions para poder tener una implementación rápida y eficaz en cuanto a la revisión de modulos con los tests y la integración al upstream. 
 
 # **Descripción del Sistema**
 
@@ -313,7 +311,11 @@ Estos workflows se ejecutan en momentos específicos del desarrollo, proporciona
 
 ---
 
-#### Ejemplo de Propuesta de Cambio
+### Entorno de Desarrollo
+
+---
+
+### Ejercicio de Propuesta de Cambio
 
 1. Se identifica una mejora o problema a resolver.
    - Puede tratarse de un bug, una mejora, o una nueva funcionalidad detectada.
@@ -344,10 +346,5 @@ Estos workflows se ejecutan en momentos específicos del desarrollo, proporciona
 8. Una vez validada en la rama `develop`, se promueve a la rama `main` del repositorio principal.
    - Esto marca el paso final antes del despliegue.
    - El despliegue es automático y se realiza directamente desde la rama `main` del repositorio principal.
-
-
-### Entorno de Desarrollo
-
-### Ejercicio de Propuesta de Cambio
-
+   
 ### Conclusiones y trabajo futuro
