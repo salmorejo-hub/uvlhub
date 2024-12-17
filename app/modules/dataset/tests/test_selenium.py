@@ -28,6 +28,18 @@ def count_datasets(driver, host):
     return amount_datasets
 
 
+def test_download_all_datasets():
+    driver = initialize_driver()
+    try:
+        host = get_host_for_selenium_testing()
+        driver.get(host)
+        wait_for_page_to_load(driver)
+        driver.find_element(By.LINK_TEXT, "Get all datasets").click()
+
+    finally:
+        close_driver(driver)
+
+
 def test_upload_dataset():
     driver = initialize_driver()
 
@@ -188,5 +200,6 @@ constraints
         close_driver(driver)
 
 
+test_download_all_datasets()
 test_upload_dataset()
 test_file_previsualize()
