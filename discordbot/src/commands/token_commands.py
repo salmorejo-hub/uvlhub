@@ -5,7 +5,7 @@ from discordbot.src.database.models import UserToken
 async def setup_token_commands(client, session):
 
     @client.command(help="Configurate your access token. This command makes the bot send you a private message to configurate your token")
-    async def token_config(ctx):
+    async def token_config_on_dm(ctx):
         user = ctx.message.author
         await user.send("To configurate your access token, please type !token <your_token>")
 
