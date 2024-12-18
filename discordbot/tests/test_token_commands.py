@@ -3,22 +3,22 @@ import discord.ext.test as dpytest
 
 
 @pytest.mark.asyncio
-async def test_token_config_command_on_guild(bot):
+async def test_token_config_on_dm_command_on_guild(bot):
     channel = bot.guilds[0].text_channels[0]
     user = bot.guilds[0].members[0]
 
-    await dpytest.message("!token_config", channel=channel, member=user)
+    await dpytest.message("!token_config_on_dm", channel=channel, member=user)
     message = dpytest.get_message()
     assert message.channel == user.dm_channel, "The bot did not send a private message"
     assert message.content.__contains__("To configurate your access token"), "The bot did not send the expected message"
 
 
 @pytest.mark.asyncio
-async def test_token_config_command_on_dm(bot):
+async def test_token_config_on_dm_command_on_dm(bot):
     user = bot.guilds[0].members[0]
     dm = await user.create_dm()
 
-    await dpytest.message("!token_config", dm)
+    await dpytest.message("!token_config_on_dm", dm)
     assert dpytest.verify().message().contains().content(
         "To configurate your access token"), "The bot did not send the expected message in a DM"
 
